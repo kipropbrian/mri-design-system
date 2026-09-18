@@ -1,0 +1,121 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mri-design-system",
+  "homepage": "https://github.com/OWNER/mri-design-system",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:item",
+      "title": "MRI semantic theme",
+      "description": "The semantic colour extension the preset does not ship: info, warning and notable, each with a fill, an ink-on-fill and a readable ink. Import it next to tailwindcss in app/globals.css.",
+      "files": [
+        {
+          "path": "app/mri-theme.css",
+          "type": "registry:file",
+          "target": "~/app/mri-theme.css"
+        }
+      ]
+    },
+    {
+      "name": "agent-rules",
+      "type": "registry:item",
+      "title": "MRI UI rules for agents",
+      "description": "The imperative rule set for anyone editing an MRI interface, human or agent. Install it and reference it from AGENTS.md.",
+      "files": [
+        {
+          "path": "AGENT-RULES.md",
+          "type": "registry:file",
+          "target": "~/docs/mri-ui-rules.md"
+        }
+      ]
+    },
+    {
+      "name": "chip",
+      "type": "registry:item",
+      "title": "Chip",
+      "description": "The single chip component: two surfaces (flow 20px, overlay 22px), seven tones, mandatory scrims on photographs. A span, not the preset Badge, because Badge cannot be recoloured.",
+      "files": [
+        {
+          "path": "components/shell/chips.tsx",
+          "type": "registry:file",
+          "target": "~/components/shell/chips.tsx"
+        }
+      ]
+    },
+    {
+      "name": "chip-audit",
+      "type": "registry:item",
+      "title": "Chip audit",
+      "description": "Measures every rendered chip and reports any outside the two allowed sizes. Drop it on a review route.",
+      "registryDependencies": ["OWNER/mri-design-system/chip"],
+      "files": [
+        {
+          "path": "components/shell/chip-audit.tsx",
+          "type": "registry:file",
+          "target": "~/components/shell/chip-audit.tsx"
+        }
+      ]
+    },
+    {
+      "name": "spacing-audit",
+      "type": "registry:item",
+      "title": "Spacing audit",
+      "description": "Extracts every class-list literal and exits non-zero on any spacing utility outside the eight-step scale. Wire it into npm run verify.",
+      "files": [
+        {
+          "path": "scripts/audit-spacing.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/audit-spacing.mjs"
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "type": "registry:item",
+      "title": "Page layout primitives",
+      "description": "PageContainer, PageHeader, SectionHeader and the specimen labels used to document a pattern.",
+      "registryDependencies": ["OWNER/mri-design-system/chip"],
+      "files": [
+        {
+          "path": "components/shell/layout.tsx",
+          "type": "registry:file",
+          "target": "~/components/shell/layout.tsx"
+        }
+      ]
+    },
+    {
+      "name": "patterns",
+      "type": "registry:item",
+      "title": "Page patterns",
+      "description": "Panel, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
+      "registryDependencies": [
+        "OWNER/mri-design-system/chip",
+        "card",
+        "empty",
+        "skeleton",
+        "checkbox"
+      ],
+      "files": [
+        {
+          "path": "components/shell/patterns.tsx",
+          "type": "registry:file",
+          "target": "~/components/shell/patterns.tsx"
+        }
+      ]
+    },
+    {
+      "name": "specimen-card",
+      "type": "registry:item",
+      "title": "Specimen and media cards",
+      "description": "ObservationCard and BirdMediaCard, plus IucnChip. The reference implementation of the overlay rules: two scrimmed chips at most, media facts on the image and record facts in the body.",
+      "registryDependencies": ["OWNER/mri-design-system/chip", "OWNER/mri-design-system/patterns", "card"],
+      "files": [
+        {
+          "path": "components/shell/specimen-card.tsx",
+          "type": "registry:file",
+          "target": "~/components/shell/specimen-card.tsx"
+        }
+      ]
+    }
+  ]
+}

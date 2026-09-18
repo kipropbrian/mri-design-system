@@ -34,3 +34,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# shadcn registry build output — a GitHub registry reads
+# registry.json and the source files directly, so this is validation-only.
+/public/r/
