@@ -1,0 +1,1480 @@
+{
+  "source": "public/birds/east-african-bird-list/east_african_bird_list.json + public/birds/species-details/",
+  "totalSpecies": 1706,
+  "familyCount": 111,
+  "region": [
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "flag": "🇰🇪"
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "flag": "🇹🇿"
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "flag": "🇺🇬"
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "flag": "🇷🇼"
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "flag": "🇧🇮"
+    },
+    {
+      "code": "CD",
+      "name": "DR Congo",
+      "flag": "🇨🇩"
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "flag": "🇸🇸"
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "flag": "🇸🇴"
+    },
+    {
+      "code": "ET",
+      "name": "Ethiopia",
+      "flag": "🇪🇹"
+    }
+  ],
+  "countries": [
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "flag": "🇰🇪"
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "flag": "🇹🇿"
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "flag": "🇺🇬"
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "flag": "🇷🇼"
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "flag": "🇧🇮"
+    },
+    {
+      "code": "CD",
+      "name": "DR Congo",
+      "flag": "🇨🇩"
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "flag": "🇸🇸"
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "flag": "🇸🇴"
+    }
+  ],
+  "byCountry": [
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "flag": "🇰🇪",
+      "species": 1151,
+      "withPhoto": 1135,
+      "withAudio": 1120
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "flag": "🇹🇿",
+      "species": 1113,
+      "withPhoto": 1101,
+      "withAudio": 1089
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "flag": "🇺🇬",
+      "species": 1013,
+      "withPhoto": 1008,
+      "withAudio": 989
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "flag": "🇷🇼",
+      "species": 717,
+      "withPhoto": 715,
+      "withAudio": 703
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "flag": "🇧🇮",
+      "species": 473,
+      "withPhoto": 473,
+      "withAudio": 471
+    },
+    {
+      "code": "CD",
+      "name": "DR Congo",
+      "flag": "🇨🇩",
+      "species": 1053,
+      "withPhoto": 935,
+      "withAudio": 916
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "flag": "🇸🇸",
+      "species": 564,
+      "withPhoto": 560,
+      "withAudio": 556
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "flag": "🇸🇴",
+      "species": 546,
+      "withPhoto": 534,
+      "withAudio": 524
+    }
+  ],
+  "byFamily": [
+    {
+      "family": "Old World Flycatchers",
+      "species": 106,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Cisticolas and Allies",
+      "species": 95,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Weavers and Allies",
+      "species": 87,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Sunbirds and Spiderhunters",
+      "species": 73,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Hawks, Eagles, and Kites",
+      "species": 68,
+      "order": "Accipitriformes"
+    },
+    {
+      "family": "Waxbills and Allies",
+      "species": 61,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Bulbuls",
+      "species": 48,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Larks",
+      "species": 42,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "African Barbets",
+      "species": 38,
+      "order": "Piciformes"
+    },
+    {
+      "family": "Starlings",
+      "species": 37,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Bushshrikes and Allies",
+      "species": 36,
+      "order": "Passeriformes"
+    },
+    {
+      "family": "Swallows",
+      "species": 36,
+      "order": "Passeriformes"
+    }
+  ],
+  "byChecklist": [
+    {
+      "source": "eBird only",
+      "species": 998
+    },
+    {
+      "source": "eBird + Bubo",
+      "species": 708
+    }
+  ],
+  "byIucn": [
+    {
+      "status": "LC",
+      "species": 1470
+    },
+    {
+      "status": "NE",
+      "species": 86
+    },
+    {
+      "status": "NT",
+      "species": 61
+    },
+    {
+      "status": "VU",
+      "species": 41
+    },
+    {
+      "status": "EN",
+      "species": 36
+    },
+    {
+      "status": "CR",
+      "species": 8
+    },
+    {
+      "status": "DD",
+      "species": 4
+    }
+  ],
+  "presenceDistribution": [
+    {
+      "countries": 0,
+      "species": 76
+    },
+    {
+      "countries": 1,
+      "species": 304
+    },
+    {
+      "countries": 2,
+      "species": 281
+    },
+    {
+      "countries": 3,
+      "species": 183
+    },
+    {
+      "countries": 4,
+      "species": 156
+    },
+    {
+      "countries": 5,
+      "species": 182
+    },
+    {
+      "countries": 6,
+      "species": 163
+    },
+    {
+      "countries": 7,
+      "species": 185
+    },
+    {
+      "countries": 8,
+      "species": 176
+    }
+  ],
+  "mediaByFamily": [
+    {
+      "family": "Old World Flycatchers",
+      "audio": 2336,
+      "photos": 2918,
+      "species": 106
+    },
+    {
+      "family": "Cisticolas and Allies",
+      "audio": 1990,
+      "photos": 3605,
+      "species": 95
+    },
+    {
+      "family": "Weavers and Allies",
+      "audio": 1371,
+      "photos": 2290,
+      "species": 87
+    },
+    {
+      "family": "Sunbirds and Spiderhunters",
+      "audio": 1196,
+      "photos": 3499,
+      "species": 73
+    },
+    {
+      "family": "Hawks, Eagles, and Kites",
+      "audio": 1181,
+      "photos": 2010,
+      "species": 68
+    },
+    {
+      "family": "Bulbuls",
+      "audio": 1080,
+      "photos": 1550,
+      "species": 48
+    },
+    {
+      "family": "Waxbills and Allies",
+      "audio": 951,
+      "photos": 1630,
+      "species": 61
+    },
+    {
+      "family": "Starlings",
+      "audio": 640,
+      "photos": 1020,
+      "species": 37
+    }
+  ],
+  "mediaTotals": {
+    "photos": 182660,
+    "audio": 39014,
+    "video": 23628,
+    "speciesWithMedia": 1559
+  },
+  "featured": [
+    {
+      "speciesCode": "spemou2",
+      "commonName": "Speckled Mousebird",
+      "scientificName": "Colius striatus",
+      "family": "Mousebirds",
+      "familyScientific": "Coliidae",
+      "order": "Coliiformes",
+      "authority": "Gmelin, JF, 1789",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 3,
+      "rwandaFrequency": 35.25,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 49,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 10,
+        "BI": 3,
+        "TZ": 12,
+        "ET": 6,
+        "KE": 17
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/211674951/1200",
+      "ebirdUrl": "https://ebird.org/species/spemou2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Colius%20striatus",
+      "occurrenceScore": 281.35,
+      "commonnessRank": 1,
+      "range": ""
+    },
+    {
+      "speciesCode": "wbrcha2",
+      "commonName": "White-browed Robin-Chat",
+      "scientificName": "Cossypha heuglini",
+      "family": "Old World Flycatchers",
+      "familyScientific": "Muscicapidae",
+      "order": "Passeriformes",
+      "authority": "Hartlaub, KJG, 1866",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 4,
+      "rwandaFrequency": 32.38,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 189,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 65,
+        "BI": 12,
+        "TZ": 31,
+        "ET": 11,
+        "RW": 12,
+        "KE": 57
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/632960746/1200",
+      "ebirdUrl": "https://ebird.org/species/wbrcha2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Cossypha%20heuglini",
+      "occurrenceScore": 280.26,
+      "commonnessRank": 2,
+      "range": ""
+    },
+    {
+      "speciesCode": "combul2",
+      "commonName": "Common Bulbul",
+      "scientificName": "Pycnonotus barbatus",
+      "family": "Bulbuls",
+      "familyScientific": "Pycnonotidae",
+      "order": "Passeriformes",
+      "authority": "(Desfontaines, RL, 1789)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 1,
+      "rwandaFrequency": 49.18,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 43,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 18,
+        "TZ": 3,
+        "ET": 16,
+        "RW": 1,
+        "KE": 4
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/205372831/1200",
+      "ebirdUrl": "https://ebird.org/species/combul2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Pycnonotus%20barbatus",
+      "occurrenceScore": 260.74,
+      "commonnessRank": 3,
+      "range": ""
+    },
+    {
+      "speciesCode": "varsun2",
+      "commonName": "Variable Sunbird",
+      "scientificName": "Cinnyris venustus",
+      "family": "Sunbirds and Spiderhunters",
+      "familyScientific": "Nectariniidae",
+      "order": "Passeriformes",
+      "authority": "(Shaw, G, 1799)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 5,
+      "rwandaFrequency": 32.26,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 134,
+      "xenoCountryRecordings": {
+        "UG": 7,
+        "BI": 1,
+        "TZ": 53,
+        "ET": 21,
+        "RW": 5,
+        "KE": 46,
+        "SO": 1
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/651538145/1200",
+      "ebirdUrl": "https://ebird.org/species/varsun2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Cinnyris%20venustus",
+      "occurrenceScore": 255.94,
+      "commonnessRank": 4,
+      "range": ""
+    },
+    {
+      "speciesCode": "piekin1",
+      "commonName": "Pied Kingfisher",
+      "scientificName": "Ceryle rudis",
+      "family": "Kingfishers",
+      "familyScientific": "Alcedinidae",
+      "order": "Coraciiformes",
+      "authority": "(Linnaeus, C, 1758)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 16,
+      "rwandaFrequency": 19.21,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 68,
+      "xenoCountryRecordings": {
+        "UG": 16,
+        "TZ": 38,
+        "ET": 5,
+        "RW": 1,
+        "KE": 8
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/363745301/1200",
+      "ebirdUrl": "https://ebird.org/species/piekin1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Ceryle%20rudis",
+      "occurrenceScore": 240.83,
+      "commonnessRank": 5,
+      "range": ""
+    },
+    {
+      "speciesCode": "hadibi1",
+      "commonName": "Hadada Ibis",
+      "scientificName": "Bostrychia hagedash",
+      "family": "Ibises and Spoonbills",
+      "familyScientific": "Threskiornithidae",
+      "order": "Pelecaniformes",
+      "authority": "(Latham, J, 1790)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 6,
+      "rwandaFrequency": 30.07,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 83,
+      "xenoCountryRecordings": {
+        "UG": 14,
+        "BI": 3,
+        "TZ": 13,
+        "ET": 5,
+        "RW": 6,
+        "KE": 42
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/55595551/1200",
+      "ebirdUrl": "https://ebird.org/species/hadibi1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Bostrychia%20hagedash",
+      "occurrenceScore": 226.63,
+      "commonnessRank": 6,
+      "range": ""
+    },
+    {
+      "speciesCode": "hamerk1",
+      "commonName": "Hamerkop",
+      "scientificName": "Scopus umbretta",
+      "family": "Hamerkop",
+      "familyScientific": "Scopidae",
+      "order": "Pelecaniformes",
+      "authority": "Gmelin, JF, 1789",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 18,
+      "rwandaFrequency": 19,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 26,
+      "xenoCountryRecordings": {
+        "UG": 4,
+        "TZ": 5,
+        "ET": 7,
+        "RW": 1,
+        "KE": 9
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/530912931/1200",
+      "ebirdUrl": "https://ebird.org/species/hamerk1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Scopus%20umbretta",
+      "occurrenceScore": 223.4,
+      "commonnessRank": 7,
+      "range": ""
+    },
+    {
+      "speciesCode": "bagwea1",
+      "commonName": "Baglafecht Weaver",
+      "scientificName": "Ploceus baglafecht",
+      "family": "Weavers and Allies",
+      "familyScientific": "Ploceidae",
+      "order": "Passeriformes",
+      "authority": "(Daudin, FM, 1802)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 7,
+      "rwandaMatch": true,
+      "rwandaRank": 14,
+      "rwandaFrequency": 20.61,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 63,
+      "xenoCountryRecordings": {
+        "UG": 6,
+        "BI": 3,
+        "TZ": 20,
+        "ET": 12,
+        "KE": 22
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/162316641/1200",
+      "ebirdUrl": "https://ebird.org/species/bagwea1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Ploceus%20baglafecht",
+      "occurrenceScore": 215.39,
+      "commonnessRank": 8,
+      "range": ""
+    }
+  ],
+  "rwandaTop": [
+    {
+      "speciesCode": "combul2",
+      "commonName": "Common Bulbul",
+      "scientificName": "Pycnonotus barbatus",
+      "family": "Bulbuls",
+      "familyScientific": "Pycnonotidae",
+      "order": "Passeriformes",
+      "authority": "(Desfontaines, RL, 1789)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 1,
+      "rwandaFrequency": 49.18,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 43,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 18,
+        "TZ": 3,
+        "ET": 16,
+        "RW": 1,
+        "KE": 4
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/205372831/1200",
+      "ebirdUrl": "https://ebird.org/species/combul2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Pycnonotus%20barbatus",
+      "occurrenceScore": 260.74,
+      "commonnessRank": 3,
+      "range": ""
+    },
+    {
+      "speciesCode": "blakit1",
+      "commonName": "Black Kite",
+      "scientificName": "Milvus migrans",
+      "family": "Hawks, Eagles, and Kites",
+      "familyScientific": "Accipitridae",
+      "order": "Accipitriformes",
+      "authority": "(Boddaert, P, 1783)",
+      "iucn": "NE",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 2,
+      "rwandaFrequency": 36.45,
+      "checklists": [
+        "ebird",
+        "bubo",
+        "earc"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 5,
+      "xenoCountryRecordings": {
+        "UG": 1,
+        "KE": 4
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/65441931/1200",
+      "ebirdUrl": "https://ebird.org/species/blakit1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Milvus%20migrans",
+      "occurrenceScore": -792.59,
+      "commonnessRank": 1456,
+      "range": ""
+    },
+    {
+      "speciesCode": "spemou2",
+      "commonName": "Speckled Mousebird",
+      "scientificName": "Colius striatus",
+      "family": "Mousebirds",
+      "familyScientific": "Coliidae",
+      "order": "Coliiformes",
+      "authority": "Gmelin, JF, 1789",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 3,
+      "rwandaFrequency": 35.25,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 49,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 10,
+        "BI": 3,
+        "TZ": 12,
+        "ET": 6,
+        "KE": 17
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/211674951/1200",
+      "ebirdUrl": "https://ebird.org/species/spemou2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Colius%20striatus",
+      "occurrenceScore": 281.35,
+      "commonnessRank": 1,
+      "range": ""
+    },
+    {
+      "speciesCode": "wbrcha2",
+      "commonName": "White-browed Robin-Chat",
+      "scientificName": "Cossypha heuglini",
+      "family": "Old World Flycatchers",
+      "familyScientific": "Muscicapidae",
+      "order": "Passeriformes",
+      "authority": "Hartlaub, KJG, 1866",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 4,
+      "rwandaFrequency": 32.38,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 189,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 65,
+        "BI": 12,
+        "TZ": 31,
+        "ET": 11,
+        "RW": 12,
+        "KE": 57
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/632960746/1200",
+      "ebirdUrl": "https://ebird.org/species/wbrcha2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Cossypha%20heuglini",
+      "occurrenceScore": 280.26,
+      "commonnessRank": 2,
+      "range": ""
+    },
+    {
+      "speciesCode": "varsun2",
+      "commonName": "Variable Sunbird",
+      "scientificName": "Cinnyris venustus",
+      "family": "Sunbirds and Spiderhunters",
+      "familyScientific": "Nectariniidae",
+      "order": "Passeriformes",
+      "authority": "(Shaw, G, 1799)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 5,
+      "rwandaFrequency": 32.26,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 134,
+      "xenoCountryRecordings": {
+        "UG": 7,
+        "BI": 1,
+        "TZ": 53,
+        "ET": 21,
+        "RW": 5,
+        "KE": 46,
+        "SO": 1
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/651538145/1200",
+      "ebirdUrl": "https://ebird.org/species/varsun2",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Cinnyris%20venustus",
+      "occurrenceScore": 255.94,
+      "commonnessRank": 4,
+      "range": ""
+    },
+    {
+      "speciesCode": "hadibi1",
+      "commonName": "Hadada Ibis",
+      "scientificName": "Bostrychia hagedash",
+      "family": "Ibises and Spoonbills",
+      "familyScientific": "Threskiornithidae",
+      "order": "Pelecaniformes",
+      "authority": "(Latham, J, 1790)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 6,
+      "rwandaFrequency": 30.07,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 83,
+      "xenoCountryRecordings": {
+        "UG": 14,
+        "BI": 3,
+        "TZ": 13,
+        "ET": 5,
+        "RW": 6,
+        "KE": 42
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/55595551/1200",
+      "ebirdUrl": "https://ebird.org/species/hadibi1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Bostrychia%20hagedash",
+      "occurrenceScore": 226.63,
+      "commonnessRank": 6,
+      "range": ""
+    },
+    {
+      "speciesCode": "piecro1",
+      "commonName": "Pied Crow",
+      "scientificName": "Corvus albus",
+      "family": "Crows, Jays, and Magpies",
+      "familyScientific": "Corvidae",
+      "order": "Passeriformes",
+      "authority": "Müller, PLS, 1776",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 7,
+      "rwandaFrequency": 29.73,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 43,
+      "xenoCountryRecordings": {
+        "CD": 1,
+        "UG": 3,
+        "BI": 2,
+        "TZ": 16,
+        "ET": 9,
+        "RW": 5,
+        "KE": 7
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/34550251/1200",
+      "ebirdUrl": "https://ebird.org/species/piecro1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Corvus%20albus",
+      "occurrenceScore": 202.39,
+      "commonnessRank": 10,
+      "range": "sub-Saharan Africa, Madagascar, Aldabra, and Comoros"
+    },
+    {
+      "speciesCode": "reedov1",
+      "commonName": "Red-eyed Dove",
+      "scientificName": "Streptopelia semitorquata",
+      "family": "Pigeons and Doves",
+      "familyScientific": "Columbidae",
+      "order": "Columbiformes",
+      "authority": "(Rüppell, WPES, 1837)",
+      "iucn": "LC",
+      "countries": [
+        "BI",
+        "CD",
+        "KE",
+        "RW",
+        "SO",
+        "SS",
+        "TZ",
+        "UG"
+      ],
+      "presenceCount": 8,
+      "rwandaMatch": true,
+      "rwandaRank": 8,
+      "rwandaFrequency": 27.66,
+      "checklists": [
+        "ebird",
+        "bubo"
+      ],
+      "photoCount": 30,
+      "audioCount": 30,
+      "videoCount": 30,
+      "xenoCount": 65,
+      "xenoCountryRecordings": {
+        "CD": 2,
+        "UG": 21,
+        "TZ": 7,
+        "ET": 7,
+        "RW": 1,
+        "KE": 27
+      },
+      "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/120040781/1200",
+      "ebirdUrl": "https://ebird.org/species/reedov1",
+      "xenocantoUrl": "https://xeno-canto.org/explore?query=Streptopelia%20semitorquata",
+      "occurrenceScore": 204.98,
+      "commonnessRank": 9,
+      "range": "sub-Saharan Africa and southwestern Arabia"
+    }
+  ],
+  "xeno": {
+    "totals": {
+      "recordings": 70253,
+      "speciesWithAudio": 1153,
+      "cataloguedSpecies": 1706
+    },
+    "byCountry": [
+      {
+        "code": "TZ",
+        "name": "Tanzania",
+        "flag": "🇹🇿",
+        "recordings": 6403,
+        "species": 499
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "flag": "🇰🇪",
+        "recordings": 6146,
+        "species": 571
+      },
+      {
+        "code": "UG",
+        "name": "Uganda",
+        "flag": "🇺🇬",
+        "recordings": 4125,
+        "species": 443
+      },
+      {
+        "code": "ET",
+        "name": "Ethiopia",
+        "flag": "🇪🇹",
+        "recordings": 2087,
+        "species": 363
+      },
+      {
+        "code": "CD",
+        "name": "DR Congo",
+        "flag": "🇨🇩",
+        "recordings": 298,
+        "species": 157
+      },
+      {
+        "code": "RW",
+        "name": "Rwanda",
+        "flag": "🇷🇼",
+        "recordings": 290,
+        "species": 128
+      },
+      {
+        "code": "BI",
+        "name": "Burundi",
+        "flag": "🇧🇮",
+        "recordings": 222,
+        "species": 85
+      },
+      {
+        "code": "SO",
+        "name": "Somalia",
+        "flag": "🇸🇴",
+        "recordings": 83,
+        "species": 43
+      },
+      {
+        "code": "SS",
+        "name": "South Sudan",
+        "flag": "🇸🇸",
+        "recordings": 13,
+        "species": 10
+      }
+    ],
+    "topSpecies": [
+      {
+        "speciesCode": "grewhi1",
+        "commonName": "Greater Whitethroat",
+        "scientificName": "Curruca communis",
+        "family": "Sylviid Warblers and Allies",
+        "familyScientific": "Sylviidae",
+        "order": "Passeriformes",
+        "authority": "(Latham, J, 1787)",
+        "iucn": "LC",
+        "countries": [
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 7,
+        "rwandaMatch": true,
+        "rwandaRank": 598,
+        "rwandaFrequency": 0.0126,
+        "checklists": [
+          "ebird",
+          "bubo"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 4684,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/333121331/1200",
+        "ebirdUrl": "https://ebird.org/species/grewhi1",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Curruca%20communis",
+        "occurrenceScore": 84.04,
+        "commonnessRank": 412,
+        "range": ""
+      },
+      {
+        "speciesCode": "commoo3",
+        "commonName": "Eurasian Moorhen",
+        "scientificName": "Gallinula chloropus",
+        "family": "Rails, Gallinules, and Coots",
+        "familyScientific": "Rallidae",
+        "order": "Gruiformes",
+        "authority": "(Linnaeus, C, 1758)",
+        "iucn": "LC",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 7,
+        "rwandaMatch": true,
+        "rwandaRank": 120,
+        "rwandaFrequency": 5.37,
+        "checklists": [
+          "ebird",
+          "bubo"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 3029,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/404825431/1200",
+        "ebirdUrl": "https://ebird.org/species/commoo3",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Gallinula%20chloropus",
+        "occurrenceScore": 100.11,
+        "commonnessRank": 228,
+        "range": ""
+      },
+      {
+        "speciesCode": "comcuc",
+        "commonName": "Common Cuckoo",
+        "scientificName": "Cuculus canorus",
+        "family": "Cuckoos",
+        "familyScientific": "Cuculidae",
+        "order": "Cuculiformes",
+        "authority": "Linnaeus, C, 1758",
+        "iucn": "LC",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 8,
+        "rwandaMatch": true,
+        "rwandaRank": 402,
+        "rwandaFrequency": 0.402,
+        "checklists": [
+          "ebird",
+          "bubo"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 2485,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/181662571/1200",
+        "ebirdUrl": "https://ebird.org/species/comcuc",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Cuculus%20canorus",
+        "occurrenceScore": 97.21,
+        "commonnessRank": 276,
+        "range": ""
+      },
+      {
+        "speciesCode": "eurcur",
+        "commonName": "Eurasian Curlew",
+        "scientificName": "Numenius arquata",
+        "family": "Sandpipers and Allies",
+        "familyScientific": "Scolopacidae",
+        "order": "Charadriiformes",
+        "authority": "(Linnaeus, C, 1758)",
+        "iucn": "NT",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 8,
+        "rwandaMatch": true,
+        "rwandaRank": 658,
+        "rwandaFrequency": 0,
+        "checklists": [
+          "ebird",
+          "bubo",
+          "earc"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 2260,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/66351051/1200",
+        "ebirdUrl": "https://ebird.org/species/eurcur",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Numenius%20arquata",
+        "occurrenceScore": -904,
+        "commonnessRank": 1466,
+        "range": ""
+      },
+      {
+        "speciesCode": "eurwar1",
+        "commonName": "Common Reed Warbler",
+        "scientificName": "Acrocephalus scirpaceus",
+        "family": "Reed Warblers and Allies",
+        "familyScientific": "Acrocephalidae",
+        "order": "Passeriformes",
+        "authority": "(Hermann, J, 1804)",
+        "iucn": "LC",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 8,
+        "rwandaMatch": true,
+        "rwandaRank": 245,
+        "rwandaFrequency": 1.88,
+        "checklists": [
+          "ebird",
+          "bubo"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 2190,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/154989101/1200",
+        "ebirdUrl": "https://ebird.org/species/eurwar1",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Acrocephalus%20scirpaceus",
+        "occurrenceScore": 101.64,
+        "commonnessRank": 214,
+        "range": ""
+      },
+      {
+        "speciesCode": "graher1",
+        "commonName": "Gray Heron",
+        "scientificName": "Ardea cinerea",
+        "family": "Herons, Egrets, and Bitterns",
+        "familyScientific": "Ardeidae",
+        "order": "Pelecaniformes",
+        "authority": "Linnaeus, C, 1758",
+        "iucn": "LC",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 8,
+        "rwandaMatch": true,
+        "rwandaRank": 50,
+        "rwandaFrequency": 10.82,
+        "checklists": [
+          "ebird",
+          "bubo"
+        ],
+        "photoCount": 30,
+        "audioCount": 29,
+        "videoCount": 30,
+        "xenoCount": 2128,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/423947981/1200",
+        "ebirdUrl": "https://ebird.org/species/graher1",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Ardea%20cinerea",
+        "occurrenceScore": 128.46,
+        "commonnessRank": 78,
+        "range": ""
+      },
+      {
+        "speciesCode": "whiwag",
+        "commonName": "White Wagtail",
+        "scientificName": "Motacilla alba",
+        "family": "Wagtails and Pipits",
+        "familyScientific": "Motacillidae",
+        "order": "Passeriformes",
+        "authority": "Linnaeus, C, 1758",
+        "iucn": "LC",
+        "countries": [
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 7,
+        "rwandaMatch": true,
+        "rwandaRank": 716,
+        "rwandaFrequency": 0,
+        "checklists": [
+          "ebird",
+          "bubo",
+          "earc"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 1994,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/295003631/1200",
+        "ebirdUrl": "https://ebird.org/species/whiwag",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Motacilla%20alba",
+        "occurrenceScore": -916,
+        "commonnessRank": 1484,
+        "range": ""
+      },
+      {
+        "speciesCode": "comred1",
+        "commonName": "Common Redshank",
+        "scientificName": "Tringa totanus",
+        "family": "Sandpipers and Allies",
+        "familyScientific": "Scolopacidae",
+        "order": "Charadriiformes",
+        "authority": "(Linnaeus, C, 1758)",
+        "iucn": "LC",
+        "countries": [
+          "BI",
+          "CD",
+          "KE",
+          "RW",
+          "SO",
+          "SS",
+          "TZ",
+          "UG"
+        ],
+        "presenceCount": 8,
+        "rwandaMatch": true,
+        "rwandaRank": 661,
+        "rwandaFrequency": 0,
+        "checklists": [
+          "ebird",
+          "bubo",
+          "earc"
+        ],
+        "photoCount": 30,
+        "audioCount": 30,
+        "videoCount": 30,
+        "xenoCount": 1957,
+        "xenoCountryRecordings": {},
+        "image": "https://cdn.download.ams.birds.cornell.edu/api/v2/asset/311512471/1200",
+        "ebirdUrl": "https://ebird.org/species/comred1",
+        "xenocantoUrl": "https://xeno-canto.org/explore?query=Tringa%20totanus",
+        "occurrenceScore": -904,
+        "commonnessRank": 1465,
+        "range": ""
+      }
+    ]
+  }
+}

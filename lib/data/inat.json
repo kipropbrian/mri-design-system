@@ -1,0 +1,847 @@
+{
+  "source": "public/inaturalist/country-firsts/snapshots/inat-20260913.json",
+  "publishedRunId": "inat-20260913",
+  "publishedAt": "2026-09-13T20:14:19.769Z",
+  "latestRun": {
+    "runId": "inat-20260913",
+    "startedAt": "2026-09-13T06:01:57+00:00",
+    "completedAt": "2026-09-13T07:36:57+00:00",
+    "requestCount": 96,
+    "newCount": 34,
+    "recheckedCount": 399,
+    "changedCount": 5,
+    "promotedCount": 1,
+    "withdrawnCount": 3,
+    "stableRecheckedCount": 17,
+    "status": "complete"
+  },
+  "runCount": 10,
+  "eventCount": 506,
+  "countries": [
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "speciesCount": 7872,
+      "lastScanAt": "2026-09-13T06:59:57+00:00"
+    },
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "speciesCount": 7663,
+      "lastScanAt": "2026-09-13T06:13:57+00:00"
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "speciesCount": 4050,
+      "lastScanAt": "2026-09-13T07:22:57+00:00"
+    },
+    {
+      "code": "CD",
+      "name": "Democratic Republic of the Congo",
+      "speciesCount": 3655,
+      "lastScanAt": "2026-09-13T06:04:57+00:00"
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "speciesCount": 2049,
+      "lastScanAt": "2026-09-13T06:42:57+00:00"
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "speciesCount": 579,
+      "lastScanAt": "2026-09-13T06:54:57+00:00"
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "speciesCount": 574,
+      "lastScanAt": "2026-09-13T06:51:57+00:00"
+    },
+    {
+      "code": "BI",
+      "name": "Burundi",
+      "speciesCount": 566,
+      "lastScanAt": "2026-09-13T06:03:00+00:00"
+    }
+  ],
+  "runs": [
+    {
+      "runId": "39ec8962-2c2b-4ec9-85ee-840d18d4bf0f",
+      "startedAt": "2026-07-16T19:28:07+00:00",
+      "completedAt": "2026-07-16T21:32:08+00:00",
+      "requestCount": 125,
+      "newCount": 0,
+      "recheckedCount": 0,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "dd9e2848-fb8c-406b-9e09-f3a997ba0fdf",
+      "startedAt": "2026-07-19T06:00:02+00:00",
+      "completedAt": "2026-07-19T08:29:03+00:00",
+      "requestCount": 150,
+      "newCount": 24,
+      "recheckedCount": 0,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "32008e68-d251-4d71-812c-7f9f334835dc",
+      "startedAt": "2026-07-26T06:00:30+00:00",
+      "completedAt": "2026-07-26T09:12:30+00:00",
+      "requestCount": 193,
+      "newCount": 68,
+      "recheckedCount": 0,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "d8ed38fa-2d57-4c95-80b5-801a5a22760e",
+      "startedAt": "2026-08-02T06:00:30+00:00",
+      "completedAt": "2026-08-02T09:37:31+00:00",
+      "requestCount": 218,
+      "newCount": 73,
+      "recheckedCount": 20,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "dd5d96c0-787d-4ea1-ab3e-d0597c8f8c4d",
+      "startedAt": "2026-08-09T06:00:06+00:00",
+      "completedAt": "2026-08-09T08:39:23+00:00",
+      "requestCount": 160,
+      "newCount": 67,
+      "recheckedCount": 143,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "5ae81c67-1247-4f5e-b4d1-6f00b91bdbc2",
+      "startedAt": "2026-08-16T06:00:10+00:00",
+      "completedAt": "2026-08-16T08:23:11+00:00",
+      "requestCount": 144,
+      "newCount": 82,
+      "recheckedCount": 232,
+      "changedCount": 25,
+      "promotedCount": 1,
+      "withdrawnCount": 3,
+      "stableRecheckedCount": 25,
+      "status": "complete"
+    },
+    {
+      "runId": "a8c3033d-35dd-48c6-8c7e-d6b3ab86765e",
+      "startedAt": "2026-08-23T06:00:11+00:00",
+      "completedAt": "2026-08-23T08:10:12+00:00",
+      "requestCount": 131,
+      "newCount": 69,
+      "recheckedCount": 259,
+      "changedCount": 3,
+      "promotedCount": 2,
+      "withdrawnCount": 1,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "b21a80c5-fc99-42fc-99f3-d33a9e9e84a1",
+      "startedAt": "2026-08-30T15:22:59+00:00",
+      "completedAt": "2026-08-30T16:44:59+00:00",
+      "requestCount": 83,
+      "newCount": 21,
+      "recheckedCount": 344,
+      "changedCount": 1,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 12,
+      "status": "complete"
+    },
+    {
+      "runId": "94acc55e-fae5-46ac-8431-c476f33f3918",
+      "startedAt": "2026-09-06T08:47:08+00:00",
+      "completedAt": "2026-09-06T14:34:06+00:00",
+      "requestCount": 225,
+      "newCount": 39,
+      "recheckedCount": 380,
+      "changedCount": 0,
+      "promotedCount": 0,
+      "withdrawnCount": 0,
+      "stableRecheckedCount": 0,
+      "status": "complete"
+    },
+    {
+      "runId": "inat-20260913",
+      "startedAt": "2026-09-13T06:01:57+00:00",
+      "completedAt": "2026-09-13T07:36:57+00:00",
+      "requestCount": 96,
+      "newCount": 34,
+      "recheckedCount": 399,
+      "changedCount": 5,
+      "promotedCount": 1,
+      "withdrawnCount": 3,
+      "stableRecheckedCount": 17,
+      "status": "complete"
+    }
+  ],
+  "taxa": [
+    {
+      "taxon": "Plantae",
+      "count": 224,
+      "share": 0.4426877470355731
+    },
+    {
+      "taxon": "Insecta",
+      "count": 139,
+      "share": 0.274703557312253
+    },
+    {
+      "taxon": "Aves",
+      "count": 50,
+      "share": 0.09881422924901186
+    },
+    {
+      "taxon": "Reptilia",
+      "count": 19,
+      "share": 0.037549407114624504
+    },
+    {
+      "taxon": "Mammalia",
+      "count": 18,
+      "share": 0.03557312252964427
+    },
+    {
+      "taxon": "Actinopterygii",
+      "count": 16,
+      "share": 0.03162055335968379
+    },
+    {
+      "taxon": "Animalia",
+      "count": 12,
+      "share": 0.023715415019762844
+    },
+    {
+      "taxon": "Mollusca",
+      "count": 12,
+      "share": 0.023715415019762844
+    },
+    {
+      "taxon": "Fungi",
+      "count": 8,
+      "share": 0.015810276679841896
+    },
+    {
+      "taxon": "Arachnida",
+      "count": 4,
+      "share": 0.007905138339920948
+    },
+    {
+      "taxon": "Amphibia",
+      "count": 3,
+      "share": 0.005928853754940711
+    },
+    {
+      "taxon": "Unknown",
+      "count": 1,
+      "share": 0.001976284584980237
+    }
+  ],
+  "statuses": [
+    {
+      "status": "monitoring",
+      "count": 407
+    },
+    {
+      "status": "stable",
+      "count": 80
+    },
+    {
+      "status": "withdrawn",
+      "count": 19
+    }
+  ],
+  "years": [
+    {
+      "year": 1918,
+      "count": 1
+    },
+    {
+      "year": 1928,
+      "count": 1
+    },
+    {
+      "year": 1965,
+      "count": 1
+    },
+    {
+      "year": 1972,
+      "count": 2
+    },
+    {
+      "year": 1978,
+      "count": 1
+    },
+    {
+      "year": 1984,
+      "count": 1
+    },
+    {
+      "year": 1989,
+      "count": 1
+    },
+    {
+      "year": 2004,
+      "count": 2
+    },
+    {
+      "year": 2007,
+      "count": 2
+    },
+    {
+      "year": 2009,
+      "count": 3
+    },
+    {
+      "year": 2010,
+      "count": 1
+    },
+    {
+      "year": 2011,
+      "count": 1
+    },
+    {
+      "year": 2012,
+      "count": 6
+    },
+    {
+      "year": 2013,
+      "count": 3
+    },
+    {
+      "year": 2014,
+      "count": 8
+    },
+    {
+      "year": 2015,
+      "count": 7
+    },
+    {
+      "year": 2016,
+      "count": 8
+    },
+    {
+      "year": 2017,
+      "count": 6
+    },
+    {
+      "year": 2018,
+      "count": 7
+    },
+    {
+      "year": 2019,
+      "count": 5
+    },
+    {
+      "year": 2020,
+      "count": 6
+    },
+    {
+      "year": 2021,
+      "count": 7
+    },
+    {
+      "year": 2022,
+      "count": 16
+    },
+    {
+      "year": 2023,
+      "count": 30
+    },
+    {
+      "year": 2024,
+      "count": 33
+    },
+    {
+      "year": 2025,
+      "count": 75
+    },
+    {
+      "year": 2026,
+      "count": 272
+    }
+  ],
+  "yearByCountry": {
+    "countries": [
+      {
+        "code": "TZ",
+        "name": "Tanzania"
+      },
+      {
+        "code": "KE",
+        "name": "Kenya"
+      },
+      {
+        "code": "UG",
+        "name": "Uganda"
+      }
+    ],
+    "series": [
+      {
+        "year": 1918,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 1928,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 1972,
+        "KE": 2,
+        "TZ": 0,
+        "UG": 0
+      },
+      {
+        "year": 1978,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 1984,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 1989,
+        "KE": 1,
+        "TZ": 0,
+        "UG": 0
+      },
+      {
+        "year": 2004,
+        "KE": 2,
+        "TZ": 0,
+        "UG": 0
+      },
+      {
+        "year": 2007,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 2009,
+        "TZ": 1,
+        "UG": 1,
+        "KE": 1
+      },
+      {
+        "year": 2010,
+        "TZ": 1,
+        "KE": 0,
+        "UG": 0
+      },
+      {
+        "year": 2012,
+        "TZ": 2,
+        "UG": 2,
+        "KE": 0
+      },
+      {
+        "year": 2013,
+        "UG": 2,
+        "TZ": 0,
+        "KE": 0
+      },
+      {
+        "year": 2014,
+        "KE": 2,
+        "UG": 2,
+        "TZ": 1
+      },
+      {
+        "year": 2015,
+        "UG": 2,
+        "KE": 1,
+        "TZ": 1
+      },
+      {
+        "year": 2016,
+        "KE": 4,
+        "TZ": 3,
+        "UG": 0
+      },
+      {
+        "year": 2017,
+        "KE": 1,
+        "TZ": 2,
+        "UG": 0
+      },
+      {
+        "year": 2018,
+        "KE": 4,
+        "TZ": 3,
+        "UG": 0
+      },
+      {
+        "year": 2019,
+        "TZ": 1,
+        "UG": 3,
+        "KE": 1
+      },
+      {
+        "year": 2020,
+        "UG": 1,
+        "KE": 1,
+        "TZ": 4
+      },
+      {
+        "year": 2021,
+        "KE": 4,
+        "TZ": 1,
+        "UG": 1
+      },
+      {
+        "year": 2022,
+        "KE": 6,
+        "UG": 3,
+        "TZ": 3
+      },
+      {
+        "year": 2023,
+        "UG": 10,
+        "KE": 8,
+        "TZ": 9
+      },
+      {
+        "year": 2024,
+        "UG": 3,
+        "TZ": 11,
+        "KE": 15
+      },
+      {
+        "year": 2025,
+        "UG": 18,
+        "KE": 20,
+        "TZ": 15
+      },
+      {
+        "year": 2026,
+        "UG": 21,
+        "TZ": 44,
+        "KE": 91
+      }
+    ]
+  },
+  "taxaByCountry": {
+    "taxa": [
+      "plantae",
+      "insecta",
+      "aves"
+    ],
+    "rows": [
+      {
+        "code": "TZ",
+        "name": "Tanzania",
+        "plantae": 40,
+        "insecta": 33,
+        "aves": 7
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "plantae": 90,
+        "insecta": 40,
+        "aves": 8
+      },
+      {
+        "code": "UG",
+        "name": "Uganda",
+        "plantae": 30,
+        "insecta": 30,
+        "aves": 0
+      },
+      {
+        "code": "CD",
+        "name": "Democratic Republic of the Congo",
+        "plantae": 21,
+        "insecta": 11,
+        "aves": 3
+      }
+    ]
+  },
+  "events": [
+    {
+      "eventId": "f45649bc0395eac926d04394",
+      "countryCode": "UG",
+      "countryName": "Uganda",
+      "scientificName": "Dacnodes elongata",
+      "commonName": null,
+      "iconicTaxon": "Insecta",
+      "observationId": 333700116,
+      "observationUrl": "https://www.inaturalist.org/observations/333700116",
+      "observer": "bertogcliment",
+      "observedOn": "2025-12-24",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/605835415/medium.jpg",
+      "photoAttribution": "(c) bertogcliment, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": true,
+      "globalObservationCount": 1,
+      "detectedAt": "2026-09-13T07:36:57+00:00"
+    },
+    {
+      "eventId": "5e9318b91d7c902ea63a2b86",
+      "countryCode": "UG",
+      "countryName": "Uganda",
+      "scientificName": "Xanthagaricus appendiculatus",
+      "commonName": null,
+      "iconicTaxon": "Fungi",
+      "observationId": 311163983,
+      "observationUrl": "https://www.inaturalist.org/observations/311163983",
+      "observer": "ksanderson",
+      "observedOn": "2025-07-30",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/561681670/medium.jpg",
+      "photoAttribution": "(c) Ken Sanderson, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": true,
+      "globalObservationCount": 1,
+      "detectedAt": "2026-09-13T07:35:57+00:00"
+    },
+    {
+      "eventId": "28f07af5bbe15baceb4354d4",
+      "countryCode": "UG",
+      "countryName": "Uganda",
+      "scientificName": "Euphaedra ochrovirens",
+      "commonName": null,
+      "iconicTaxon": "Insecta",
+      "observationId": 239989498,
+      "observationUrl": "https://www.inaturalist.org/observations/239989498",
+      "observer": "sui_fai_pun",
+      "observedOn": "2024-07-02",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/427505162/medium.jpg",
+      "photoAttribution": "(c) Sui Fai Pun, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 3,
+      "status": "stable",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 3,
+      "detectedAt": "2026-09-13T07:34:57+00:00"
+    },
+    {
+      "eventId": "632f699d7460a356cc68cb5e",
+      "countryCode": "UG",
+      "countryName": "Uganda",
+      "scientificName": "Actocetor indicus",
+      "commonName": null,
+      "iconicTaxon": "Insecta",
+      "observationId": 391489842,
+      "observationUrl": "https://www.inaturalist.org/observations/391489842",
+      "observer": "marcthibault",
+      "observedOn": "2026-06-23",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/717342720/medium.jpg",
+      "photoAttribution": "(c) Marc Thibault, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 3,
+      "status": "stable",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 211,
+      "detectedAt": "2026-09-13T07:33:58+00:00"
+    },
+    {
+      "eventId": "d7c181387f425387675786d1",
+      "countryCode": "TZ",
+      "countryName": "Tanzania",
+      "scientificName": "Murdannia longifolia",
+      "commonName": "Long-leafed Dewflower",
+      "iconicTaxon": "Plantae",
+      "observationId": 217577895,
+      "observationUrl": "https://www.inaturalist.org/observations/217577895",
+      "observer": "aztekium",
+      "observedOn": "2024-04-20",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/384923478/medium.jpeg",
+      "photoAttribution": "(c) Carlos G Velazco-Macias, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": true,
+      "globalObservationCount": 8,
+      "detectedAt": "2026-09-13T07:22:57+00:00"
+    },
+    {
+      "eventId": "4ef0fc4b7a6fb42639c92cc0",
+      "countryCode": "TZ",
+      "countryName": "Tanzania",
+      "scientificName": "Elaeodendron schlechterianum",
+      "commonName": null,
+      "iconicTaxon": "Plantae",
+      "observationId": 397168355,
+      "observationUrl": "https://www.inaturalist.org/observations/397168355",
+      "observer": "bushbode",
+      "observedOn": "2026-09-02",
+      "photoUrl": "https://static.inaturalist.org/photos/728422649/medium.jpg",
+      "photoAttribution": "(c) bushbode, all rights reserved",
+      "photoLicense": null,
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 18,
+      "detectedAt": "2026-09-13T07:20:57+00:00"
+    },
+    {
+      "eventId": "55265f95bf79ad4704d37883",
+      "countryCode": "TZ",
+      "countryName": "Tanzania",
+      "scientificName": "Hapsidophrys smaragdina",
+      "commonName": "Emerald Snake",
+      "iconicTaxon": "Reptilia",
+      "observationId": 398936929,
+      "observationUrl": "https://www.inaturalist.org/observations/398936929",
+      "observer": "rwilkes",
+      "observedOn": "2026-09-10",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/731881723/medium.jpg",
+      "photoAttribution": "(c) Ryan Wilkes, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 157,
+      "detectedAt": "2026-09-13T07:19:57+00:00"
+    },
+    {
+      "eventId": "4cbcfd2015539d81bff54dba",
+      "countryCode": "TZ",
+      "countryName": "Tanzania",
+      "scientificName": "Englerophytum magalismontanum",
+      "commonName": "Stamvrug",
+      "iconicTaxon": "Plantae",
+      "observationId": 170299622,
+      "observationUrl": "https://www.inaturalist.org/observations/170299622",
+      "observer": "reubenheydenrych",
+      "observedOn": "2019-09-17",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/295343825/medium.jpeg",
+      "photoAttribution": "(c) Reuben Heydenrych, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 2883,
+      "detectedAt": "2026-09-13T07:18:57+00:00"
+    },
+    {
+      "eventId": "613c4f050a22af30c2bf9f21",
+      "countryCode": "RW",
+      "countryName": "Rwanda",
+      "scientificName": "Buteo rufinus",
+      "commonName": "Long-legged Buzzard",
+      "iconicTaxon": "Aves",
+      "observationId": 190705023,
+      "observationUrl": "https://www.inaturalist.org/observations/190705023",
+      "observer": "theadhocracy",
+      "observedOn": "2023-10-26",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/334373272/medium.jpg",
+      "photoAttribution": "(c) theadhocracy, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 3,
+      "status": "stable",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 7144,
+      "detectedAt": "2026-09-13T06:48:57+00:00"
+    },
+    {
+      "eventId": "b8fa27ebc8f13af2019f707f",
+      "countryCode": "KE",
+      "countryName": "Kenya",
+      "scientificName": "Boulengerula endauensis",
+      "commonName": "Endau Hill Caecilian",
+      "iconicTaxon": "Amphibia",
+      "observationId": 367997423,
+      "observationUrl": "https://www.inaturalist.org/observations/367997423",
+      "observer": "pkmalonza",
+      "observedOn": "2024-01-24",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/672089911/medium.jpg",
+      "photoAttribution": "(c) Patrick Kinyatta Malonza, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": true,
+      "globalObservationCount": 1,
+      "detectedAt": "2026-09-13T06:40:57+00:00"
+    },
+    {
+      "eventId": "7c508b31370a78477c66d4c7",
+      "countryCode": "KE",
+      "countryName": "Kenya",
+      "scientificName": "Lanius collaris",
+      "commonName": "Southern Fiscal",
+      "iconicTaxon": "Aves",
+      "observationId": 398937120,
+      "observationUrl": "https://www.inaturalist.org/observations/398937120",
+      "observer": "willunders50",
+      "observedOn": "1989-02-03",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/731882151/medium.jpg",
+      "photoAttribution": "(c) willunders50, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": false,
+      "globalObservationCount": 9047,
+      "detectedAt": "2026-09-13T06:33:57+00:00"
+    },
+    {
+      "eventId": "495c3c48f3f89fb5ff598426",
+      "countryCode": "KE",
+      "countryName": "Kenya",
+      "scientificName": "Schistometopum gregorii",
+      "commonName": "Flood-plain-dwelling Caecilian",
+      "iconicTaxon": "Amphibia",
+      "observationId": 367997427,
+      "observationUrl": "https://www.inaturalist.org/observations/367997427",
+      "observer": "pkmalonza",
+      "observedOn": "2016-06-28",
+      "photoUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/672092169/medium.jpg",
+      "photoAttribution": "(c) Patrick Kinyatta Malonza, some rights reserved (CC BY-NC)",
+      "photoLicense": "cc-by-nc",
+      "supportCount": 2,
+      "status": "monitoring",
+      "qualityGrade": "research",
+      "globalFirst": true,
+      "globalObservationCount": 1,
+      "detectedAt": "2026-09-13T06:30:57+00:00"
+    }
+  ]
+}

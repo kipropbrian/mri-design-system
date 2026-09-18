@@ -1,0 +1,87 @@
+/* ==========================================================================
+   MRI semantic colour extension
+   --------------------------------------------------------------------------
+   The shadcn preset ships one brand hue (green), one alarm hue (red) and a
+   monochrome olive chart ramp. That is enough for surfaces and actions, but not
+   for the states a research tool actually reports: at-risk taxa, provenance
+   context, and "this is rarer than rare".
+
+   Without these three roles, routes invent them per page — which is exactly how
+   the platform ended up with amber-500/90 in one card, amber-500/15 in another,
+   and an olive chip standing in for "warning" in a third.
+
+   This file is the whole extension. It is portable: copy it into another MRI
+   project and import it after `tailwindcss`, and the same semantic roles become
+   available as ordinary Tailwind utilities (`bg-info`, `text-warning`,
+   `ring-notable`, …).
+
+   Each role has three values, because one colour cannot do all three jobs:
+
+     --<role>             the solid fill (solid chips, dots, bars, icon fills)
+     --<role>-foreground  ink ON that solid fill
+     --<role>-ink         the role as text on a normal surface — a tinted chip,
+                          an eyebrow, a link
+
+   Skipping `-ink` is what makes dark mode fail: a preset `--primary` that is
+   dark enough to carry white button text is far too dark to *be* text on a dark
+   card, so `text-primary` on a tinted chip measured 2.1:1. Every `-ink` below is
+   picked to clear WCAG AA (4.5:1) at 10px on the `--card` surface of its own
+   theme; every `-foreground` clears it on its solid fill.
+   ========================================================================== */
+
+@theme inline {
+  --color-primary-ink: var(--primary-ink);
+  --color-destructive-ink: var(--destructive-ink);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-ink: var(--info-ink);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-ink: var(--warning-ink);
+  --color-notable: var(--notable);
+  --color-notable-foreground: var(--notable-foreground);
+  --color-notable-ink: var(--notable-ink);
+}
+
+:root {
+  /* Reads the two preset roles that are also used as text, so a route never has
+     to reach past the semantic layer. */
+  --primary-ink: oklch(0.47 0.13 151);
+  --destructive-ink: oklch(0.47 0.19 27);
+
+  /* Provenance, context, non-state metadata. Blue is the only hue left that
+     reads as "informational" without implying success or failure. */
+  --info: oklch(0.52 0.15 252);
+  --info-foreground: oklch(0.99 0.005 250);
+  --info-ink: oklch(0.47 0.15 252);
+
+  /* At-risk, needs-attention, near-threshold. */
+  --warning: oklch(0.62 0.14 62);
+  --warning-foreground: oklch(0.99 0.01 80);
+  --warning-ink: oklch(0.48 0.12 60);
+
+  /* Notable — the rarity accent. A gold fill with a dark ink, which is the only
+     way a highlight stays readable on top of an arbitrary photograph. */
+  --notable: oklch(0.79 0.15 80);
+  --notable-foreground: oklch(0.3 0.07 62);
+  --notable-ink: oklch(0.45 0.09 62);
+}
+
+.dark {
+  /* On a dark card, text has to be light. The preset's dark `--primary` is a
+     fill colour; this is its readable counterpart. */
+  --primary-ink: oklch(0.8 0.15 152);
+  --destructive-ink: oklch(0.76 0.15 25);
+
+  --info: oklch(0.75 0.12 250);
+  --info-foreground: oklch(0.2 0.04 250);
+  --info-ink: oklch(0.79 0.11 250);
+
+  --warning: oklch(0.8 0.13 75);
+  --warning-foreground: oklch(0.22 0.05 60);
+  --warning-ink: oklch(0.84 0.12 78);
+
+  --notable: oklch(0.84 0.14 83);
+  --notable-foreground: oklch(0.22 0.06 60);
+  --notable-ink: oklch(0.87 0.13 82);
+}
