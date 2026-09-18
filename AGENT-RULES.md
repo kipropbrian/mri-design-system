@@ -74,7 +74,7 @@ Tones: `neutral`, `primary`, `positive`, `info`, `warning`, `notable`,
 **`monitoring` gets no chip.** It is the default state, so it renders as absence.
 Only `stable` and `withdrawn` earn one.
 
-## Two traps that will cost you an hour
+## Three traps that will cost you an hour
 
 1. **The preset `Badge` cannot be recoloured.** Its variants carry
    `dark:bg-input/30`, and Tailwind compiles `dark:` with `:is(.dark *)`, which
@@ -84,3 +84,7 @@ Only `stable` and `withdrawn` earn one.
 2. **Base UI's `MenuGroupLabel` requires group context.** A `DropdownMenuLabel`
    placed directly in `DropdownMenuContent` throws, and the menu then silently
    never opens. Wrap it in a `DropdownMenuGroup` or `DropdownMenuRadioGroup`.
+3. **`components.json` needs the resolved style id, not the preset's short name.**
+   The preset prints `style: mira`; the CLI then requests
+   `styles/mira/card.json` and 404s. Write `base-mira` (Base UI) or `radix-vega`
+   (Radix). Every `add` fails until it is right — including base primitives.

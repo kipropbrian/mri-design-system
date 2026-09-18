@@ -19,6 +19,59 @@ npm run dev -- --port 4311
 
 Press <kbd>d</kbd> anywhere, or use the header control, to switch light/dark.
 
+## Install it in a project
+
+The registry *is* this repository. Nothing is hosted and nothing is built —
+the CLI reads `registry.json` and the source files from GitHub directly.
+
+```sh
+npx shadcn@latest add kipropbrian/mri-design-system/theme
+npx shadcn@latest add kipropbrian/mri-design-system/specimen-card
+```
+
+That second command demonstrates the point: it pulls `chip`, `patterns`, `layout`
+and the four base primitives (`card`, `empty`, `skeleton`, `checkbox`) as well —
+seven files from one address.
+
+Pin a release so a project cannot drift:
+
+```sh
+npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
+```
+
+| Item | What it carries |
+| --- | --- |
+| `theme` | `app/mri-theme.css` — the semantic roles and the `-ink` tier |
+| `agent-rules` | `docs/mri-ui-rules.md` — the imperative rules, for agents |
+| `chip` | the one chip: two surfaces, seven tones, overlay scrims |
+| `layout` | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen` |
+| `patterns` | `Panel`, `MetricCard`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
+| `specimen-card` | `ObservationCard`, `BirdMediaCard`, `IucnChip` |
+| `spacing-audit` | `scripts/audit-spacing.mjs` — the CI gate |
+| `chip-audit` | `components/shell/chip-audit.tsx` — measures the rendered DOM |
+
+`theme` is a file, not a component: add `@import "./mri-theme.css";` to
+`app/globals.css` next to the `tailwindcss` import after installing it.
+
+### The style-id trap
+
+`components.json` must name the **resolved** style — `<base>-<theme>` — not the
+short name the preset prints. A bare style id makes the CLI request
+`styles/mira/card.json`, which does not exist:
+
+| Preset prints | `components.json` must say |
+| --- | --- |
+| `style: mira` (Base UI) | `base-mira` |
+| `style: vega` (Radix) | `radix-vega` |
+
+This fails on **every** `add`, including base primitives like `card`. If you see
+
+```
+The item at https://ui.shadcn.com/r/styles/mira/card.json was not found.
+```
+
+the fault is the style id, not the item name and not this registry.
+
 ## What is in here
 
 | Route | What it reviews |
