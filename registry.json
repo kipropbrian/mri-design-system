@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "mri-design-system",
-  "homepage": "https://github.com/OWNER/mri-design-system",
+  "homepage": "https://github.com/kipropbrian/mri-design-system",
   "items": [
     {
       "name": "theme",
@@ -47,7 +47,7 @@
       "type": "registry:item",
       "title": "Chip audit",
       "description": "Measures every rendered chip and reports any outside the two allowed sizes. Drop it on a review route.",
-      "registryDependencies": ["OWNER/mri-design-system/chip"],
+      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
       "files": [
         {
           "path": "components/shell/chip-audit.tsx",
@@ -74,7 +74,7 @@
       "type": "registry:item",
       "title": "Page layout primitives",
       "description": "PageContainer, PageHeader, SectionHeader and the specimen labels used to document a pattern.",
-      "registryDependencies": ["OWNER/mri-design-system/chip"],
+      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
       "files": [
         {
           "path": "components/shell/layout.tsx",
@@ -89,7 +89,7 @@
       "title": "Page patterns",
       "description": "Panel, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
       "registryDependencies": [
-        "OWNER/mri-design-system/chip",
+        "kipropbrian/mri-design-system/chip",
         "card",
         "empty",
         "skeleton",
@@ -108,7 +108,7 @@
       "type": "registry:item",
       "title": "Specimen and media cards",
       "description": "ObservationCard and BirdMediaCard, plus IucnChip. The reference implementation of the overlay rules: two scrimmed chips at most, media facts on the image and record facts in the body.",
-      "registryDependencies": ["OWNER/mri-design-system/chip", "OWNER/mri-design-system/patterns", "card"],
+      "registryDependencies": ["kipropbrian/mri-design-system/chip", "kipropbrian/mri-design-system/patterns", "card"],
       "files": [
         {
           "path": "components/shell/specimen-card.tsx",
