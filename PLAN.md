@@ -86,27 +86,73 @@ not lucide — the platform is lucide-free but 12 files import the entry that ca
 
 **Step 1 — replace `components/ui`, and convert `asChild` to `render` in the same step.**
 
-Regenerate from the preset's `mira` set. Delete the 13 Radix primitives
-(`badge`, `button`, `checkbox`, `dialog`, `dropdown-menu`, `popover`,
-`progress`, `radio-group`, `separator`, `sheet`, `switch`, `tabs`, `tooltip`).
-The 10 that do not import `radix-ui` (`card`, `chart`, `input`, `native-select`,
-`pagination`, `skeleton`, `stepper`, `table`, `textarea`, `timeline`) are still
-replaced: they differ from the preset's output. `card` in particular is
-hand-flattened and predates `--card-spacing`, which is why card bodies were
-flush against the bottom edge.
+Regenerate from the preset's `mira` set. The 13 primitives that imported
+`radix-ui` (`badge`, `button`, `checkbox`, `dialog`, `dropdown-menu`, `popover`,
+`progress`, `radio-group`, `separator`, `sheet`, `switch`, `tabs`, `tooltip`) and
+the 8 that did not (`card`, `chart`, `input`, `native-select`, `pagination`,
+`skeleton`, `table`, `textarea`) are all replaced: the second group differs from
+the preset's output too. `card` in particular was hand-flattened and predated
+`--card-spacing`, which is why card bodies were flush against the bottom edge.
 
-**This step also translates every `asChild` to `render`** — 43 call sites across
-23 files, measured. These cannot be separated: `asChild` is Radix's API and
-`render` is Base UI's, so each is meaningless on the other library, and a
-half-swapped tree does not compile. Converting inside Step 1 is what keeps the
-gate below meaningful; the alternative is a platform that is broken from Step 1
-until Step 3 finishes, with no way to bisect a regression in between.
+**This step also translates every `asChild` to `render`.** These cannot be
+separated: `asChild` is Radix's API and `render` is Base UI's, so each is
+meaningless on the other library, and a half-swapped tree does not compile.
+Converting inside Step 1 is what keeps the gate below meaningful; the alternative
+is a platform that is broken from Step 1 until Step 3 finishes, with no way to
+bisect a regression in between.
 
 It is mechanical, and it is not the visual rewrite: Step 3 stays about
 presentation.
 
-**Gate:** `components/ui` matches a fresh `shadcn add` run; `radix-ui` removed
-from `package.json`; zero `asChild` in the tree; `verify` green.
+**Landed.** All 21 primitives are byte-identical to this repository's — the
+strongest form of the gate, and mechanically checkable with a `diff` loop. The
+two files that were neither preset output nor Radix-based, `stepper.tsx` and
+`timeline.tsx`, had no importers at all and were deleted; they were hand-written
+components misfiled in the generated layer.
+
+Five things the plan did not anticipate, all measured rather than assumed:
+
+1. **The theme was a second, larger gap.** `shadcn add` does not touch
+   `app/globals.css`, so the platform kept a `radix-vega`-era stylesheet — hex
+   colours, no `.dark`, no sidebar tokens, and no `@import "shadcn/tailwind.css"`.
+   That last one is the dangerous one: the file supplies the `data-*` custom
+   variants (`data-checked`, `data-open`, `data-disabled`, …) that every Base UI
+   primitive is written against. Without it each state variant silently fails to
+   compile. `--font-heading` was added for the same reason. Colour values were
+   deliberately left alone: changing them is Step 3's job.
+2. **`asChild` was 47 occurrences on 43 lines across 21 files**, not "43 call
+   sites across 23 files". The line count was right and the occurrence count was
+   not, because one `not-found.tsx` line carries four of them and one country page
+   carries two. Converted with a TypeScript-AST codemod that splices source text
+   rather than reprinting it, so formatting survives — there is no Prettier in
+   this repository to fall back on.
+3. **The hand-added `Badge` `size` variant disappeared**, breaking 58 call sites.
+   It was not restored: `Chip` mandates one size per surface ("Two surfaces, one
+   size each. Nothing else varies."), and the preset `Badge` is already 20px — the
+   `flow` chip geometry. The prop was dropped mechanically and the ratchet
+   recorded it.
+4. **`shadcn add` silently downgraded `recharts` 3.10.1 → 3.8.0** by writing its
+   own declared range. Reverted: Step 1 must not change chart behaviour, and a
+   downgrade is not the direction to reconcile two repositories from. This
+   repository's `^3.8.0` range is the one to raise, not the platform's to lower.
+5. **`nativeButton={false}` erases the link role**, which makes this repository's
+   own deviation 2 wrong. Base UI's `Button` compiles to
+   `isNativeButton ? { type: "button" } : { role: "button" }`, so
+   `<Button nativeButton={false} render={<Link/>}>` produced real `<a href>`
+   elements that announced as **buttons**. The platform's e2e suite caught it —
+   three tests failed on `getByRole("link")` — while this repository's own site
+   carries the same defect with nothing testing it. Navigational links now put
+   `buttonVariants()` on the link itself (43 sites across 19 files) and `Button`
+   is reserved for actions. Deviation 2, `AGENT-RULES.md` and trap 4 are
+   corrected; the template's own pages still need the same pass.
+
+Also removed: the 12 remaining bare `@phosphor-icons/react` imports (the
+`createContext` hazard the preset avoids by using `/dist/ssr`), taking the frozen
+ledger from **492 to 480**.
+
+**Gate:** `components/ui` diffs clean against this repository's; `radix-ui`,
+`clsx` and `tailwind-merge` removed from `package.json`; zero `asChild` in the
+tree; `verify` green.
 
 **Step 2 — replace `components/platform` with the design system's shell.**
 
@@ -132,8 +178,9 @@ is exactly what it is.
 **Step 3 — rewrite the 28 routes, one per commit, worst-first.**
 
 Xeno-canto and iNaturalist first: they carry the hand-rolled chips and the
-inconsistent tables. Convert `asChild` → `render` as you go (47 sites across 21
-files). This is the bulk of the work and it should look boring.
+inconsistent tables. The `asChild` → `render` conversion that used to live here
+moved into Step 1, where it belongs — it is a library swap, not a presentation
+decision. This is the bulk of the work and it should look boring.
 
 **Gate per route:** `verify` green, and the route's e2e selectors repointed.
 

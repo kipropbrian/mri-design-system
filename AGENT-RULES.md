@@ -15,6 +15,10 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
   for colour, no keyframes. Tokens and utilities only.
 - **Never write a raw `<table>`.** Use the shared table composition.
 - **Never build a chip, pill, tag, badge or status marker.** Use `Chip`.
+- **Never use `Button` for navigation.** Base UI's `Button` renders
+  `role="button"`, which erases the link role for screen readers and for
+  `getByRole("link")`. Put `buttonVariants()` on the `<Link>` or `<a>` itself.
+  `Button` is for things that are actions, not places to go.
 - **Never import an icon library other than `@phosphor-icons/react/dist/ssr`.**
 - **Never use an off-scale spacing value.** The scale is below.
 - **Never hand-roll a chart.** Use the shared chart container with the semantic
@@ -74,7 +78,7 @@ Tones: `neutral`, `primary`, `positive`, `info`, `warning`, `notable`,
 **`monitoring` gets no chip.** It is the default state, so it renders as absence.
 Only `stable` and `withdrawn` earn one.
 
-## Three traps that will cost you an hour
+## Four traps that will cost you an hour
 
 1. **The preset `Badge` cannot be recoloured.** Its variants carry
    `dark:bg-input/30`, and Tailwind compiles `dark:` with `:is(.dark *)`, which
@@ -88,3 +92,11 @@ Only `stable` and `withdrawn` earn one.
    The preset prints `style: mira`; the CLI then requests
    `styles/mira/card.json` and 404s. Write `base-mira` (Base UI) or `radix-vega`
    (Radix). Every `add` fails until it is right — including base primitives.
+4. **`nativeButton={false}` on a link erases the link role.** Base UI's `Button`
+   compiles to `isNativeButton ? { type: "button" } : { role: "button" }`. So
+   `<Button nativeButton={false} render={<Link href="…" />}>` renders a real
+   `<a href>` that announces as a **button** — screen readers stop listing it as a
+   link, and `getByRole("link")` stops matching it. Put `buttonVariants()` on the
+   link instead. Omitting the flag keeps the link role but logs a dev-only warning
+   on every render; `nativeButton={false}` is right only for a genuine action,
+   such as `SheetClose` wrapping a link.

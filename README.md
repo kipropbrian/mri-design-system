@@ -288,9 +288,16 @@ retouched.
    platform repo already uses. Affected files: `pagination`, `sheet`, `sonner`,
    `accordion`, `native-select`, `breadcrumb`, `dialog`, `checkbox`, `spinner`,
    `dropdown-menu`, `select`.
-2. **`nativeButton={false}` on anchor and link buttons.** Base UI warns when
-   `render` produces a non-`<button>`; the template sets the flag wherever a
-   button or a `SheetClose` renders a link.
+2. **Navigation links are styled links, never `Button`s.** Base UI's `Button`
+   compiles to `isNativeButton ? { type: "button" } : { role: "button" }`, so the
+   `nativeButton={false}` it asks for when `render` produces an anchor silently
+   *overrides the link role*. `<Button nativeButton={false} render={<Link/>}>`
+   therefore looks right and navigates, but announces as a button and stops
+   matching `getByRole("link")`. Every navigational link here is a plain
+   `<Link>`/`<a>` carrying `buttonVariants()`. Omitting the flag is not a fix: it
+   preserves the link role but logs a dev-only warning on every render.
+   `nativeButton={false}` is correct only where the control is genuinely an
+   action, as with a `SheetClose` wrapping a link.
 3. **`turbopack.root` is pinned** in `next.config.ts` because this project lives
    inside a repository that has a second lockfile.
 4. **`@next/next/no-img-element` is off.** Provider imagery is loaded directly
@@ -319,6 +326,13 @@ retouched.
    any background passed to `<Badge variant="outline" className="bg-...">` is
    silently replaced by a grey tint in dark mode. `Chip` owns its class string;
    the preset `Badge` is untouched and still shown on `/components`.
+11. **Titles carry `font-heading`.** A fresh `shadcn add` emits card, dialog and
+   sheet titles as `text-sm font-medium`; here they are `font-heading text-sm
+   font-medium`, and `globals.css` defines `--font-heading` (currently an alias of
+   `--font-sans`) so that the utility resolves at all. Both halves are needed, or
+   a re-added primitive silently drifts from the reviewed set. This is the one
+   deviation a `diff` against a fresh `add` will always show — see
+   "Adding components".
 
 
 ## Review points worth a decision
@@ -349,8 +363,11 @@ retouched.
 npx shadcn@latest add <component>
 ```
 
-After adding, fix the Phosphor import to `/dist/ssr` (point 1 above) and run
-`npm run typecheck`.
+After adding, apply the two mechanical fixes a fresh `add` always needs: the
+Phosphor import to `/dist/ssr` (point 1) and `font-heading` on card, dialog and
+sheet titles (point 11). Then run `npm run typecheck`, and `diff` the result
+against this repository's `components/ui` — that loop is the real gate, and it is
+how the platform proved its Step 1 landed.
 
 Base UI's `MenuGroupLabel` also requires group context — a `DropdownMenuLabel`
 placed directly in `DropdownMenuContent` throws and the menu never opens. Wrap it
