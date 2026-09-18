@@ -15,8 +15,8 @@ import {
   TreeIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Chip } from "@/components/shell/chips";
-import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/shell/layout";
+import { Chip } from "@/components/mri/chips";
+import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import {
   ErrorState,
   EmptyState,
@@ -31,8 +31,8 @@ import {
   StatusPath,
   StatusBadge,
   TableSkeleton,
-} from "@/components/shell/patterns";
-import { BirdMediaCard, ObservationCard } from "@/components/shell/specimen-card";
+} from "@/components/mri/patterns";
+import { BirdMediaCard, ObservationCard } from "@/components/mri/specimen-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

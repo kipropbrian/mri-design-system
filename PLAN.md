@@ -113,13 +113,18 @@ from `package.json`; zero `asChild` in the tree; `verify` green.
 Install `theme`, `chip`, `layout`, `patterns` and `specimen-card` from this
 registry, or vendor them. Delete the 4 files in `components/platform`.
 
-**Naming collision to resolve here.** The platform already has a
+**Naming collision — resolved.** The platform already has a
 `components/shell/` holding its chrome (`header`, `footer`, `breadcrumb`,
-`routes`), while this registry's items target `~/components/shell/*` and mean
-something different by it — the compositions a route is built from. Decide once,
-in this step: either merge them (chrome is arguably just another composition), or
-have the registry items land somewhere unambiguous. Do not let the two meanings
-share a directory by accident.
+`routes`), while this registry's items targeted `~/components/shell/*` and mean
+something different by it — the compositions a route is built from.
+
+This repository renamed its own layer to **`components/mri/`**, which is now the
+registry's install target, and moved its review scaffolding to
+`components/site/`. The platform's `components/shell/` therefore keeps its
+conventional meaning and does not move, so no platform import churns for a
+rename. `components/mri/` is also the clearer name where it matters most: in the
+*other* MRI projects that install from this registry, where "the MRI layer"
+is exactly what it is.
 
 **Gate:** no route imports `components/platform`; the chip audit reports only
 20px/22px on a migrated page.

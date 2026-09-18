@@ -11,9 +11,9 @@ import {
   RowsIcon,
   RulerIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { MriLockup } from "@/components/shell/brand";
-import { Eyebrow, PageContainer, SectionHeader } from "@/components/shell/layout";
-import { MetricCard, MetricStrip, Panel, StatusBadge } from "@/components/shell/patterns";
+import { MriLockup } from "@/components/site/brand";
+import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
+import { MetricCard, MetricStrip, Panel, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

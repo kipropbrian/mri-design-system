@@ -10,7 +10,7 @@ import {
   WaveformIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/shell/layout";
+import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   EmptyState,
   ErrorState,
@@ -21,8 +21,8 @@ import {
   SourceNote,
   StatusBadge,
   TableSkeleton,
-} from "@/components/shell/patterns";
-import { QuizPreview, type QuizQuestion } from "@/components/shell/quiz-preview";
+} from "@/components/mri/patterns";
+import { QuizPreview, type QuizQuestion } from "@/components/site/quiz-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

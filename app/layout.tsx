@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Geist, IBM_Plex_Sans, Inter, Source_Sans_3 } from "next/font/google";
-import { SiteFooter } from "@/components/shell/site-footer";
-import { SiteHeader } from "@/components/shell/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";

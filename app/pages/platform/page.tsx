@@ -7,10 +7,10 @@ import {
   CompassIcon,
   HeadphonesIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { ProviderMark } from "@/components/shell/brand";
-import { Chip } from "@/components/shell/chips";
-import { Eyebrow, PageContainer, SectionHeader } from "@/components/shell/layout";
-import { Panel, SourceNote, StatusBadge } from "@/components/shell/patterns";
+import { ProviderMark } from "@/components/site/brand";
+import { Chip } from "@/components/mri/chips";
+import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
+import { Panel, SourceNote, StatusBadge } from "@/components/mri/patterns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { birds, inat } from "@/lib/data";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
-import { ReferenceNav } from "@/components/shell/reference-nav";
-import { PageContainer } from "@/components/shell/layout";
+import { ReferenceNav } from "@/components/site/reference-nav";
+import { PageContainer } from "@/components/mri/layout";
 
 export default function ReferencePagesLayout({ children }: { children: React.ReactNode }) {
   return (

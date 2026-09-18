@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircleIcon, WarningCircleIcon } from "@phosphor-icons/react/dist/ssr";
-import { Chip } from "@/components/shell/chips";
+import { Chip } from "@/components/mri/chips";
 
 /**
  * Self-audit for the chip system.

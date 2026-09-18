@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeftIcon, MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr";
-import { Eyebrow, PageContainer } from "@/components/shell/layout";
-import { EmptyState } from "@/components/shell/patterns";
+import { Eyebrow, PageContainer } from "@/components/mri/layout";
+import { EmptyState } from "@/components/mri/patterns";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {

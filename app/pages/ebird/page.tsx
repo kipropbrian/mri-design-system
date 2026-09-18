@@ -7,8 +7,8 @@ import {
   MicrophoneIcon,
   VideoCameraIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { CountryBar, GroupedBar, StatusDonut, CHART_COLORS } from "@/components/shell/charts";
-import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/shell/layout";
+import { CountryBar, GroupedBar, StatusDonut, CHART_COLORS } from "@/components/mri/charts";
+import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,
   LegendSwatch,
@@ -17,8 +17,8 @@ import {
   Panel,
   SourceNote,
   StatusBadge,
-} from "@/components/shell/patterns";
-import { BirdMediaCard, IucnChip } from "@/components/shell/specimen-card";
+} from "@/components/mri/patterns";
+import { BirdMediaCard, IucnChip } from "@/components/mri/specimen-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

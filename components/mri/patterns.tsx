@@ -9,7 +9,7 @@ import {
   DatabaseIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Chip, type ChipTone } from "@/components/shell/chips";
+import { Chip, type ChipTone } from "@/components/mri/chips";
 import {
   Card,
   CardAction,

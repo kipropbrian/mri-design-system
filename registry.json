@@ -36,9 +36,9 @@
       "description": "The single chip component: two surfaces (flow 20px, overlay 22px), seven tones, mandatory scrims on photographs. A span, not the preset Badge, because Badge cannot be recoloured.",
       "files": [
         {
-          "path": "components/shell/chips.tsx",
+          "path": "components/mri/chips.tsx",
           "type": "registry:file",
-          "target": "~/components/shell/chips.tsx"
+          "target": "~/components/mri/chips.tsx"
         }
       ]
     },
@@ -50,9 +50,9 @@
       "registryDependencies": ["kipropbrian/mri-design-system/chip"],
       "files": [
         {
-          "path": "components/shell/chip-audit.tsx",
+          "path": "components/mri/chip-audit.tsx",
           "type": "registry:file",
-          "target": "~/components/shell/chip-audit.tsx"
+          "target": "~/components/mri/chip-audit.tsx"
         }
       ]
     },
@@ -77,9 +77,9 @@
       "registryDependencies": ["kipropbrian/mri-design-system/chip"],
       "files": [
         {
-          "path": "components/shell/layout.tsx",
+          "path": "components/mri/layout.tsx",
           "type": "registry:file",
-          "target": "~/components/shell/layout.tsx"
+          "target": "~/components/mri/layout.tsx"
         }
       ]
     },
@@ -97,9 +97,9 @@
       ],
       "files": [
         {
-          "path": "components/shell/patterns.tsx",
+          "path": "components/mri/patterns.tsx",
           "type": "registry:file",
-          "target": "~/components/shell/patterns.tsx"
+          "target": "~/components/mri/patterns.tsx"
         }
       ]
     },
@@ -111,9 +111,9 @@
       "registryDependencies": ["kipropbrian/mri-design-system/chip", "kipropbrian/mri-design-system/patterns", "card"],
       "files": [
         {
-          "path": "components/shell/specimen-card.tsx",
+          "path": "components/mri/specimen-card.tsx",
           "type": "registry:file",
-          "target": "~/components/shell/specimen-card.tsx"
+          "target": "~/components/mri/specimen-card.tsx"
         }
       ]
     }

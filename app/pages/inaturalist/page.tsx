@@ -8,8 +8,8 @@ import {
   ShieldCheckIcon,
   TreeIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { InatScanArea, InatTaxaBar, CHART_COLORS } from "@/components/shell/charts";
-import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/shell/layout";
+import { InatScanArea, InatTaxaBar, CHART_COLORS } from "@/components/mri/charts";
+import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,
   LegendSwatch,
@@ -18,8 +18,8 @@ import {
   Panel,
   SourceNote,
   StatusBadge,
-} from "@/components/shell/patterns";
-import { ObservationCard } from "@/components/shell/specimen-card";
+} from "@/components/mri/patterns";
+import { ObservationCard } from "@/components/mri/specimen-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

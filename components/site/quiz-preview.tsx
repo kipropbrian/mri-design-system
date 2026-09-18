@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Kbd } from "@/components/ui/kbd";
-import { Chip, ChipRow, OverlayCaption } from "@/components/shell/chips";
+import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { cn } from "cn";
 
 /**

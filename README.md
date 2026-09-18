@@ -48,7 +48,7 @@ npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
 | `patterns` | `Panel`, `MetricCard`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
 | `specimen-card` | `ObservationCard`, `BirdMediaCard`, `IucnChip` |
 | `spacing-audit` | `scripts/audit-spacing.mjs` — the CI gate |
-| `chip-audit` | `components/shell/chip-audit.tsx` — measures the rendered DOM |
+| `chip-audit` | `components/mri/chip-audit.tsx` — measures the rendered DOM |
 
 `theme` is a file, not a component: add `@import "./mri-theme.css";` to
 `app/globals.css` next to the `tailwindcss` import after installing it.
@@ -225,15 +225,20 @@ faces side by side.
 ```
 app/                     routes (see the table above)
 components/ui/           the preset's shadcn primitives — do not hand-edit semantics
-components/shell/        MRI compositions built from those primitives
+components/mri/          the MRI layer: the five registry items, plus its own charts
   chips.tsx              the one chip: two surfaces, seven tones, overlay scrims
   chip-audit.tsx         measures every rendered chip, used by /rules
-  charts.tsx             Recharts compositions on the olive ramp
   layout.tsx             PageContainer, PageHeader, SectionHeader, Specimen
   patterns.tsx           Panel, MetricCard, StatusBadge, FilterSidebar,
                          StatusPath, RecordChange, data states, skeletons
   specimen-card.tsx      Observation and bird-media cards
+  charts.tsx             Recharts compositions on the olive ramp
+components/site/         this review site's own chrome — not published
+  site-header.tsx        header, theme toggle, font picker, reference nav
+  site-footer.tsx  nav.ts  brand.tsx  theme-toggle.tsx  font-picker.tsx
+  reference-nav.tsx      the section index down the side of every route
   quiz-preview.tsx       Interactive quiz state machine
+  component-demos.tsx    the primitive gallery on /components
 PLAN.md                  what is left to do, led by the open decision
 RESCUE-NOTES.md          what the superseded prototype held, and what it cost
 lib/data/                JSON extracted from live platform artifacts
@@ -243,6 +248,12 @@ scripts/                 Data extraction, asset preparation, spacing audit
 public/brand/            MRI mark, lockup and favicons
 public/providers/        iNaturalist, eBird, GBIF, Xeno-canto, AviList marks
 ```
+
+`components/mri/` is the boundary that matters: it is what a consuming project
+installs and what the rules are about. `components/site/` is scaffolding for
+reviewing it and is deliberately not published — which is why the two no longer
+share a directory called `shell`, a name that meant "app chrome" to the platform
+and "page compositions" to this repository.
 
 ## Regenerating the data and assets
 

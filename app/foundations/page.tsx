@@ -17,9 +17,9 @@ import {
   WarningCircleIcon,
   WaveformIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { MriLockup, MriMark, MriMarkInverse, ProviderMark } from "@/components/shell/brand";
-import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/shell/layout";
-import { Panel, StatusBadge } from "@/components/shell/patterns";
+import { MriLockup, MriMark, MriMarkInverse, ProviderMark } from "@/components/site/brand";
+import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
+import { Panel, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {

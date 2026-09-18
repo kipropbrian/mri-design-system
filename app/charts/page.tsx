@@ -9,12 +9,12 @@ import {
   Sparkline,
   StatusDonut,
   CHART_COLORS,
-} from "@/components/shell/charts";
-import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/shell/layout";
-import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/shell/patterns";
+} from "@/components/mri/charts";
+import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
+import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TableSkeleton } from "@/components/shell/patterns";
+import { TableSkeleton } from "@/components/mri/patterns";
 import { birds, inat, regionByCode } from "@/lib/data";
 import { formatCompact, formatNumber } from "@/lib/format";
 

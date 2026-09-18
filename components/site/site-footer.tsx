@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
-import { MriMark, MriMarkInverse } from "@/components/shell/brand";
-import { EXTERNAL_LINKS, FOOTER_GROUPS } from "@/components/shell/nav";
+import { MriMark, MriMarkInverse } from "@/components/site/brand";
+import { EXTERNAL_LINKS, FOOTER_GROUPS } from "@/components/site/nav";
 
 export function SiteFooter() {
   const year = 2026;

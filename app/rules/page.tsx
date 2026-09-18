@@ -9,11 +9,11 @@ import {
   WarningCircleIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { ChipAudit } from "@/components/shell/chip-audit";
-import { Chip, ChipRow, OverlayCaption } from "@/components/shell/chips";
-import { IucnChip } from "@/components/shell/specimen-card";
-import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/shell/layout";
-import { Panel, StatusBadge } from "@/components/shell/patterns";
+import { ChipAudit } from "@/components/mri/chip-audit";
+import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
+import { IucnChip } from "@/components/mri/specimen-card";
+import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
+import { Panel, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "cn";
 

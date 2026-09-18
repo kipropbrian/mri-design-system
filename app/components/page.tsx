@@ -5,9 +5,9 @@ import {
   InfoIcon,
   WarningIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { ChoiceDemos, DisclosureDemos, FeedbackDemos, OverlayDemos, TabDemos } from "@/components/shell/component-demos";
-import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/shell/layout";
-import { EmptyState, MetricCardSkeleton, Panel, StatusBadge, TableSkeleton } from "@/components/shell/patterns";
+import { ChoiceDemos, DisclosureDemos, FeedbackDemos, OverlayDemos, TabDemos } from "@/components/site/component-demos";
+import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
+import { EmptyState, MetricCardSkeleton, Panel, StatusBadge, TableSkeleton } from "@/components/mri/patterns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import {

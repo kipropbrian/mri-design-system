@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { REFERENCE_NAV, isActive } from "@/components/shell/nav";
+import { REFERENCE_NAV, isActive } from "@/components/site/nav";
 import { cn } from "cn";
 
 /** Sub-navigation shown across the reference-page rebuilds. */

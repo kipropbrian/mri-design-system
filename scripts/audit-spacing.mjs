@@ -17,7 +17,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
-const SCAN = ["app", "components/shell"];
+const SCAN = ["app", "components/mri", "components/site"];
 const SCALE = new Set(["0", "0.5", "1", "1.5", "2", "3", "4", "6", "10"]);
 
 /** `gap-3`, `py-2.5`, `space-y-4` … captured from inside a class-list literal. */

@@ -7,7 +7,7 @@ import {
   VideoCameraIcon,
   WaveformIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Chip, ChipRow, OverlayCaption } from "@/components/shell/chips";
+import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { Card, CardContent } from "@/components/ui/card";
 import { countryFlag, type BirdRecord, type CountryFirst, IUCN_LABEL, IUCN_TONE } from "@/lib/data";
 import { formatNumber } from "@/lib/format";

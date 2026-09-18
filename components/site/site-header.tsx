@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRightIcon, ListIcon } from "@phosphor-icons/react/dist/ssr";
-import { BrandLink } from "@/components/shell/brand";
-import { FontPicker } from "@/components/shell/font-picker";
-import { ThemeToggle } from "@/components/shell/theme-toggle";
+import { BrandLink } from "@/components/site/brand";
+import { FontPicker } from "@/components/site/font-picker";
+import { ThemeToggle } from "@/components/site/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV_ITEMS, REFERENCE_NAV, TEMPLATE_NAV, currentItem, isActive } from "@/components/shell/nav";
+import { NAV_ITEMS, REFERENCE_NAV, TEMPLATE_NAV, currentItem, isActive } from "@/components/site/nav";
 
 function DesktopLinks({ pathname }: { pathname: string }) {
   return (
