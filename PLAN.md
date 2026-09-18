@@ -66,40 +66,60 @@ Each step has a gate. Do not start the next until it passes.
 
 **Step 0 — enforcement harness, before any UI changes.**
 
-Nothing visible changes. This is the step that makes the rest stick.
+**Landed.** `scripts/audit-ui.mjs` audits six rules — spacing, chips, raw tables,
+colour literals, banned imports and stylesheets — and replaces the plan's six
+separate scripts, which would have been six copies of the same walk. It carries a
+baseline (`scripts/audit-baseline.json`) that may only **shrink**: a violation not
+in the ledger fails, a violation beyond the ledger's count fails, and an entry
+that no longer occurs also fails, so a rewritten file must delete its own
+entries. ESLint holds the import bans, since it has no baseline mechanism and can
+therefore only carry rules that were already clean. Unit tests cover the ratchet;
+`verify` is green on the existing tree.
 
-- `scripts/audit-spacing.mjs` — run **report-only** first; the platform will have
-  a real number of off-scale values. Triage: fix, or add to the documented
-  geometry exceptions. Do not silence it wholesale.
-- New source audits in the same shape: `audit-chips` (no chip-shaped class
-  strings outside `chips.tsx`), `audit-tables` (no raw `<table>` outside the
-  shared composition — there are 3 known offenders), `audit-css` (only the
-  sanctioned files), `audit-tokens` (no `#hex`/`rgb()`/`oklch()` literals in
-  class names), `audit-icons` (only `@phosphor-icons/react/dist/ssr`).
-- ESLint for what grep cannot parse: `no-restricted-imports` on `radix-ui`,
-  `@base-ui/react` and `lucide-react` outside `components/ui`;
-  `no-restricted-syntax` on `<table>` and inline colour styles.
-- `AGENT-RULES.md` installed into the platform and referenced from its existing
-  `AGENTS.md`.
-- Wire every audit into `npm run verify`, which the deploy gate already runs.
+Measured debt, frozen in the ledger: **492** violations — spacing 444 (62 files),
+chips 22 (9), raw tables 3, colour literals 11, banned imports 12, stylesheets 0.
+All six figures were confirmed against the tree, and two of them corrected my own
+reconnaissance: the "143 colour literals" were Recharts palettes in JS, not class
+names (8 are real), and the 12 banned imports are Phosphor's **non-SSR** entry,
+not lucide — the platform is lucide-free but 12 files import the entry that calls
+`createContext`.
 
-**Gate:** `verify` green on the *existing* code, with the new audits passing or
-their exceptions documented. Drift can no longer ship.
+**Step 1 — replace `components/ui`, and convert `asChild` to `render` in the same step.**
 
-**Step 1 — replace `components/ui`.**
+Regenerate from the preset's `mira` set. Delete the 13 Radix primitives
+(`badge`, `button`, `checkbox`, `dialog`, `dropdown-menu`, `popover`,
+`progress`, `radio-group`, `separator`, `sheet`, `switch`, `tabs`, `tooltip`).
+The 10 that do not import `radix-ui` (`card`, `chart`, `input`, `native-select`,
+`pagination`, `skeleton`, `stepper`, `table`, `textarea`, `timeline`) are still
+replaced: they differ from the preset's output. `card` in particular is
+hand-flattened and predates `--card-spacing`, which is why card bodies were
+flush against the bottom edge.
 
-Regenerate from the preset's `mira` set. Delete the 13 Radix primitives. Keep the
-10 already-agnostic ones (`card`, `chart`, `input`, `native-select`, `pagination`,
-`skeleton`, `stepper`, `table`, `textarea`, `timeline`) unless the preset's
-version differs.
+**This step also translates every `asChild` to `render`** — 43 call sites across
+23 files, measured. These cannot be separated: `asChild` is Radix's API and
+`render` is Base UI's, so each is meaningless on the other library, and a
+half-swapped tree does not compile. Converting inside Step 1 is what keeps the
+gate below meaningful; the alternative is a platform that is broken from Step 1
+until Step 3 finishes, with no way to bisect a regression in between.
+
+It is mechanical, and it is not the visual rewrite: Step 3 stays about
+presentation.
 
 **Gate:** `components/ui` matches a fresh `shadcn add` run; `radix-ui` removed
-from `package.json`.
+from `package.json`; zero `asChild` in the tree; `verify` green.
 
 **Step 2 — replace `components/platform` with the design system's shell.**
 
 Install `theme`, `chip`, `layout`, `patterns` and `specimen-card` from this
 registry, or vendor them. Delete the 4 files in `components/platform`.
+
+**Naming collision to resolve here.** The platform already has a
+`components/shell/` holding its chrome (`header`, `footer`, `breadcrumb`,
+`routes`), while this registry's items target `~/components/shell/*` and mean
+something different by it — the compositions a route is built from. Decide once,
+in this step: either merge them (chrome is arguably just another composition), or
+have the registry items land somewhere unambiguous. Do not let the two meanings
+share a directory by accident.
 
 **Gate:** no route imports `components/platform`; the chip audit reports only
 20px/22px on a migrated page.
