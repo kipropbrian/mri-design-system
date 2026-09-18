@@ -50,17 +50,35 @@ I write a per-primitive sequence for review before touching any code.
 
 ---
 
-## 2. Do this regardless, and soon
+## 2. Under review — the plan is being re-framed
 
-**Initialise git in this repo.** `projects/mri-design-system/` is not under
-version control — it was untracked inside the platform repository, and the nested
-`.git` was removed when it was first scaffolded. Nothing is recoverable: during
-this work an editing mistake could not be reverted from history.
+Two decisions landed that change the shape of what follows, so §1, §3 and §4 are
+provisional until the rewrite question is answered:
 
-It is a standalone project now, so it should be its own repository with a first
-commit. The longer it waits, the more there is to lose.
+- **This repository is now under version control** (first commit `ae9a3dc`).
+- **The registry is dropped.** This is an internal tool, so there will be no
+  published shadcn registry and no hosting requirement. What replaces it is open:
+  copy once and diverge, vendor with a sync + drift check, a git submodule, or a
+  private package.
+- **The platform has no users, so a full UI rewrite is acceptable.** That removes
+  the main reason the additive-only option was recommended: the 47 `asChild` call
+  sites and 13 Radix primitives were expensive to retrofit, but they are files a
+  rewrite touches anyway. The decision is therefore no longer "port or rewrite"
+  but **which stack to rewrite onto**.
 
----
+Measured, and correcting earlier assumptions in this document:
+
+| Claim | Reality |
+| --- | --- |
+| "`lucide` becomes Phosphor" | **0 lucide imports.** The platform is already Phosphor-only. |
+| Many hand-rolled tables | **3** files contain a raw `<table>` outside `components/ui`. |
+| Custom CSS to remove | **1** CSS file: `app/globals.css`. |
+| `asChild` blast radius | 47 call sites across 21 consumer files; only 6 inside `components/ui`. |
+| Consumer files importing `components/ui` | 61 |
+
+The platform is in better shape than this plan first assumed. The debt is
+concentrated in `components/ui` (13 Radix primitives) and in 21 consumer files
+that use `asChild`.
 
 ## 3. Phase 4 — land the additive layer on the platform
 
@@ -94,29 +112,22 @@ no file left dangling in the working tree.
 
 ---
 
-## 4. Phase 6 — registry packaging
+## 4. How other MRI projects consume this (registry dropped)
 
-**Blocked on one input: a hostname.** Nothing else needs it.
+Open. Without a registry there is no automatic update path, so the choice is how
+much drift to tolerate:
 
-A folder of code is not something another repo can consume — it decays into
-copy-paste. The shadcn CLI adds from remote registries, and `components.json`
-already carries an empty `"registries": {}`.
+| | Mechanism | Drift risk | Cost |
+| --- | --- | --- | --- |
+| C1 | Copy `mri-theme.css` + `components/shell` once | High — diverges immediately | None |
+| C2 | **Vendor + a `sync:design` script that copies from this checkout and records the source commit, plus an `audit:design-drift` that fails when the vendored copy differs** | Low — drift is detected | Small |
+| C3 | Git submodule | Low | Awkward with Next/TS path resolution |
+| C4 | Private npm package | Lowest | Needs this app split into a package |
 
-1. Emit registry item JSON for `chip`, `panel`, `metric-card`, `filter-sidebar`,
-   `status-path`, `specimen-card`, `data-state`, and the `mri-theme.css` token file.
-2. Deploy the review site (Cloudflare, like the platform) to give the registry a
-   stable origin.
-3. Document the two-line adoption path:
-
-```sh
-npx shadcn@latest init --preset b6t6Ah1yi
-npx shadcn@latest add https://<host>/r/chip.json
-```
-
-**Gate:** a throwaway Next app can `add` from the registry and render a chip that
-matches `/rules` exactly.
-
----
+C2 fits an internal tool with a handful of consumers. Note that the *audits* are
+the portable part — a rule book cannot enforce anything, a script can — so the
+copyable set is `mri-theme.css`, `components/shell`, the rule book, and
+`scripts/audit-*.mjs`.
 
 ## 5. Decided and implemented
 
@@ -135,11 +146,16 @@ Recorded so they are not re-litigated.
 
 ## 6. Known gaps
 
-- **No version control** (§2). The most urgent item here.
-- **Phase 5 unanswered** (§1).
-- **Registry hostname unknown** (§4).
-- The platform design guide still carries three corrections that Phase 4 will
-  resolve: "light-only interface" is false, `p-3.5` is off-scale, and its icon
-  sizes conflict with the master's.
-- `eslint` is pinned to `^9` in this repo because `eslint-config-next@16.3.4`
-  bundles an `eslint-plugin-react` incompatible with ESLint 10.
+- **The rewrite question is unanswered** (§1, §2). This is the blocker.
+- **Consumption mechanism is unanswered** (§4).
+- `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
+  `eslint-plugin-react` incompatible with ESLint 10.
+- The platform design guide carries three corrections that a migration resolves:
+  "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
+  conflict with the master's.
+- **One legitimate custom-CSS carve-out exists and the rules must name it or
+  absorb it:** the isolated upload/media player (`public/bird-review/player.css`,
+  `transport.css`, `embed.css` plus `player.js`), which is why `app/globals.css`
+  carries a `--bg`/`--bg-surface` compatibility block marked "used only by the
+  isolated upload media player". If the rule is "no custom CSS", this is either
+  the single documented exception or it becomes a React component.
