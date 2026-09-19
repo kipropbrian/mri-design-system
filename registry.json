@@ -30,6 +30,45 @@
       ]
     },
     {
+      "name": "format",
+      "type": "registry:item",
+      "title": "Shared formatting",
+      "description": "Number, date and label formatting: grouped counts, integers, compact notation, deltas and ISO-safe dates. Dependency-free, so it installs anywhere — and the one place a numeral's treatment should be decided.",
+      "files": [
+        {
+          "path": "lib/format.ts",
+          "type": "registry:file",
+          "target": "~/lib/format.ts"
+        }
+      ]
+    },
+    {
+      "name": "taxonomy",
+      "type": "registry:item",
+      "title": "Portable domain vocabulary",
+      "description": "The IUCN tone and label tables, the bird and observation record types, and countryFlag computed from an ISO code. No fixtures and no data, which is what makes specimen-card installable.",
+      "files": [
+        {
+          "path": "lib/taxonomy.ts",
+          "type": "registry:file",
+          "target": "~/lib/taxonomy.ts"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:item",
+      "title": "Checkbox, Phosphor import corrected",
+      "description": "The preset checkbox with its icon import moved to /dist/ssr. Depending on the bare preset name instead overwrites a consumer's corrected file with the createContext hazard, which is exactly what happened to the platform twice.",
+      "files": [
+        {
+          "path": "components/ui/checkbox.tsx",
+          "type": "registry:file",
+          "target": "~/components/ui/checkbox.tsx"
+        }
+      ]
+    },
+    {
       "name": "chip",
       "type": "registry:item",
       "title": "Chip",
@@ -73,8 +112,7 @@
       "name": "layout",
       "type": "registry:item",
       "title": "Page layout primitives",
-      "description": "PageContainer, PageHeader, SectionHeader and the specimen labels used to document a pattern.",
-      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
+      "description": "PageContainer, PageHeader, SectionHeader and the specimen labels used to document a pattern. No dependencies: it is layout and text only.",
       "files": [
         {
           "path": "components/mri/layout.tsx",
@@ -90,10 +128,10 @@
       "description": "Panel, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
       "registryDependencies": [
         "kipropbrian/mri-design-system/chip",
+        "kipropbrian/mri-design-system/checkbox",
         "card",
         "empty",
-        "skeleton",
-        "checkbox"
+        "skeleton"
       ],
       "files": [
         {
@@ -108,7 +146,12 @@
       "type": "registry:item",
       "title": "Specimen and media cards",
       "description": "ObservationCard and BirdMediaCard, plus IucnChip. The reference implementation of the overlay rules: two scrimmed chips at most, media facts on the image and record facts in the body.",
-      "registryDependencies": ["kipropbrian/mri-design-system/chip", "kipropbrian/mri-design-system/patterns", "card"],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/chip",
+        "kipropbrian/mri-design-system/taxonomy",
+        "kipropbrian/mri-design-system/format",
+        "card"
+      ],
       "files": [
         {
           "path": "components/mri/specimen-card.tsx",

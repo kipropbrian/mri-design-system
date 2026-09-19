@@ -9,7 +9,13 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { Card, CardContent } from "@/components/ui/card";
-import { countryFlag, type BirdRecord, type CountryFirst, IUCN_LABEL, IUCN_TONE } from "@/lib/data";
+import {
+  countryFlag,
+  IUCN_LABEL,
+  IUCN_TONE,
+  type BirdRecord,
+  type CountryFirst,
+} from "@/lib/taxonomy";
 import { formatNumber } from "@/lib/format";
 import { cn } from "cn";
 

@@ -68,7 +68,11 @@
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.93 0.007 106.5);
     --input: oklch(0.93 0.007 106.5);
-    --ring: oklch(0.737 0.021 106.9);
+    /* Focus indicator. 4.27:1 on --background, clearing the 3:1 WCAG 1.4.11
+       requires; the previous 0.737 measured 2.15:1 and failed it. One value for
+       both themes, measured: it also clears 4.59:1 on the dark background and
+       3.97:1 on the dark card. */
+    --ring: oklch(0.58 0.021 106.9);
     --chart-1: oklch(0.88 0.011 106.6);
     --chart-2: oklch(0.58 0.031 107.3);
     --chart-3: oklch(0.466 0.025 107.3);

@@ -8,6 +8,16 @@
  */
 import birdsJson from "@/lib/data/birds.json";
 import inatJson from "@/lib/data/inat.json";
+import type { BirdRecord, CountryFirst, RegionCountry } from "@/lib/taxonomy";
+
+/**
+ * The portable half of this vocabulary — the record types, the IUCN tables and
+ * `countryFlag` — lives in `lib/taxonomy.ts` and is re-exported here so callers
+ * keep a single import. Only the fixture-bound helpers are defined locally, which
+ * is what lets `specimen-card` be installed without this file.
+ */
+export type { BirdRecord, CountryFirst, RegionCountry, IucnTone } from "@/lib/taxonomy";
+export { IUCN_LABEL, IUCN_TONE, countryFlag, iucnLabel, iucnTone } from "@/lib/taxonomy";
 
 export interface CountrySummary {
   code: string;
@@ -28,28 +38,6 @@ export interface WatchRun {
   withdrawnCount: number;
   stableRecheckedCount: number;
   status: string;
-}
-
-export interface CountryFirst {
-  eventId: string;
-  countryCode: string;
-  countryName: string;
-  scientificName: string;
-  commonName: string | null;
-  iconicTaxon: string;
-  observationId: number;
-  observationUrl: string;
-  observer: string;
-  observedOn: string;
-  photoUrl: string;
-  photoAttribution: string;
-  photoLicense: string;
-  supportCount: number;
-  status: string;
-  qualityGrade: string | null;
-  globalFirst: boolean;
-  globalObservationCount: number | null;
-  detectedAt: string;
 }
 
 export interface TaxonShare {
@@ -92,40 +80,6 @@ export interface InatData {
 }
 
 export const inat = inatJson as unknown as InatData;
-
-export interface BirdRecord {
-  speciesCode: string;
-  commonName: string;
-  scientificName: string;
-  family: string;
-  familyScientific: string;
-  order: string;
-  authority: string | null;
-  iucn: string;
-  countries: string[];
-  presenceCount: number;
-  rwandaMatch: boolean;
-  rwandaRank: number | null;
-  rwandaFrequency: number | null;
-  checklists: string[];
-  photoCount: number;
-  audioCount: number;
-  videoCount: number;
-  xenoCount: number;
-  xenoCountryRecordings: Record<string, number>;
-  image: string | null;
-  ebirdUrl: string | null;
-  xenocantoUrl: string | null;
-  occurrenceScore: number;
-  commonnessRank: number | null;
-  range: string;
-}
-
-export interface RegionCountry {
-  code: string;
-  name: string;
-  flag: string;
-}
 
 export interface BirdData {
   source: string;
@@ -170,36 +124,3 @@ export const regionByCode = new Map<string, RegionCountry>(
 export function countryLabel(code: string): string {
   return regionByCode.get(code)?.name ?? code;
 }
-
-export function countryFlag(code: string): string {
-  return regionByCode.get(code)?.flag ?? "🏳️";
-}
-
-/**
- * IUCN status mapped to a chip tone, not to a component variant — the chip
- * system decides how a tone renders, so status colours cannot drift per page.
- */
-export const IUCN_TONE: Record<
-  string,
-  "negative" | "warning" | "positive" | "neutral"
-> = {
-  EX: "negative",
-  EW: "negative",
-  CR: "negative",
-  EN: "negative",
-  VU: "negative",
-  NT: "warning",
-  LC: "positive",
-  DD: "neutral",
-};
-
-export const IUCN_LABEL: Record<string, string> = {
-  CR: "Critically Endangered",
-  EN: "Endangered",
-  VU: "Vulnerable",
-  NT: "Near Threatened",
-  LC: "Least Concern",
-  DD: "Data Deficient",
-  EX: "Extinct",
-  EW: "Extinct in the Wild",
-};

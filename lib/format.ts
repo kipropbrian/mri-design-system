@@ -8,6 +8,8 @@
  */
 
 const numberFormat = new Intl.NumberFormat("en-US");
+/** Counts, axis ticks and ranks: no fractional part, even if one is passed. */
+const integerFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const compactFormat = new Intl.NumberFormat("en-US", {
   notation: "compact",
   maximumFractionDigits: 1,
@@ -23,6 +25,12 @@ const decimalFormat = new Intl.NumberFormat("en-US", {
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   return numberFormat.format(value);
+}
+
+/** Counts, ticks and ranks. Rounds rather than showing a fractional part. */
+export function formatInteger(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return "—";
+  return integerFormat.format(value);
 }
 
 export function formatCompact(value: number | null | undefined): string {
