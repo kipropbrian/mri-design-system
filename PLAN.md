@@ -287,6 +287,13 @@ ones; `verify` green.
 
 **Still open.**
 
+- **`Chip` has no positive or negative overlay scrim.** `surface="overlay"` is a
+  closed set of three appearances — `dark`, `light`, `highlight` — so a chip that
+  needs to say *correct* or *incorrect* on a photograph has no tone to reach for.
+  The platform's quiz result badge hit this: it kept the meaning in its check/X
+  icon and took the `dark` scrim, which works but loses the colour cue the
+  original had. Adding `positive` and `negative` scrims alongside `highlight`
+  would close it.
 - `formatDecimal` uses `maximumFractionDigits: 1` with no minimum, so a whole
   number renders as `4` where the platform previously showed `4.0`. That is a
   deliberate simplification, not an oversight: if a fixed decimal is genuinely
