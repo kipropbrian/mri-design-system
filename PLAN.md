@@ -546,6 +546,46 @@ Each step has a gate. Do not start the next until it passes.
    ledger against today's counts so the rules ratchet down rather than blocking
    Step 2.
 
+**Landed.** Eight rules became twelve — the six that existed, plus `headers`,
+`tableHeaders`, `dataColours`, `twoUp` and `padding` (this repository runs clean on
+all twelve with an empty ledger; the platform carries 145 seeded violations over 106
+entries and may only shrink). Five things the plan did not anticipate:
+
+1. **`DataCard` would have been a duplicate.** `Panel` took `count` and a
+   truncating description instead, so the data-card header is the component's shape
+   rather than a sibling of it. Adding a near-identical second card to the
+   repository whose purpose is preventing drift would have been the drift.
+2. **The sidebar-token claim in the diagnosis above was wrong.** The preset *does*
+   define `--sidebar-*`, in `globals.css`. The platform has none because they were
+   among the dead aliases trimmed during the migration. Checking properly found a
+   worse problem than the one assumed: the preset's light `--sidebar-ring` is the
+   `0.737` value already measured at 2.15:1 and replaced, and its
+   `--sidebar-primary` is a second green, different from `--primary` in both
+   themes. The tokens now live in `mri-theme.css`, aliasing values that are already
+   measured.
+3. **The bare-Phosphor defect reached the generated layer a fourth time.** The
+   registry's `sheet.tsx` and `sidebar.tsx` both ship it. The generated layer stays
+   exempt from every style rule, but a single targeted import rule now covers it,
+   and `sheet` and `sidebar` are published as corrected items — `sidebar` depending
+   on this repository's `sheet` rather than the preset's.
+4. **The colour rule found a documentation defect the plan did not predict.**
+   `/foundations` was still publishing the old `--ring`, so the token reference was
+   lying about the token. Two files are exempt because a page that documents the
+   palette must contain it, and both exemptions carry their reason.
+5. **`twoUp` had to be narrowed before it could be trusted.** Its first version was
+   file-level — a file rendering a surface may not declare a 3+ column grid — and
+   fired 30 times on this repository, almost all of it the swatch and specimen grids
+   a documentation site is made of. It is now a proximity check, which took the
+   false positives to zero while still catching the real shape. On the platform it
+   then found nothing, correctly: the wide grids there hold `MetricCard`s, which are
+   a summary band and not data surfaces.
+
+Two traps were added to `AGENT-RULES.md` along the way, both found by a build
+failing rather than by review: a value imported from a `"use client"` module
+arrives as a client-reference proxy (property reads work, `.map` does not), which is
+why `lib/chart-colors.ts` exists; and the preset's `use-mobile` hook sets state in an
+effect, which the React compiler lint rejects.
+
 **Step 2 — replace the shell.**
 
 Delete `Breadcrumb`, the page-level card, and the `sm:mt-3` / `pb-1.5` spacing
