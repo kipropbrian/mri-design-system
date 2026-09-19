@@ -628,6 +628,49 @@ New rules fail the build, the ~10 e2e specs the shell change touches are
 repointed, `docs/frontend-design-system.md` and `docs/mri-ui-rules.md` are
 reconciled, `verify` is green in both repositories, and the platform takes a tag.
 
+### An open decision this section cannot make
+
+**The platform's theme is not this repository's theme, and nothing said so.**
+
+The plan assumed Step 1's rewrite brought the platform onto the preset's theme.
+Checking, while verifying that collapsing the `dark:` twins was safe, found otherwise.
+The platform's `app/globals.css` holds a bespoke warm palette, in hex:
+
+| | platform | this repository (the preset) |
+| --- | --- | --- |
+| `--background` | `#f8f6f1` warm off-white | `oklch(1 0 0)` pure white |
+| `--foreground` | `#2c211b` warm near-black | `oklch(0.153 0.006 107.1)` |
+| `--primary` | `#174d38` deep forest green | `oklch(0.527 0.154 150.069)` |
+| `--chart-1…5` | `#226747` `#bd7a0c` `#3d78a2` `#74567d` `#b66048` | one monochrome olive ramp |
+| `.dark` block | **absent** | present |
+
+Three consequences, in order of severity:
+
+1. **`charts.tsx`'s central assumption is false on the platform.** Its header says
+   "the preset sets `chartColor: olive`, so `--chart-1 … --chart-5` are a single
+   monochrome olive ramp", and the "at most three series" rule follows from that. On
+   the platform those five tokens are five different hues, so `CHART_COLORS.strong`
+   resolves to `--chart-4`, which is **purple** there. The categorical ramp is
+   unaffected — `--chart-cat-*` carries absolute values from the theme item rather
+   than deriving from the preset — so country identity is sound, and that is why the
+   chart migration looked right.
+2. **The platform cannot render dark mode at all.** Its `globals.css` has no `.dark`
+   block, so only `mri-theme.css`'s semantic roles change under `.dark`; the surfaces
+   do not. It has no theme toggle and never sets the class, so this is latent rather
+   than broken — but roughly 150 `dark:` variants across the platform are dead code
+   implying support that does not exist.
+3. **This is a decision, not a defect.** Repainting the application onto the preset's
+   white-and-olive theme would change every surface at once, and it is the only change
+   in this section that a reviewer would see as a redesign rather than a tidy-up. It
+   is recorded here rather than made, because the design system winning every
+   disagreement does not extend to repainting an application nobody asked to have
+   repainted.
+
+The cheap half is done: the platform's chart semantics are no longer assumed, and the
+palette debt the mismatch was hiding — 321 Tailwind palette classes across 27 files —
+is at zero. The remaining half is one question: adopt the preset's theme, or keep the
+warm one and make it the documented theme.
+
 ### Risks
 
 - **The shell change is the one irreversible step.** It touches every route, the
