@@ -429,15 +429,36 @@ const RULES = {
    * legitimate, which is why this is narrower than "no className".
    */
   padding: {
-    title: "page padding restated on PageContainer",
-    hint: "PageContainer decides page padding; drop py/pt/pb/space-y and let its gap space the sections",
+    title: "page padding restated around PageContainer",
+    hint: "PageContainer decides page padding; drop py/pt/pb/space-y from it and from any wrapper directly around it",
     scan(rel, source) {
+      const RHYTHM = /(?<![\w:-])((?:[a-z0-9]+:)*(?:py|pt|pb|space-y)-[\d.]+)/g;
       const hits = [];
+
+      // On the container itself.
       const pattern = /<PageContainer\b[^>]*?className=(?:"([^"]*)"|\{"([^"]*)"|\{cn\(\s*"([^"]*)")/g;
       for (const match of source.matchAll(pattern)) {
         const classes = match[1] ?? match[2] ?? match[3] ?? "";
-        for (const util of classes.matchAll(/(?<![\w:-])((?:[a-z0-9]+:)*(?:py|pt|pb|space-y)-[\d.]+)/g)) {
+        for (const util of classes.matchAll(RHYTHM)) {
           hits.push({ line: lineOf(source, match.index), token: util[1] });
+        }
+      }
+
+      // On the element immediately wrapping it. This is the half that was missed:
+      // the container was cleaned up and eleven files kept their rhythm by wrapping
+      // it in `<div className="pb-10 pt-3">`, which the rule could not see because it
+      // only ever read the container's own attributes. The wrapper is not a loophole
+      // in the contract; it is the same violation one level out.
+      const lines = source.split("\n");
+      for (const match of source.matchAll(/<PageContainer\b/g)) {
+        const line = lineOf(source, match.index);
+        for (let i = line - 2; i >= Math.max(0, line - 3); i--) {
+          const classes = lines[i].match(/className="([^"]*)"/);
+          if (!classes) continue;
+          for (const util of classes[1].matchAll(RHYTHM)) {
+            hits.push({ line: i + 1, token: `${util[1]} (wrapper)` });
+          }
+          break;
         }
       }
       return hits;
