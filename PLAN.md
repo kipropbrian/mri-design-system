@@ -646,9 +646,19 @@ Four things worth recording:
 4. **The runtime is untouched.** Shaders, canvas renderer and annotation hit-testing are
    exactly as they were. This changed colours and added a receiver.
 
-The quiz's sign-in, start and stats screens have **not** been rebuilt on the shell — the
-question screen keeps its player and loses its special status, but the other three are
-still their own thing. That is the remaining half of this step.
+**The quiz is an ordinary route.** It had three nested page frames — a `ForestQuizFrame`
+with a photographed backdrop and `min-h-[780px]`, `QuizClient`'s own wrapper and header
+bar, and screens that each rendered an `h1` — which is up to four top-level headings on
+one route. All three frames are gone: `QuizClient` is `PageContainer` + `PageHeader`, the
+route has exactly one `h1`, and sign-in, start and stats are rebuilt on `DataRow`,
+`Panel`, `MetricStrip`, `SectionHeader` and `TableCard`. The question, reveal, summary and
+done screens keep their layouts — the question screen keeps its player, which is where
+the shared `AudioPlayer`'s design came from — and lost only their duplicate headings.
+
+The generalisable lesson: the quiz was not special because anyone decided it should be,
+but because it grew one wrapper at a time. Each layer was reasonable on its own; the
+stack was not. A route that renders more than one page frame is the symptom, and it is
+cheaper to check for that than to argue about whether a route deserves an exception.
 
 **Step 7 — lock in.**
 
