@@ -1,0 +1,7 @@
+{
+  "$comment": "Project-specific exemptions for scripts/audit-ui.mjs. The rules live in the script and are shared; which files may break them is a property of this project. The allow-lists merge over the script's defaults, so an entry here only ever adds an exemption.",
+  "allowedColourFiles": {
+    "app/foundations/page.tsx": "The token reference. It prints every colour value in the theme by definition — a page that documents the palette has to contain the palette — so the colour rules cannot apply to it. This is the one file where a literal is the content rather than a decision, and it is why the exemption is scoped to this file alone rather than to `app/`.",
+    "app/rules/page.tsx": "The rule book. It publishes the semantic roles with their measured values and the contrast each one clears, which cannot be written without the values. Same reasoning as app/foundations/page.tsx."
+  }
+}

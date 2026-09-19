@@ -277,6 +277,113 @@ const RULES = {
   },
 
   /**
+   * The data-card header is `Panel`'s shape, not a recipe to retype.
+   *
+   * Fifteen files hand-rolled it before this rule existed, four of them pinning a
+   * `min-h-[48px]` to keep row heights level — which is the component's job and
+   * which they each got slightly wrong. The signature is the pairing of
+   * `font-semibold` with `tracking-tight`: a title treatment specific enough that a
+   * prose heading rarely trips it.
+   */
+  headers: {
+    title: "hand-rolled data-card header",
+    hint: "use <Panel title count description> or <TableCard> from components/mri/patterns.tsx",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        if (/\bfont-semibold\b/.test(literal) && /\btracking-tight\b/.test(literal)) {
+          hits.push({ line, token: "data-card header class string" });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A table header is plain. A shaded one is the most common drift in this system,
+   * and it makes the same table look like two different components on two routes.
+   *
+   * Only the *header* treatment is checked mechanically. The container is checked by
+   * banning the raw element (`tables`, above); a route that has a `Table` in its own
+   * bordered box is caught by review, because no class-string signature distinguishes
+   * that box from any other card.
+   */
+  tableHeaders: {
+    title: "shaded table header",
+    hint: "a table header carries no background, no blur and no shadow; move the emphasis into the data",
+    scan(rel, source) {
+      const hits = [];
+      for (const match of source.matchAll(/<TableHeader\b[^>]*className=(?:"([^"]*)"|\{cn\(\s*"([^"]*)")/g)) {
+        const classes = match[1] ?? match[2] ?? "";
+        for (const util of classes.matchAll(/(?<![\w:-])((?:[a-z0-9]+:)*(?:bg|backdrop-blur|shadow)-[^\s"']+)/g)) {
+          hits.push({ line: lineOf(source, match.index), token: util[1] });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A colour is a token, never a value — **including inside a data object**.
+   *
+   * The `tokens` rule above reads class-name strings, so a hex sitting in a chart
+   * palette (`{ start: "#3b82f6", end: "#1d4ed8" }`) was invisible to it. That was a
+   * correct scoping decision for a token-conformance pass and the wrong one for a
+   * design migration: it left seventy-one literals, the largest single block of
+   * styling on the platform that no token governed, looking compliant. Charts get
+   * their colours from `CHART_COLORS` and `CATEGORICAL` in `lib/chart-colors.ts`.
+   */
+  dataColours: {
+    title: "colour literal outside a class name",
+    hint: "chart colour comes from CHART_COLORS / CATEGORICAL in lib/chart-colors.ts, or from a --chart-* token",
+    scan(rel, source) {
+      if (ALLOWED_COLOUR_FILES.has(rel)) return [];
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\boklch\(/g)) {
+          hits.push({ line, token: match[0] });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * At most two data surfaces in a row.
+   *
+   * The check is a **proximity** one: for each table or chart, look at the ten lines
+   * above it for a three-or-more column grid, stopping early at a closing tag that
+   * ends the enclosing element. That is what a wrapper looks like, and it is the
+   * closest a class-string audit gets to "these two blocks are siblings" without an
+   * AST.
+   *
+   * It is a prompt to look rather than a proof, and the honest fix is structural:
+   * `DataRow` is a component, and a component can be held to two columns in a way a
+   * convention cannot.
+   */
+  twoUp: {
+    title: "three-or-more column grid around a data surface",
+    hint: "arrange tables and charts with <DataRow>, which caps a row at two; a wider grid is for cards and specimens",
+    scan(rel, source) {
+      const hits = [];
+      const lines = source.split("\n");
+      const CLOSES = /^\s*<\/(div|section|main|article)>\s*$/;
+      for (const match of source.matchAll(/<(TableCard|ChartFrame|Table)\b/g)) {
+        const line = lineOf(source, match.index);
+        for (let i = line - 2; i >= Math.max(0, line - 11); i--) {
+          const grid = lines[i].match(/(?<![\w:-])((?:[a-z0-9]+:)*grid-cols-([3-9]|\d{2,}))/);
+          if (grid) {
+            hits.push({ line: i + 1, token: grid[1] });
+            break;
+          }
+          if (CLOSES.test(lines[i])) break;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * `PageContainer` owns page padding, so a route must not restate it.
    *
    * The contract exists because padding used to be inherited: nothing supplied a

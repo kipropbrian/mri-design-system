@@ -62,7 +62,7 @@ const INK_TOKENS: TokenRow[] = [
   { name: "--muted-foreground", value: "oklch(0.58 0.031 107.3)", light: "var(--muted-foreground)", usage: "Descriptions, labels, axes" },
   { name: "--border", value: "oklch(0.93 0.007 106.5)", light: "var(--border)", usage: "Dividers, table rules, panel rings" },
   { name: "--input", value: "oklch(0.93 0.007 106.5)", light: "var(--input)", usage: "Field borders" },
-  { name: "--ring", value: "oklch(0.737 0.021 106.9)", light: "var(--ring)", usage: "Focus rings" },
+  { name: "--ring", value: "oklch(0.58 0.021 106.9)", light: "var(--ring)", usage: "Focus rings" },
   { name: "--destructive", value: "oklch(0.577 0.245 27.325)", light: "var(--destructive)", usage: "Errors, missed quiz answers, withdrawals" },
 ];
 
