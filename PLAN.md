@@ -384,3 +384,147 @@ on every reinstall — which is what the `checkbox` item was fixed to stop.
   repository's `audit:spacing`.
 - `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
   `eslint-plugin-react` incompatible with ESLint 10.
+
+## 5. The composition layer
+
+Sections 1–4 changed the platform's **vocabulary**. They did not change its
+**grammar**, and on review the platform's own author could not tell the migrated
+pages from the originals. That is a fair reading of the result, not a
+misunderstanding of it: a conformance pass was run where a redesign was wanted.
+
+The distinction that matters is that a shadcn component, a semantic token and a
+shared formatter are all *lexical* — they fix what a thing is made of. Nothing in
+v0.4.0 fixed *how a page is arranged*, so each route kept its own arrangement and
+invented the pieces it was missing. This section closes that gap.
+
+### The diagnosis, measured
+
+Every figure below was read off the tree, not estimated.
+
+- **Page shell padding is inherited, never defined.** `app/layout.tsx` wraps every
+  route in a `page-card` with `sm:rounded-2xl sm:border` and **no padding**. The
+  horizontal space comes from `PageContainer`'s `px-4 sm:px-6 lg:px-8` and the
+  bottom from whatever the page passes, but **no page passes a top padding**, so
+  content begins at 0px from the card's top border while the xeno-canto snapshot
+  page ends at `pb-10`. Across 24 files using `PageContainer` there are **7
+  distinct padding recipes**: `pt-3 pb-6 sm:pt-6 sm:pb-10`, `space-y-6 pb-10`,
+  `pb-6 sm:pb-10`, `pb-6`, `pt-3`, `pt-4`, `space-y-4 pb-6`.
+- **Cards nest.** 136 `<Card>` usages sit inside that page-level card.
+- **The data-card header is hand-rolled 15 times.** `text-sm font-semibold
+  tracking-tight` plus a truncated one-line description, four of them pinned with
+  `min-h-[48px]`. `/patterns` documents this exact recipe — and its own specimen
+  note concedes it was *"previously only recorded platform-side"*. It was promoted
+  to the master as **prose**, with no component behind it, so `Panel` enforces none
+  of the three rules the page states.
+- **Three tables, three shapes, one page.** `/birds/xeno-canto/weekly-highlights/[snapshot]`
+  renders a country table (plain header), a contributor list (`<ul>`, so no column
+  headers at all) and a taxa table (**shaded sticky header**, `bg-muted/90
+  backdrop-blur-xs shadow-xs`, plus magic `max-h-[310px]`/`max-h-[426px]`). The
+  three also disagree on last-cell padding (`pr-4` vs `pr-3`), on `StatusBadge` vs
+  `Badge`, and on 10/11/12px numerics. Across the platform: 16 files import the
+  table primitive, 22 headers are plain, 2 carry a background.
+- **The chart layer was never distributed.** `components/mri/charts.tsx` — 377
+  lines, 8 compositions, `CHART_COLORS` — **is not in `registry.json`**, so the
+  platform could never install it. All 8 platform chart files import `recharts`
+  directly: two use `var(--chart-N)`, three carry their own rainbow hex maps, one
+  draws with `stroke="#888888"`. **71 colour literals** live in these files.
+- **The enforcement is not published either.** This repository ships
+  `spacing-audit` — 84 lines, one rule. The platform has grown `audit-ui.mjs` —
+  422 lines, six rules. They are different files. Anything else installing this
+  registry gets the weak one.
+
+The audit could not have caught any of it. Its six rules — spacing, chips, raw
+tables, colour literals, banned imports, stylesheets — are all mechanical, and
+composition is not a mechanical property. Two blind spots compounded it:
+
+1. The colour rule reads **class-name string literals** and inline `style={{}}`
+   only. A hex inside a plain data object (`{ start: "#3b82f6" }`) is invisible.
+2. The earlier reconnaissance **saw** those palettes and set them aside by design:
+   "the 143 colour literals were Recharts palettes in JS, not class names (8 are
+   real)". That was a correct scoping call for a token-conformance pass and the
+   wrong one for a design migration — the palettes are the largest single block of
+   styling on the platform that no token governs.
+
+### Decided
+
+1. **The shell is a persistent left sidebar plus a top header.** Full route tree
+   always visible, so the breadcrumb is genuinely redundant on deep routes and is
+   deleted rather than restyled.
+2. **The chart palette becomes a tokenised categorical ramp in this repository.**
+   `charts.tsx`'s "at most three series" rule is right for the olive ramp and
+   wrong for nine-country comparison: collapsing those to one hue makes countries
+   indistinguishable, which is a legibility regression rather than consistency.
+   The rule book is extended rather than ignored, and the 71 loose hex values
+   become documented tokens.
+
+### Order of work
+
+Each step has a gate. Do not start the next until it passes.
+
+**Step 1 — the rule book, before any platform work.** Tag `v0.5.0`.
+
+1. **Publish the real audit.** Move the platform's six-rule `audit-ui.mjs` here and
+   ship it as a registry item, superseding `spacing-audit`. Keep the old item name
+   resolving so existing installs do not break. This is the whole point of the
+   repository: enforcement that only one consumer has is not a standard.
+2. **Ship `DataCard`.** The data-card header recipe as a component: title that
+   carries its count, one-line truncating description, optional right slot, and no
+   uppercase eyebrow. The three rules the page states become the component's
+   shape.
+3. **Ship `TableCard`.** `Panel` + horizontal containment + optional `TableCaption`
+   + footer strip, with a **plain** header. `/patterns` already prescribes this;
+   it needs to be installable.
+4. **Publish `charts.tsx`** as a registry item, and add the categorical ramp
+   alongside `CHART_COLORS` — documented, named per series, and contrast-checked in
+   both themes the way `--ring` was.
+5. **Define the shell.** `PageContainer` gains the padding contract so no page
+   passes its own again; add the shell primitives and the `--sidebar-*` tokens,
+   which the theme does not have today (0 occurrences). `sidebar` from the preset
+   ships no CSS, so the tokens must come from here or the component renders
+   against undefined variables.
+6. **Add composition rules** to the audit: hand-rolled section header, table
+   container or header treatment outside the shared composition, and colour
+   literals in data objects with no exemption path. Seed the ledger against
+   today's counts so the rules ratchet down rather than blocking Step 2.
+
+**Step 2 — replace the shell.**
+
+Delete `Breadcrumb`, the page-level card, and the `sm:mt-3` / `pb-1.5` spacing
+fudge. One header, one sidebar, one padding contract.
+
+**Step 3 — flat pages, piloted on xeno-canto.**
+
+`/birds/xeno-canto/weekly-highlights/[snapshot]` first, so the arrangement can be
+judged before it is repeated 28 times. Then the sweep: `PageHeader`,
+`SectionHeader`, `Panel`/`DataCard`, no card inside card.
+
+**Step 4 — tables.**
+
+One `TableCard` everywhere. The three xeno-canto sections first, then the
+remaining 13 files importing the primitive. `text-emerald-600` in
+`weekly-country-breakdown.tsx:110` goes with them.
+
+**Step 5 — charts.**
+
+Install `charts.tsx`, move the 8 files off direct `recharts`, and resolve each
+against the new ramp. This is the largest single block of work in the section and
+the one most likely to change what the platform looks like.
+
+**Step 6 — lock in.**
+
+New rules fail the build, the ~10 e2e specs the shell change touches are
+repointed, `docs/frontend-design-system.md` and `docs/mri-ui-rules.md` are
+reconciled, `verify` is green in both repositories, and the platform takes a tag.
+
+### Risks
+
+- **The shell change is the one irreversible step.** It touches every route, the
+  48-test e2e suite and the layout contract at once. It goes after Step 1 so the
+  audit can see the result, and it is piloted before it is swept.
+- **`sidebar` overwrites `components/ui/sheet.tsx`** (confirmed by dry run). The
+  platform's mobile navigation depends on that file, so the shell step must
+  re-verify the sheet's Base UI `render` usage rather than assume the overwrite is
+  compatible.
+- **Fixing composition will expose the chart palettes as the dominant remaining
+  inconsistency.** Step 5 is not optional cleanup; if it is deferred the platform
+  will look half-migrated, which is the state this section exists to end.
