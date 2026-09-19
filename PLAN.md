@@ -375,9 +375,13 @@ on every reinstall — which is what the `checkbox` item was fixed to stop.
   number renders as `4` where the platform previously showed `4.0`. That is a
   deliberate simplification, not an oversight: if a fixed decimal is genuinely
   wanted it belongs here as a parameter rather than as another local formatter.
-- The platform design guide carries three corrections that Step 3 resolves:
-  "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
-  conflict with the master's.
+- **The platform design guide is reconciled** (Step 5). Its three corrections
+  are recorded as resolved rather than pending: the spacing collapse took all 406
+  off-scale utilities to zero, chips run at the shared `Chip`'s `size-2.5`, and the
+  light-only claim is qualified by the `.dark` block `mri-theme.css` actually ships.
+  Its component-ownership section no longer describes the deleted
+  `components/platform`, and it names `npm run audit:ui` rather than this
+  repository's `audit:spacing`.
 - `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
   `eslint-plugin-react` incompatible with ESLint 10.
   "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
