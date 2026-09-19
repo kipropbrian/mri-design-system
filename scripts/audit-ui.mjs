@@ -427,6 +427,11 @@ const RULES = {
       if (ALLOWED_COLOUR_FILES.has(rel)) return [];
       const hits = [];
       for (const { literal, line } of literals(source)) {
+        // A mask is an alpha channel, not a colour. `[mask-image:radial-gradient(…,
+        // rgba(0,0,0,0.72) …)]` names black because black is "opaque" there, and the
+        // hue is discarded by the mask — so it is not a colour decision, and rewriting
+        // it as a token would only make it a less obvious way of saying the same thing.
+        if (/\[mask(-image)?:/.test(literal)) continue;
         for (const match of literal.matchAll(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\boklch\(/g)) {
           hits.push({ line, token: match[0] });
         }
