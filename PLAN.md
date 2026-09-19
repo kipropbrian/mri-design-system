@@ -622,6 +622,34 @@ dark theme, and shrink its stylesheet exemption to canvas geometry. Rebuild the
 quiz's sign-in, start and stats screens on the shell like any other page — the
 question screen keeps its player and loses its special status.
 
+**Landed, except the quiz screens.** One player: the quiz's bespoke copy is deleted and
+the screen uses the shared `AudioPlayer`. The frame names no colours — 95 literals
+across three stylesheets and two documents are `--xc-*` variables, and the mapping is
+property-aware because it has to be: `#20452e` was both text on white and a fill under
+white text, and one variable cannot serve both once the theme can change.
+
+Four things worth recording:
+
+1. **The colour rules never saw the frame.** They scan `app/` and `components/`; the
+   frame is in `public/`. That is why its 95 literals survived a paydown that removed
+   321 classes elsewhere, and why the exemption's *reason* was the only thing standing
+   between it and the rule. A rule that cannot reach a file is not exempting it, it is
+   ignoring it — worth checking wherever an allow-list names a path rather than a class.
+2. **A frame cannot inherit tokens, only values.** A separate document has its own
+   cascade, so `var(--background)` inside it resolves to nothing. The parent resolves
+   the tokens from computed style and sends them over the `xc-player-config` channel
+   that already existed; the compact player gets the same values as a query param
+   because that is how it receives its configuration. Reading them at send time rather
+   than hard-coding means the annotator keeps following the theme if it changes.
+3. **The frame has a dark mode for the first time.** It was light-only with no way to
+   follow the application. It now keys a `.dark` block off the theme message.
+4. **The runtime is untouched.** Shaders, canvas renderer and annotation hit-testing are
+   exactly as they were. This changed colours and added a receiver.
+
+The quiz's sign-in, start and stats screens have **not** been rebuilt on the shell — the
+question screen keeps its player and loses its special status, but the other three are
+still their own thing. That is the remaining half of this step.
+
 **Step 7 — lock in.**
 
 New rules fail the build, the ~10 e2e specs the shell change touches are
