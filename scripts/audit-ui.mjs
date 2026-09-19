@@ -369,7 +369,9 @@ const RULES = {
       const lines = source.split("\n");
       for (const match of source.matchAll(/<Table[\s>]/g)) {
         const line = lineOf(source, match.index);
-        for (let i = line - 2; i >= Math.max(0, line - 4); i--) {
+        // The line directly above only. A wider window caught a segmented control that
+        // happened to sit two lines over a table, which is not a container.
+        for (let i = line - 2; i >= Math.max(0, line - 2); i--) {
           const classes = lines[i]?.match(/className="([^"]*)"/);
           if (!classes) {
             if (/<(TableCard|Panel)\b/.test(lines[i] ?? "")) break;

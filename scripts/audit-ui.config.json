@@ -1,7 +1,8 @@
 {
   "$comment": "Project-specific exemptions for scripts/audit-ui.mjs. The rules live in the script and are shared; which files may break them is a property of this project. The allow-lists merge over the script's defaults, so an entry here only ever adds an exemption.",
   "allowedColourFiles": {
-    "app/foundations/page.tsx": "The token reference. It prints every colour value in the theme by definition — a page that documents the palette has to contain the palette — so the colour rules cannot apply to it. This is the one file where a literal is the content rather than a decision, and it is why the exemption is scoped to this file alone rather than to `app/`.",
-    "app/rules/page.tsx": "The rule book. It publishes the semantic roles with their measured values and the contrast each one clears, which cannot be written without the values. Same reasoning as app/foundations/page.tsx."
+    "app/foundations/page.tsx": "The token reference. It prints every colour value in the theme by definition \u2014 a page that documents the palette has to contain the palette \u2014 so the colour rules cannot apply to it. This is the one file where a literal is the content rather than a decision, and it is why the exemption is scoped to this file alone rather than to `app/`.",
+    "app/rules/page.tsx": "The rule book. It publishes the semantic roles with their measured values and the contrast each one clears, which cannot be written without the values. Same reasoning as app/foundations/page.tsx.",
+    "components/site/photo-stand-in.tsx": "A stand-in for a photograph. The chip and overlay rules are about legibility on an arbitrary image, so their demos need a pale, busy surface the author does not control; a token-coloured gradient would be a background rather than a picture. This is the only file in the system that names palette colours, which is why it lives in the review site's own chrome rather than in the installed layer."
   }
 }

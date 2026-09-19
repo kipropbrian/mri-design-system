@@ -12,7 +12,8 @@ import {
 import { ChipAudit } from "@/components/mri/chip-audit";
 import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { IucnChip } from "@/components/mri/specimen-card";
-import { PageContainer, PageHeader, PhotoStandIn, SectionHeader, Specimen } from "@/components/mri/layout";
+import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
+import { PhotoStandIn } from "@/components/site/photo-stand-in";
 import { Panel, StatusBadge, TableCard } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import {
