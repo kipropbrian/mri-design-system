@@ -156,8 +156,8 @@ tree; `verify` green.
 
 **Step 2 — replace `components/platform` with the design system's shell.**
 
-Install `theme`, `chip`, `layout`, `patterns` and `specimen-card` from this
-registry, or vendor them. Delete the 4 files in `components/platform`.
+Install `theme`, `chip`, `layout`, `patterns` and `chip-audit` from this registry.
+Delete the 4 files in `components/platform`.
 
 **Naming collision — resolved.** The platform already has a
 `components/shell/` holding its chrome (`header`, `footer`, `breadcrumb`,
@@ -172,8 +172,36 @@ rename. `components/mri/` is also the clearer name where it matters most: in the
 *other* MRI projects that install from this registry, where "the MRI layer"
 is exactly what it is.
 
-**Gate:** no route imports `components/platform`; the chip audit reports only
-20px/22px on a migrated page.
+**Landed.** All four files are gone and `components/mri/` is the install target;
+no route imports `components/platform`. 31 import statements across 30 files were
+rewritten, and the call sites themselves needed almost nothing — these components
+are supersets of the ones they replaced, so most routes changed one line.
+`components/mri` and `components/ui` are byte-identical to this repository's.
+
+Three corrections to the plan above:
+
+1. **`specimen-card` was not installed.** It imports `@/lib/data` — the review
+   site's `inat`/`birds` fixtures — and `@/lib/format`, and `registry.json`
+   declares neither, so it cannot build outside this repository. The platform does
+   not need it to replace `components/platform`. See Known gaps.
+2. **Four gaps had to be closed here first.** `PageHeader.titleTag`,
+   `MetricStripSkeleton.label`, per-column `columns` configs on `TableSkeleton`,
+   and `ToolbarSkeleton` entirely were all missing while the platform depended on
+   them. They are upstreamed in v0.3.0 rather than forked into the platform, so
+   the superset lives in the rule book and the next project gets it free.
+3. **The audit had to learn about this layer.** The platform's audit now excludes
+   `components/mri/` exactly as it excludes `components/ui/`: both are installed
+   and regenerated, so auditing them locally reports this repository's decisions
+   as the platform's drift and breaks on every reinstall. `app/mri-theme.css`
+   joined its CSS allow-list with a reason, and the ledger ratcheted 480 → 469.
+
+Installing `patterns` also overwrote the platform's corrected
+`components/ui/checkbox.tsx` with the raw preset — twice, once per install. That
+is now trap 5 in both rule sets, with the `diff` loop that catches it.
+
+**Gate:** met. No route imports `components/platform`; `StatusBadge` renders the
+shared `Chip`, whose only two surfaces are `h-5` (20px) and `h-5.5` (22px);
+`verify` green with 48/48 e2e.
 
 **Step 3 — rewrite the 28 routes, one per commit, worst-first.**
 
@@ -237,9 +265,24 @@ ones; `verify` green.
 
 ## 4. Known gaps
 
-- **`OWNER` placeholder in `registry.json`** (6 occurrences) — blocks install, not
-  validation.
-- **No git remote yet.** The repository is committed locally with no origin.
+- **`specimen-card` is not portable.** It imports `@/lib/data` — the review site's
+  `inat.json` / `birds.json` fixtures — and `@/lib/format`, and `registry.json`
+  declares neither. Installing it into any other project produces a broken build.
+  The platform dropped it in Step 2 for exactly this reason. Either split the item
+  so the fixture-bound half stays here, or declare the dependency.
+- **A registry dependency can silently regress a base primitive.** Any item
+  depending on `checkbox` — so `patterns` and `specimen-card` — overwrites the
+  consumer's `components/ui/checkbox.tsx` with the raw preset, whose Phosphor
+  import is the bare entry that deviation 1 exists to avoid. Installing `patterns`
+  did this to the platform twice. Ship the base primitives as corrected items, or
+  make the re-fix an explicit post-install step rather than one implied by
+  "Adding components".
+- **`lib/format.ts` should be a registry item.** The platform carried nine separate
+  hand-rolled `formatNumber` implementations across nine files; `lib/format.ts` is
+  the single dependency-free answer, and the only part of `specimen-card`'s `lib/`
+  dependency that is genuinely portable.
+- **The platform's `--ring` fails contrast** — `#a9a39a`, roughly 2.2:1 on white,
+  below the 3:1 a focus indicator needs. Raised in Step 1, still unresolved.
 - The platform design guide carries three corrections that Step 3 resolves:
   "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
   conflict with the master's.
