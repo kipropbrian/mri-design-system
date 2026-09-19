@@ -179,7 +179,17 @@ function* walk(dir) {
   for (const entry of entries) {
     if (SKIP_DIRS.has(entry)) continue;
     const full = join(dir, entry);
-    if (statSync(full).isDirectory()) yield* walk(full);
+    let isDirectory;
+    try {
+      isDirectory = statSync(full).isDirectory();
+    } catch {
+      // `readdir` succeeding does not mean `stat` will. macOS denies some paths
+      // outright, and `--root` means this can be pointed at a tree the process has
+      // no business reading. A directory that cannot be stat'd is one that cannot be
+      // audited, so skip it rather than crashing the whole run.
+      continue;
+    }
+    if (isDirectory) yield* walk(full);
     else yield full;
   }
 }
