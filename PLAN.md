@@ -428,10 +428,30 @@ Every figure below was read off the tree, not estimated.
   platform could never install it. All 8 platform chart files import `recharts`
   directly: two use `var(--chart-N)`, three carry their own rainbow hex maps, one
   draws with `stroke="#888888"`. **71 colour literals** live in these files.
+- **Audio has two implementations and neither is here.** The quiz has
+  `quiz-audio-player.tsx` — 132 lines, entirely on tokens (`bg-primary`,
+  `bg-card`, `bg-muted`, `ring-ring`), and it is the player the platform's author
+  singled out as looking right. `/birds/uploads` has `public/bird-review/`:
+  `player.css` 343, `player.js` **1,506**, `transport.css` 205, `transport.js`
+  151, `embed.css` 58, two HTML documents, ~2,900 lines in total, embedded through
+  an iframe and driven by `postMessage`. Across those files: **95 colour
+  literals and zero design tokens** — the single stray `var()` is its own
+  `--spectrogram-plot-gutter`. It has no dark mode, so it renders as a
+  light-grey document inside a themed page.
+- **Tables and charts are allowed to span the full width.** Nothing limits a
+  table to a readable number of columns or a row to one data surface, so the
+  xeno-canto taxa table runs the full container width with four columns of which
+  two are links, and the country table carries six. A table that needs every
+  column to be useful is usually two tables.
 - **The enforcement is not published either.** This repository ships
   `spacing-audit` — 84 lines, one rule. The platform has grown `audit-ui.mjs` —
   422 lines, six rules. They are different files. Anything else installing this
   registry gets the weak one.
+- **The stylesheet exemption is doing more work than it admits.** The audit
+  sanctions `player.css`, `transport.css` and `embed.css` by name. That was
+  granted to stop the audit failing on the iframe, and it has since been covering
+  95 colour literals and a complete absence of theming on the one surface where
+  the platform's audio work actually lives.
 
 The audit could not have caught any of it. Its six rules — spacing, chips, raw
 tables, colour literals, banned imports, stylesheets — are all mechanical, and
@@ -456,6 +476,37 @@ composition is not a mechanical property. Two blind spots compounded it:
    indistinguishable, which is a legibility regression rather than consistency.
    The rule book is extended rather than ignored, and the 71 loose hex values
    become documented tokens.
+3. **Two data surfaces per row, maximum.** A row holds two tables, or one table
+   and one chart, or two charts — never three, and never one full-width table.
+   This is a rule rather than a preference because a full-width table is how a
+   table accumulates columns it does not need: if the data will not fit two-up,
+   the answer is fewer columns or a second table, not more width. It goes in the
+   audit, not only in prose.
+4. **Audio is a first-class design-system concern, not a carve-out.** The split is
+   between the *chrome* and the *instrument*:
+   - **Chrome folds in.** Transport, scrub, timing and container become an
+     `AudioPlayer` in this repository, built from the quiz player's design, since
+     that is the one already on tokens and the one that reads correctly.
+   - **The instrument stays, but stops being a stylistic island.** The
+     spectrogram annotator is a WebGL and canvas application — shaders, a
+     device-pixel-ratio canvas renderer, annotation hit-testing, drag-resize, a
+     draft overlay, a modal, zoom and scroll, and a waveform overview strip. That
+     is not a component and rewriting it in React is a rewrite of a working
+     runtime, not a design task. It keeps its iframe, but it **consumes this
+     repository's tokens** instead of 95 loose hex values, gains the dark theme,
+     and its exemption shrinks to canvas geometry only.
+   - **Audio gets rules.** Where the player appears, what the transport must
+     contain, how it behaves on a photograph, and what the spectrogram is allowed
+     to look like. Audio matters to this institute and currently has no rules at
+     all.
+5. **Quiz is not a special case.** The question screen's *player* is the reference
+   for audio; its *screens* — sign-in, start and stats — are ordinary pages and
+   get rebuilt on the shell and the shared compositions like everything else.
+6. **Ruthlessness is authorised.** Content that does not conform may be dropped
+   rather than restyled: tables deleted, columns cut, surfaces omitted. The
+   platform has one user who has asked for the design system to win every
+   disagreement. A page that cannot be expressed in the shared compositions is
+   evidence about the page, not a reason for an exemption.
 
 ### Order of work
 
@@ -482,10 +533,18 @@ Each step has a gate. Do not start the next until it passes.
    which the theme does not have today (0 occurrences). `sidebar` from the preset
    ships no CSS, so the tokens must come from here or the component renders
    against undefined variables.
-6. **Add composition rules** to the audit: hand-rolled section header, table
-   container or header treatment outside the shared composition, and colour
-   literals in data objects with no exemption path. Seed the ledger against
-   today's counts so the rules ratchet down rather than blocking Step 2.
+6. **Ship `AudioPlayer` and the audio rules.** Promote the quiz player's design —
+   circle transport, replay with its key hint, scrub track, tabular time — into a
+   token-based component with the playback state owned by the caller, so the quiz
+   and the review tool drive the same chrome. Add the "Audio" rules section: where
+   a player may appear, what the transport must contain, how the overlay variant
+   behaves on a photograph.
+7. **Add composition rules** to the audit: hand-rolled section header, table
+   container or header treatment outside the shared composition, colour literals
+   in data objects with no exemption path, more than two data surfaces in a row,
+   and a design token used inside the spectrogram frame's stylesheets. Seed the
+   ledger against today's counts so the rules ratchet down rather than blocking
+   Step 2.
 
 **Step 2 — replace the shell.**
 
@@ -496,13 +555,18 @@ fudge. One header, one sidebar, one padding contract.
 
 `/birds/xeno-canto/weekly-highlights/[snapshot]` first, so the arrangement can be
 judged before it is repeated 28 times. Then the sweep: `PageHeader`,
-`SectionHeader`, `Panel`/`DataCard`, no card inside card.
+`SectionHeader`, `Panel`/`DataCard`, no card inside card, and no row carrying more
+than two data surfaces.
 
-**Step 4 — tables.**
+**Step 4 — tables, ruthlessly.**
 
-One `TableCard` everywhere. The three xeno-canto sections first, then the
-remaining 13 files importing the primitive. `text-emerald-600` in
-`weekly-country-breakdown.tsx:110` goes with them.
+One `TableCard` everywhere, two-up by default. The three xeno-canto sections
+first, then the remaining 13 files importing the primitive.
+`text-emerald-600` in `weekly-country-breakdown.tsx:110` goes with them. Columns
+and whole tables that do not earn their place are cut rather than restyled, and
+`/birds/xeno-canto/weekly-highlights/[snapshot]` is the worked example: its
+country table wants six columns and gets four, and the taxa table's two separate
+Xeno-canto links collapse to one.
 
 **Step 5 — charts.**
 
@@ -510,7 +574,15 @@ Install `charts.tsx`, move the 8 files off direct `recharts`, and resolve each
 against the new ramp. This is the largest single block of work in the section and
 the one most likely to change what the platform looks like.
 
-**Step 6 — lock in.**
+**Step 6 — audio.**
+
+Put `AudioPlayer` behind both the quiz and `/birds/uploads`, then tokenise the
+spectrogram frame: replace its 95 hex literals with the MRI tokens, give it the
+dark theme, and shrink its stylesheet exemption to canvas geometry. Rebuild the
+quiz's sign-in, start and stats screens on the shell like any other page — the
+question screen keeps its player and loses its special status.
+
+**Step 7 — lock in.**
 
 New rules fail the build, the ~10 e2e specs the shell change touches are
 repointed, `docs/frontend-design-system.md` and `docs/mri-ui-rules.md` are
@@ -528,3 +600,17 @@ reconciled, `verify` is green in both repositories, and the platform takes a tag
 - **Fixing composition will expose the chart palettes as the dominant remaining
   inconsistency.** Step 5 is not optional cleanup; if it is deferred the platform
   will look half-migrated, which is the state this section exists to end.
+- **Tokenising the spectrogram frame is a styling change and must stay one.** The
+  1,506-line runtime carries WebGL shaders, a device-pixel-ratio canvas renderer
+  and annotation hit-testing, and it currently works. Step 6 replaces colours and
+  adds a dark theme; it does not restructure the annotator. If a token cannot be
+  expressed in the frame's stylesheets without touching the renderer, the token
+  waits rather than the renderer being rewritten.
+- **The two-up rule will delete content.** Enforcing it is a content decision as
+  much as a layout one — the country table losing two columns means losing two
+  figures a reader could previously see. Authorised, and recorded here so the
+  deletions read as intended rather than as breakage.
+- **Dropping the stylesheet exemption may fail Steps 2–6 mid-flight.** The frame's
+  three stylesheets are currently sanctioned by name. Removing that sanction before
+  the files are tokenised turns the audit red for the whole of Step 6, so the
+  exemption is narrowed *after* tokenisation within the same step, not before it.
