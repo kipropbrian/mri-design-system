@@ -350,6 +350,42 @@ const RULES = {
   },
 
   /**
+   * A table lives in a `TableCard`, not in a hand-rolled box.
+   *
+   * The element is already banned (`tables`), so this catches the arrangement: a
+   * `rounded`/`border` container wrapped around a `Table` is a second definition of what
+   * a table card looks like, and it is how one table ends up with different padding from
+   * the one above it. `TableCard` settles the arrangement once — including aligning the
+   * outer columns with the card's own padding, which no route should have to restate.
+   *
+   * `Panel` is the other legitimate parent: a table inside a panel that also carries
+   * prose or a figure is a panel, not a table card.
+   */
+  tableBox: {
+    title: "hand-rolled table container",
+    hint: "wrap the table in <TableCard> from components/mri/patterns.tsx instead of a bordered box",
+    scan(rel, source) {
+      const hits = [];
+      const lines = source.split("\n");
+      for (const match of source.matchAll(/<Table[\s>]/g)) {
+        const line = lineOf(source, match.index);
+        for (let i = line - 2; i >= Math.max(0, line - 4); i--) {
+          const classes = lines[i]?.match(/className="([^"]*)"/);
+          if (!classes) {
+            if (/<(TableCard|Panel)\b/.test(lines[i] ?? "")) break;
+            continue;
+          }
+          if (/\brounded|\bborder\b/.test(classes[1])) {
+            hits.push({ line: i + 1, token: classes[1].split(" ").find((c) => /^rounded|^border/.test(c)) ?? "bordered box" });
+          }
+          break;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A table header is plain. A shaded one is the most common drift in this system,
    * and it makes the same table look like two different components on two routes.
    *
