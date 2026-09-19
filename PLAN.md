@@ -384,7 +384,3 @@ on every reinstall — which is what the `checkbox` item was fixed to stop.
   repository's `audit:spacing`.
 - `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
   `eslint-plugin-react` incompatible with ESLint 10.
-  "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
-  conflict with the master's.
-- `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
-  `eslint-plugin-react` incompatible with ESLint 10.
