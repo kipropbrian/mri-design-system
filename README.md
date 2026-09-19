@@ -43,6 +43,9 @@ npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
 | --- | --- |
 | `theme` | `app/mri-theme.css` — the semantic roles and the `-ink` tier |
 | `agent-rules` | `docs/mri-ui-rules.md` — the imperative rules, for agents |
+| `format` | `lib/format.ts` — counts, integers, compact notation, dates, initials |
+| `taxonomy` | `lib/taxonomy.ts` — IUCN tones and labels, record types, `countryFlag` |
+| `checkbox` | `components/ui/checkbox.tsx`, Phosphor import corrected |
 | `chip` | the one chip: two surfaces, seven tones, overlay scrims |
 | `layout` | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen` |
 | `patterns` | `Panel`, `MetricCard`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
@@ -52,6 +55,11 @@ npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
 
 `theme` is a file, not a component: add `@import "./mri-theme.css";` to
 `app/globals.css` next to the `tailwindcss` import after installing it.
+
+`checkbox` exists so nothing has to depend on the bare preset name. An item that
+depends on `checkbox` pulls the raw preset, whose icon import is the bare
+`@phosphor-icons/react` entry that deviation 1 exists to avoid — silently
+overwriting a consumer's corrected file. Depend on this item instead.
 
 ### The style-id trap
 

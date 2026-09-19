@@ -265,25 +265,37 @@ ones; `verify` green.
 
 ## 4. Known gaps
 
-- **`specimen-card` is not portable.** It imports `@/lib/data` — the review site's
-  `inat.json` / `birds.json` fixtures — and `@/lib/format`, and `registry.json`
-  declares neither. Installing it into any other project produces a broken build.
-  The platform dropped it in Step 2 for exactly this reason. Either split the item
-  so the fixture-bound half stays here, or declare the dependency.
-- **A registry dependency can silently regress a base primitive.** Any item
-  depending on `checkbox` — so `patterns` and `specimen-card` — overwrites the
-  consumer's `components/ui/checkbox.tsx` with the raw preset, whose Phosphor
-  import is the bare entry that deviation 1 exists to avoid. Installing `patterns`
-  did this to the platform twice. Ship the base primitives as corrected items, or
-  make the re-fix an explicit post-install step rather than one implied by
-  "Adding components".
-- **`lib/format.ts` should be a registry item.** The platform carried nine separate
-  hand-rolled `formatNumber` implementations across nine files; `lib/format.ts` is
-  the single dependency-free answer, and the only part of `specimen-card`'s `lib/`
-  dependency that is genuinely portable.
-- **The platform's `--ring` fails contrast** — `#a9a39a`, roughly 2.2:1 on white,
-  below the 3:1 a focus indicator needs. Raised in Step 1, still unresolved.
+**Closed in v0.4.0.** All four defects Step 2 exposed are fixed:
+
+- **`specimen-card` is portable.** Its fixture-bound imports moved to the new
+  `lib/taxonomy` item: the IUCN tables, the record types, and a `countryFlag`
+  computed from the ISO code rather than read out of `birds.json`. `lib/data.ts`
+  re-exports the moved names, so the review pages did not change at all.
+- **The base-primitive regression is gone.** `checkbox` is an item itself, and
+  `patterns` and `specimen-card` depend on the qualified address, so an install no
+  longer overwrites a consumer's corrected file. The registry's other dependency
+  edges were corrected against the real import graph while there: `patterns` never
+  imported `@/lib/format`, and `layout` never imported `Chip`.
+- **`lib/format.ts` is an item**, with `formatInteger` added for the four call
+  sites that rounded to whole numbers. The platform's 26 hand-rolled
+  `Intl.NumberFormat` definitions across 26 files are gone, and 27 files now
+  import the shared module.
+- **The ring contrast is fixed in both repositories.** `--ring` is now
+  `oklch(0.58 0.021 106.9)`: 4.27:1 on the light background and 4.59:1 / 3.97:1 on
+  the two dark surfaces, against 2.15:1 before. One value now serves both themes
+  because it was measured against all four.
+
+**Still open.**
+
+- `formatDecimal` uses `maximumFractionDigits: 1` with no minimum, so a whole
+  number renders as `4` where the platform previously showed `4.0`. That is a
+  deliberate simplification, not an oversight: if a fixed decimal is genuinely
+  wanted it belongs here as a parameter rather than as another local formatter.
 - The platform design guide carries three corrections that Step 3 resolves:
+  "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
+  conflict with the master's.
+- `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
+  `eslint-plugin-react` incompatible with ESLint 10.
   "light-only interface" is false, `p-3.5` is off-scale, and its icon sizes
   conflict with the master's.
 - `eslint` is pinned to `^9` here because `eslint-config-next@16.3.4` bundles an
