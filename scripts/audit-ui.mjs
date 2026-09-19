@@ -1,0 +1,456 @@
+#!/usr/bin/env node
+/**
+ * MRI UI audit — the enforcement harness.
+ *
+ * A design system is only real if a machine checks it. These rules are the ones a
+ * human reviewer cannot hold in their head across dozens of routes, so they are
+ * extracted from the class strings in the source and checked here.
+ *
+ * The rules are described in `docs/mri-ui-rules.md`; the reasoning is in the wiki
+ * page `concepts/mri-design-system`.
+ *
+ * ## Modes
+ *
+ *   node scripts/audit-ui.mjs
+ *       Fail on any violation not in the baseline, and fail on any baseline
+ *       entry that no longer occurs.
+ *
+ *   node scripts/audit-ui.mjs --report
+ *       Print the whole ledger. Always exits 0. This is the triage view.
+ *
+ *   node scripts/audit-ui.mjs --update-baseline
+ *       Rewrite the ledger from the tree. Refuses to grow the total unless
+ *       --force is also passed.
+ *
+ *   node scripts/audit-ui.mjs --root <dir>
+ *       Audit another MRI tree, or a test fixture, instead of this repository.
+ *
+ * ## Why a baseline
+ *
+ * A tree that adopts this audit usually cannot satisfy it immediately, and fixing
+ * everything first would block the adoption. The baseline records what is already
+ * there, and the second half of the check is what keeps the ledger honest: an
+ * entry that stops occurring is an **error**. The ledger can only shrink, so
+ * existing drift is paid down rather than renamed.
+ *
+ * ## Configuration
+ *
+ * Everything project-specific lives in `scripts/audit-ui.config.json` beside this
+ * file, never in this file. A rule's *rules* are shared; which files are allowed
+ * to break them is a property of the project. A tree with no config still gets
+ * audited on the defaults below, and the three allow-lists **merge** with those
+ * defaults, so a config can only ever add an exemption. `scanDirs`, `generated`
+ * and `baseline` replace.
+ *
+ *   {
+ *     "scanDirs":         ["app", "components"],
+ *     "generated":        ["components/ui/", "components/mri/"],
+ *     "baseline":         "scripts/audit-baseline.json",
+ *     "spacingAllowed":   { "pr-14": "why this one is geometry, not rhythm" },
+ *     "allowedCss":       { "public/x/player.css": "why this stylesheet exists" },
+ *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" }
+ *   }
+ */
+import { readdirSync, readFileSync, statSync, writeFileSync, existsSync } from "node:fs";
+import { join, relative, basename, resolve } from "node:path";
+
+const argv = process.argv.slice(2);
+/** `--root` lets the audit run against another MRI tree, and against fixtures. */
+const rootFlag = argv.indexOf("--root");
+const ROOT = rootFlag === -1 ? new URL("..", import.meta.url).pathname : resolve(argv[rootFlag + 1]);
+
+/* ------------------------------------------------------------------- config */
+
+/**
+ * Defaults are deliberately permissive about *what* is scanned and strict about
+ * what is allowed: an unconfigured tree gets the full rule set and no exemptions
+ * beyond the two files every MRI app has.
+ */
+const DEFAULTS = {
+  scanDirs: ["app", "components"],
+  generated: ["components/ui/", "components/mri/"],
+  baseline: "scripts/audit-baseline.json",
+
+  /** Control geometry that is not layout rhythm, each with its reason. */
+  spacingAllowed: {
+    "pl-8": "search input: 14px icon plus its 8px inset at the larger control size",
+    "px-8": "page shell gutter at lg (32px)",
+    "pl-7": "text aligned past the 24px avatar or icon it sits under",
+    "pr-7": "input clearance for a trailing affordance (clear button or select caret)",
+    "pr-8": "input and sheet-header clearance for a trailing control",
+    "pr-14": "a sheet header making room for its close button",
+  },
+
+  /** Every stylesheet, with its reason. There is no other way to add one. */
+  allowedCss: {
+    "app/globals.css": "the Tailwind entry point and design tokens",
+    "app/mri-theme.css":
+      "the MRI semantic colour extension (info / warning / notable and the -ink tier), installed from the design-system registry",
+  },
+
+  /** Files where a colour literal cannot be avoided, with the reason. */
+  allowedColourFiles: {},
+};
+
+function loadConfig() {
+  const path = join(ROOT, "scripts", "audit-ui.config.json");
+  if (!existsSync(path)) return DEFAULTS;
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(path, "utf8"));
+  } catch (error) {
+    console.error(`✗ scripts/audit-ui.config.json is not valid JSON: ${error.message}`);
+    process.exit(1);
+  }
+  // The three allow-lists merge rather than replace, so adding a config can only
+  // ever *add* an exemption. A project that writes one for its own reasons must
+  // not silently lose the shared ones, which is a footgun with no upside: an
+  // exemption nobody wants is visible in the diff that added it.
+  return {
+    ...DEFAULTS,
+    ...raw,
+    spacingAllowed: { ...DEFAULTS.spacingAllowed, ...(raw.spacingAllowed ?? {}) },
+    allowedCss: { ...DEFAULTS.allowedCss, ...(raw.allowedCss ?? {}) },
+    allowedColourFiles: { ...DEFAULTS.allowedColourFiles, ...(raw.allowedColourFiles ?? {}) },
+  };
+}
+
+const CONFIG = loadConfig();
+const BASELINE = join(ROOT, CONFIG.baseline);
+
+/**
+ * Source we own. `components/ui` is generated by shadcn and `components/mri` is
+ * installed from the MRI design-system registry, so auditing them here would
+ * report upstream's decisions as local drift — and would fight every reinstall.
+ * The design system audits its own layer.
+ */
+const SCAN_DIRS = CONFIG.scanDirs;
+const GENERATED = CONFIG.generated;
+
+const SKIP_DIRS = new Set([
+  "node_modules",
+  ".next",
+  ".open-next",
+  ".wrangler",
+  "dist",
+  "coverage",
+  ".git",
+]);
+
+/* ------------------------------------------------------------------ rules */
+
+/** 8 steps, one job each. Anything else is drift, not a decision. */
+const SPACING_SCALE = new Set(["0", "0.5", "1", "1.5", "2", "3", "4", "6", "10"]);
+const SPACING_UTILITY = /(?<![\w-])(gap|p|px|py|pt|pr|pb|pl|space-x|space-y)-(\d+(?:\.\d+)?)(?![\d.])/g;
+const SPACING_ALLOWED = new Map(Object.entries(CONFIG.spacingAllowed));
+
+/** The one chip module owns every chip-shaped class string. */
+const CHIP_MODULE = "chips.tsx";
+const CHIP_SIGNATURE = (literal) =>
+  /rounded-full/.test(literal) &&
+  /\btext-(xs|\[1[01]px\]|\[10px\])/.test(literal) &&
+  /\bpx-(1|1\.5|2|2\.5|3)\b/.test(literal) &&
+  /inline-flex|items-center/.test(literal);
+
+/** A raw table element is allowed only in the shared composition. */
+const TABLE_COMPOSITION = "components/ui/table.tsx";
+
+const ALLOWED_CSS = new Map(Object.entries(CONFIG.allowedCss));
+const ALLOWED_COLOUR_FILES = new Map(Object.entries(CONFIG.allowedColourFiles));
+
+/** A colour is a token, never a value. */
+const ARBITRARY_COLOUR =
+  /(?<![\w-])(?:bg|text|border|from|via|to|ring|fill|stroke|outline|divide|decoration|accent|caret|placeholder|shadow)-\[[^\]]*(?:#[0-9a-fA-F]{3,8}|rgba?\(|oklch\()/g;
+const INLINE_COLOUR_STYLE = /style=\{\{[^}]*?(#[0-9a-fA-F]{3,8}|rgba?\(|oklch\()[^}]*?\}\}/g;
+
+/** Icons come from Phosphor, through the SSR entry, or not at all. */
+const BANNED_IMPORTS = /^\s*(lucide-react|radix-ui|@radix-ui\/[^"']*|@base-ui\/react(?:\/[^"']*)?|react-icons(?:\/[^"']*)?|@heroicons\/[^"']*|@tabler\/[^"']*)$/;
+const IMPORT_SOURCE = /(?:from|require\()\s*["']([^"']+)["']/g;
+
+/* ----------------------------------------------------------------- plumbing */
+
+function* walk(dir) {
+  let entries;
+  try {
+    entries = readdirSync(dir);
+  } catch {
+    return;
+  }
+  for (const entry of entries) {
+    if (SKIP_DIRS.has(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) yield* walk(full);
+    else yield full;
+  }
+}
+
+/** String literals only: prose may name a banned value while explaining it. */
+function* literals(source) {
+  const pattern = /"((?:[^"\\]|\\.)*)"|`((?:[^`\\]|\\.)*)`/g;
+  for (const match of source.matchAll(pattern)) {
+    const literal = match[1] ?? match[2];
+    if (literal) yield { literal, line: source.slice(0, match.index).split("\n").length };
+  }
+}
+
+const lineOf = (source, index) => source.slice(0, index).split("\n").length;
+const isGenerated = (rel) => GENERATED.some((prefix) => rel.startsWith(prefix));
+
+const RULES = {
+  spacing: {
+    title: "off-scale spacing",
+    hint: "use one of: 0 / 0.5 / 1 / 1.5 / 2 / 3 / 4 / 6 / 10",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const util of literal.matchAll(SPACING_UTILITY)) {
+          if (SPACING_SCALE.has(util[2])) continue;
+          const token = `${util[1]}-${util[2]}`;
+          if (SPACING_ALLOWED.has(token)) continue;
+          hits.push({ line, token });
+        }
+      }
+      return hits;
+    },
+  },
+
+  chips: {
+    title: "hand-rolled chip",
+    hint: "use <Chip> from components/mri/chips.tsx",
+    scan(rel, source) {
+      if (basename(rel) === CHIP_MODULE) return [];
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        if (CHIP_SIGNATURE(literal)) hits.push({ line, token: "chip-shaped class string" });
+      }
+      return hits;
+    },
+  },
+
+  tables: {
+    title: "raw <table>",
+    hint: "use the shared table composition in components/ui/table.tsx",
+    scan(rel, source) {
+      if (rel === TABLE_COMPOSITION) return [];
+      const hits = [];
+      for (const match of source.matchAll(/<table[\s>]/g)) {
+        hits.push({ line: lineOf(source, match.index), token: "<table>" });
+      }
+      return hits;
+    },
+  },
+
+  tokens: {
+    title: "colour literal in a class name",
+    hint: "use a semantic token (bg-background, text-primary, var(--warning-ink) …)",
+    scan(rel, source) {
+      if (ALLOWED_COLOUR_FILES.has(rel)) return [];
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(ARBITRARY_COLOUR)) {
+          hits.push({ line, token: match[0] });
+        }
+      }
+      for (const match of source.matchAll(INLINE_COLOUR_STYLE)) {
+        hits.push({ line: lineOf(source, match.index), token: "inline colour style" });
+      }
+      return hits;
+    },
+  },
+
+  icons: {
+    title: "banned import",
+    hint: "icons come from @phosphor-icons/react/dist/ssr; UI primitives from components/ui",
+    scan(rel, source) {
+      const hits = [];
+      for (const match of source.matchAll(IMPORT_SOURCE)) {
+        const spec = match[1];
+        const line = lineOf(source, match.index);
+        if (spec.startsWith("@phosphor-icons/react") && !spec.includes("/dist/ssr")) {
+          hits.push({ line, token: spec });
+          continue;
+        }
+        if (BANNED_IMPORTS.test(spec)) hits.push({ line, token: spec });
+      }
+      return hits;
+    },
+  },
+};
+
+const CSS_RULE = {
+  title: "unsanctioned stylesheet",
+  hint: "there is no second way to add CSS; see docs/mri-ui-rules.md",
+};
+
+/* --------------------------------------------------------------------- run */
+
+function scanSource() {
+  const hits = [];
+  for (const dir of SCAN_DIRS) {
+    for (const file of walk(join(ROOT, dir))) {
+      if (!/\.(tsx|ts)$/.test(file)) continue;
+      const rel = relative(ROOT, file);
+      if (isGenerated(rel)) continue;
+      const source = readFileSync(file, "utf8");
+      for (const [id, rule] of Object.entries(RULES)) {
+        for (const hit of rule.scan(rel, source)) hits.push({ rule: id, file: rel, ...hit });
+      }
+    }
+  }
+  return hits;
+}
+
+function scanStylesheets() {
+  const hits = [];
+  for (const file of walk(ROOT)) {
+    if (!file.endsWith(".css")) continue;
+    const rel = relative(ROOT, file);
+    if (ALLOWED_CSS.has(rel)) continue;
+    hits.push({ rule: "css", file: rel, line: 1, token: rel });
+  }
+  return hits;
+}
+
+const sortHits = (hits) =>
+  hits.sort(
+    (a, b) => a.rule.localeCompare(b.rule) || a.file.localeCompare(b.file) || a.token.localeCompare(b.token) || a.line - b.line,
+  );
+
+/** One ledger entry per distinct (rule, file, token); the count catches additions. */
+function toLedger(hits) {
+  const entries = {};
+  for (const hit of hits) {
+    const key = `${hit.rule}|${hit.file}|${hit.token}`;
+    entries[key] = (entries[key] ?? 0) + 1;
+  }
+  return entries;
+}
+
+function loadBaseline() {
+  if (!existsSync(BASELINE)) return {};
+  return JSON.parse(readFileSync(BASELINE, "utf8")).entries ?? {};
+}
+
+const args = new Set(argv);
+const hits = sortHits([...scanSource(), ...scanStylesheets()]);
+const measured = toLedger(hits);
+
+if (args.has("--report")) {
+  const byRule = new Map();
+  for (const hit of hits) {
+    if (!byRule.has(hit.rule)) byRule.set(hit.rule, []);
+    byRule.get(hit.rule).push(hit);
+  }
+  console.log(`MRI UI audit — ${hits.length} violations\n`);
+  for (const [id, rule] of [...Object.entries(RULES), ["css", CSS_RULE]]) {
+    const list = byRule.get(id) ?? [];
+    const files = new Set(list.map((h) => h.file)).size;
+    console.log(`  ${id.padEnd(8)} ${String(list.length).padStart(4)}  in ${String(files).padStart(3)} files   ${rule.title}`);
+  }
+  console.log(`\nBaseline holds ${Object.values(loadBaseline()).reduce((a, b) => a + b, 0)} entries.`);
+  process.exit(0);
+}
+
+if (args.has("--update-baseline")) {
+  const hadBaseline = existsSync(BASELINE);
+  const previous = loadBaseline();
+  const before = Object.values(previous).reduce((a, b) => a + b, 0);
+  const after = Object.values(measured).reduce((a, b) => a + b, 0);
+
+  // The guard protects an existing ledger from quiet growth. Creating one for
+  // the first time is not growth.
+  if (hadBaseline && after > before && !args.has("--force")) {
+    console.error(
+      `✗ refusing to grow the baseline: ${before} → ${after}.\n` +
+        `  The ledger may only shrink. Fix the new violations, or re-run with\n` +
+        `  --update-baseline --force and say why in the commit message.`,
+    );
+    process.exit(1);
+  }
+
+  const sorted = Object.fromEntries(Object.entries(measured).sort(([a], [b]) => a.localeCompare(b)));
+  writeFileSync(
+    BASELINE,
+    JSON.stringify(
+      {
+        $comment:
+          "Existing UI drift, frozen so new drift cannot ship. This ledger may only shrink: " +
+          "audit-ui.mjs fails on any violation not listed here AND on any entry that no longer " +
+          "occurs, so a rewritten file must delete its own entries. See docs/mri-ui-rules.md.",
+        version: 1,
+        entries: sorted,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  console.log(`✓ baseline updated: ${before} → ${after} entries`);
+  process.exit(0);
+}
+
+const baseline = loadBaseline();
+
+// Count per (rule, file, token) so the ledger's allowance is compared as a
+// number: a key already in the ledger may not simply gain more of the same.
+const byKey = new Map();
+for (const hit of hits) {
+  const key = `${hit.rule}|${hit.file}|${hit.token}`;
+  if (!byKey.has(key)) byKey.set(key, []);
+  byKey.get(key).push(hit);
+}
+
+// New violations: anything beyond what the ledger allows for that key.
+const fresh = [];
+for (const [key, list] of byKey) {
+  const allowed = baseline[key] ?? 0;
+  if (list.length > allowed) fresh.push(...list.slice(allowed));
+}
+
+// Stale entries: the ledger promises drift that is no longer there.
+const seen = measured;
+const stale = Object.entries(baseline).filter(([key, count]) => (seen[key] ?? 0) < count);
+
+if (fresh.length === 0 && stale.length === 0) {
+  const total = Object.values(baseline).reduce((a, b) => a + b, 0);
+  console.log(`✓ UI audit passed — no new drift; ${total} baselined violations still to pay down.`);
+  process.exit(0);
+}
+
+if (fresh.length > 0) {
+  console.error(`✗ ${fresh.length} new UI violation${fresh.length === 1 ? "" : "s"}:\n`);
+  const byRule = new Map();
+  for (const hit of fresh) {
+    if (!byRule.has(hit.rule)) byRule.set(hit.rule, []);
+    byRule.get(hit.rule).push(hit);
+  }
+  for (const [id, list] of byRule) {
+    const rule = id === "css" ? CSS_RULE : RULES[id];
+    console.error(`  ${rule.title} — ${rule.hint}`);
+    for (const hit of list.slice(0, 12)) {
+      const key = `${hit.rule}|${hit.file}|${hit.token}`;
+      const allowed = baseline[key] ?? 0;
+      const found = (byKey.get(key) ?? []).length;
+      const note = allowed > 0 ? `   (ledger allows ${allowed}, found ${found})` : "";
+      console.error(`    ${hit.file}:${hit.line}  ${hit.token}${note}`);
+    }
+    if (list.length > 12) console.error(`    … and ${list.length - 12} more`);
+    console.error("");
+  }
+}
+
+if (stale.length > 0) {
+  console.error(`✗ ${stale.length} stale baseline entr${stale.length === 1 ? "y" : "ies"} — this drift is gone:\n`);
+  for (const [key, count] of stale.slice(0, 12)) console.error(`    ${key}  (ledger says ${count})`);
+  if (stale.length > 12) console.error(`    … and ${stale.length - 12} more`);
+  console.error(
+    `\n  Good news: the ledger may only shrink. Run\n` +
+      `      npm run audit:ui -- --update-baseline\n` +
+      `  to record the paydown.\n`,
+  );
+}
+
+if (fresh.length > 0) {
+  console.error(`  Fix these, or if the rule is genuinely wrong, change the rule — not the ledger.`);
+}
+
+process.exit(1);

@@ -38,8 +38,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /* ------------------------------------------------------------------- panels */
 
+/**
+ * A card with a header, a body and an optional footer.
+ *
+ * This is the **data card**, and its header is the most repeated block in the
+ * platform, so the three rules that govern that header are the component's shape
+ * rather than advice in a document:
+ *
+ * 1. **The title carries its count.** Pass `count`; it renders in parentheses in
+ *    a muted tone. A bare title is the exception.
+ * 2. **The description is one line.** It truncates rather than wraps, so cards
+ *    sharing a row keep level header heights. Longer detail belongs in the body.
+ * 3. **No uppercase eyebrow.** There is no prop for one. The title already names
+ *    the section, and an eyebrow both duplicates it and breaks row alignment.
+ */
 export function Panel({
   title,
+  count,
   description,
   action,
   footer,
@@ -49,6 +64,8 @@ export function Panel({
   size = "default",
 }: {
   title?: ReactNode;
+  /** The number of items on the surface, rendered as `Title (count)`. */
+  count?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
   footer?: ReactNode;
@@ -61,8 +78,13 @@ export function Panel({
     <Card size={size} className={cn("min-w-0", className)}>
       {title || description || action ? (
         <CardHeader className="border-b border-border/60 pb-3">
-          <CardTitle>{title}</CardTitle>
-          {description ? <CardDescription>{description}</CardDescription> : null}
+          <CardTitle className="truncate">
+            {title}
+            {count === undefined || count === null ? null : (
+              <span className="font-normal text-muted-foreground"> ({count})</span>
+            )}
+          </CardTitle>
+          {description ? <CardDescription className="truncate">{description}</CardDescription> : null}
           {action ? <CardAction>{action}</CardAction> : null}
         </CardHeader>
       ) : null}
@@ -73,6 +95,107 @@ export function Panel({
         </div>
       ) : null}
     </Card>
+  );
+}
+
+/* ----------------------------------------------------------- data surfaces */
+
+/**
+ * The row that holds data surfaces.
+ *
+ * Tables and charts share a row **at most two at a time**, and this is the only
+ * composition that arranges them. The cap is the point: a full-width table is how
+ * a table accumulates columns it does not need, so a surface that will not fit
+ * two-up is telling you to drop a column or split it, not to take the page.
+ *
+ * Metric strips are not data surfaces and do not belong here — see
+ * `MetricStrip`, which is a summary band and may run four across.
+ */
+export function DataRow({
+  children,
+  className,
+  ratio = "even",
+}: {
+  children: ReactNode;
+  className?: string;
+  /** `wide-left` gives the first surface the larger share, for a table beside a figure. */
+  ratio?: "even" | "wide-left";
+}) {
+  return (
+    <div
+      className={cn(
+        "grid min-w-0 items-start gap-3",
+        ratio === "even" ? "lg:grid-cols-2" : "lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A table in a card.
+ *
+ * The arrangement every table on the platform shares, so no route has to decide
+ * what a table header looks like:
+ *
+ * - the **header is plain**. No background, no blur, no shadow, no uppercase
+ *   eyebrow — a shaded table header is the single most common drift, and it makes
+ *   the same table look different on two routes.
+ * - the table **bleeds to the card's edges** (`p-0`), which is what makes a table
+ *   read as a table rather than as a list in a box.
+ * - containment is horizontal. `Table` already scrolls its own overflow, so long
+ *   rows stay reachable instead of being truncated to fit.
+ * - the **outer columns align with the card's own padding**, applied here once
+ *   rather than by every route. A table whose first column starts 4px inside the
+ *   title above it reads as misaligned even when every value is correct.
+ * - `note` is the caveat that belongs with the figures, and `footer` is the
+ *   range-and-pagination strip.
+ */
+export function TableCard({
+  title,
+  count,
+  description,
+  action,
+  note,
+  footer,
+  children,
+  className,
+  contentClassName,
+}: {
+  title?: ReactNode;
+  count?: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  note?: ReactNode;
+  footer?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  contentClassName?: string;
+}) {
+  return (
+    <Panel
+      title={title}
+      count={count}
+      description={description}
+      action={action}
+      footer={footer}
+      className={className}
+      contentClassName={cn(
+        "grid gap-0 p-0",
+        "[&_th:first-child]:pl-(--card-spacing) [&_th:last-child]:pr-(--card-spacing)",
+        "[&_td:first-child]:pl-(--card-spacing) [&_td:last-child]:pr-(--card-spacing)",
+        contentClassName,
+      )}
+    >
+      {children}
+      {note ? (
+        <p className="border-t border-border/60 px-(--card-spacing) py-2 text-[0.6875rem] leading-relaxed text-muted-foreground">
+          {note}
+        </p>
+      ) : null}
+    </Panel>
   );
 }
 

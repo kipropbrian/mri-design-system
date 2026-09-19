@@ -48,9 +48,10 @@ npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
 | `checkbox` | `components/ui/checkbox.tsx`, Phosphor import corrected |
 | `chip` | the one chip: two surfaces, seven tones, overlay scrims |
 | `layout` | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen` |
-| `patterns` | `Panel`, `MetricCard`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
+| `patterns` | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
 | `specimen-card` | `ObservationCard`, `BirdMediaCard`, `IucnChip` |
-| `spacing-audit` | `scripts/audit-spacing.mjs` — the CI gate |
+| `ui-audit` | `scripts/audit-ui.mjs` — the six-rule CI gate |
+| `spacing-audit` | deprecated alias for `ui-audit`; installs the same file |
 | `chip-audit` | `components/mri/chip-audit.tsx` — measures the rendered DOM |
 
 `theme` is a file, not a component: add `@import "./mri-theme.css";` to
@@ -114,11 +115,13 @@ to make again. `/rules` documents all three and audits itself live.
 | 6 | 24 | `gap-6` | Section heading to its content |
 | 10 | 40 | `gap-10` | Between page sections |
 
-Enforced by `npm run audit:spacing`, which extracts every class-list literal and
-fails on anything outside the scale. Before it existed this app carried **120
+Enforced by `npm run audit:ui`, which extracts every class-list literal and
+fails on anything outside the scale. Before it existed the platform carried **120
 off-scale utilities** — 27 × `gap-2.5`, 14 × `py-2.5`, 10 × `gap-8`. None were
-decisions; they were drift. Four control-geometry paddings are allowed, each with
-a written reason in `scripts/audit-spacing.mjs`.
+decisions; they were drift. Six control-geometry paddings are allowed. They are
+defaults in `scripts/audit-ui.mjs`, so every project shares them, and a project
+adds its own in `scripts/audit-ui.config.json` — the allow-lists merge, so a
+config can only ever add an exemption.
 
 Four rules go with the scale:
 

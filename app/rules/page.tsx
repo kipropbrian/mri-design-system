@@ -13,8 +13,16 @@ import { ChipAudit } from "@/components/mri/chip-audit";
 import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { IucnChip } from "@/components/mri/specimen-card";
 import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
-import { Panel, StatusBadge } from "@/components/mri/patterns";
+import { Panel, StatusBadge, TableCard } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "cn";
 
 export const metadata: Metadata = {
@@ -37,6 +45,7 @@ const SPACE_SCALE = [
 /** Control geometry — fixed sizes that are not layout rhythm, each with a reason. */
 const SPACE_EXCEPTIONS = [
   { token: "pl-7 / pl-8", why: "a search input clearing its 14px icon and that icon's inset" },
+  { token: "pr-7 / pr-8", why: "an input clearing a trailing affordance — a clear button or a select caret" },
   { token: "px-8", why: "the desktop page gutter, matching the live platform" },
   { token: "pr-14", why: "a sheet header making room for its close button" },
 ];
@@ -160,51 +169,49 @@ export default function RulesPage() {
           title="Eight steps, each with one job"
           description="Tailwind will happily accept any spacing value. That is the problem — this app had 120 off-scale spacing utilities before the rule existed. These eight are the only ones a route author needs, and each has exactly one job."
         />
-        <Panel contentClassName="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs/relaxed">
-              <thead className="border-b border-border/60 bg-muted/40 text-[0.625rem] uppercase tracking-[0.12em] text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-3 font-medium">Step</th>
-                  <th className="px-3 py-3 font-medium">Value</th>
-                  <th className="px-3 py-3 font-medium">Utility</th>
-                  <th className="px-3 py-3 font-medium">Its one job</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {SPACE_SCALE.map((row) => (
-                  <tr key={row.step}>
-                    <td className="px-3 py-3 font-mono text-[0.6875rem] tabular-nums text-foreground">
-                      {row.step}
-                    </td>
-                    <td className="px-3 py-3 font-mono text-[0.6875rem] tabular-nums text-muted-foreground">
-                      {row.value}
-                    </td>
-                    <td className="px-3 py-3 font-mono text-[0.6875rem] text-muted-foreground">
-                      {row.utility}
-                    </td>
-                    <td className="px-3 py-3 text-muted-foreground">{row.role}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Panel>
+        <TableCard>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Step</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Utility</TableHead>
+                <TableHead>Its one job</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {SPACE_SCALE.map((row) => (
+                <TableRow key={row.step}>
+                  <TableCell className="font-mono text-[0.6875rem] tabular-nums text-foreground">
+                    {row.step}
+                  </TableCell>
+                  <TableCell className="font-mono text-[0.6875rem] tabular-nums text-muted-foreground">
+                    {row.value}
+                  </TableCell>
+                  <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
+                    {row.utility}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{row.role}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableCard>
 
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <Panel
             title="Enforced, not documented"
-            description="npm run audit:spacing greps every class string and fails on anything outside the eight steps"
+            description="npm run audit:ui greps every class string and fails on anything outside the eight steps"
             action={<Badge variant="outline">CI gate</Badge>}
           >
             <div className="grid gap-3">
               <pre className="overflow-x-auto rounded-lg bg-muted/40 p-3 font-mono text-[0.6875rem] leading-relaxed text-foreground">
-{`$ npm run audit:spacing
-✓ All spacing utilities are on the scale
-  (0 / 0.5 / 1 / 1.5 / 2 / 3 / 4 / 6 / 10).`}
+{`$ npm run audit:ui
+✓ UI audit passed — no new drift;
+  0 baselined violations still to pay down.`}
               </pre>
               <p className="text-[0.6875rem] leading-relaxed text-muted-foreground">
-                Before this gate existed the app carried{" "}
+                Before this gate existed the platform carried{" "}
                 <strong className="font-medium text-foreground">120 off-scale utilities</strong> — twenty-seven{" "}
                 <code className="font-mono">gap-2.5</code>, ten <code className="font-mono">gap-8</code>, fourteen{" "}
                 <code className="font-mono">py-2.5</code>. None of them were decisions; they were drift.
@@ -224,8 +231,10 @@ export default function RulesPage() {
               </div>
             ))}
             <p className="text-[0.6875rem] text-muted-foreground">
-              These are fixed control dimensions, not rhythm. If an entry stops being true, delete it from{" "}
-              <code className="font-mono">scripts/audit-spacing.mjs</code>.
+              These are fixed control dimensions, not rhythm. They are the defaults in{" "}
+              <code className="font-mono">scripts/audit-ui.mjs</code>, so every project shares them; a project
+              adds its own in <code className="font-mono">scripts/audit-ui.config.json</code>. If an entry stops
+              being true, delete it.
             </p>
           </Panel>
         </div>
@@ -346,32 +355,29 @@ export default function RulesPage() {
             </div>
           </Panel>
 
-          <Panel
+          <TableCard
             title="Tones and their meanings"
             description="A tone is a semantic role. Two chips with different tones must mean different things."
-            contentClassName="p-0"
           >
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs/relaxed">
-                <thead className="border-b border-border/60 bg-muted/40 text-[0.625rem] uppercase tracking-[0.12em] text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-3 font-medium">Chip</th>
-                    <th className="px-3 py-3 font-medium">Meaning</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
-                  {CHIP_TONES.map((row) => (
-                    <tr key={row.tone}>
-                      <td className="px-3 py-3">
-                        <Chip tone={row.tone}>{row.tone}</Chip>
-                      </td>
-                      <td className="px-3 py-3 text-muted-foreground">{row.use}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Panel>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Chip</TableHead>
+                  <TableHead>Meaning</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {CHIP_TONES.map((row) => (
+                  <TableRow key={row.tone}>
+                    <TableCell>
+                      <Chip tone={row.tone}>{row.tone}</Chip>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{row.use}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableCard>
         </div>
 
         <Panel
@@ -588,40 +594,38 @@ export default function RulesPage() {
           }
         />
 
-        <Panel contentClassName="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs/relaxed">
-              <thead className="border-b border-border/60 bg-muted/40 text-[0.625rem] uppercase tracking-[0.12em] text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-3 font-medium">Role</th>
-                  <th className="px-3 py-3 font-medium">Chip</th>
-                  <th className="px-3 py-3 font-medium">Light</th>
-                  <th className="px-3 py-3 font-medium">Dark</th>
-                  <th className="px-3 py-3 font-medium">What it is for</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {SEMANTIC_ROLES.map((role) => (
-                  <tr key={role.token}>
-                    <td className="px-3 py-3">
-                      <code className="font-mono text-[0.6875rem] text-foreground">{role.token}</code>
-                    </td>
-                    <td className="px-3 py-3">
-                      <Chip tone={role.tone}>{role.label}</Chip>
-                    </td>
-                    <td className="px-3 py-3 font-mono text-[0.5625rem] text-muted-foreground">
-                      {role.light}
-                    </td>
-                    <td className="px-3 py-3 font-mono text-[0.5625rem] text-muted-foreground">
-                      {role.dark}
-                    </td>
-                    <td className="px-3 py-3 whitespace-normal text-muted-foreground">{role.use}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Panel>
+        <TableCard>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Role</TableHead>
+                <TableHead>Chip</TableHead>
+                <TableHead>Light</TableHead>
+                <TableHead>Dark</TableHead>
+                <TableHead>What it is for</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {SEMANTIC_ROLES.map((role) => (
+                <TableRow key={role.token}>
+                  <TableCell>
+                    <code className="font-mono text-[0.6875rem] text-foreground">{role.token}</code>
+                  </TableCell>
+                  <TableCell>
+                    <Chip tone={role.tone}>{role.label}</Chip>
+                  </TableCell>
+                  <TableCell className="font-mono text-[0.5625rem] text-muted-foreground">
+                    {role.light}
+                  </TableCell>
+                  <TableCell className="font-mono text-[0.5625rem] text-muted-foreground">
+                    {role.dark}
+                  </TableCell>
+                  <TableCell className="whitespace-normal text-muted-foreground">{role.use}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableCard>
 
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <Panel

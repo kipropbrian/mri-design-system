@@ -10,10 +10,10 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
-    "audit:spacing": "node scripts/audit-spacing.mjs",
     "data:extract": "node scripts/extract-platform-data.mjs",
     "data:assets": "python3 scripts/prepare-assets.py",
-    "verify": "npm run typecheck && npm run lint && npm run audit:spacing"
+    "verify": "npm run typecheck && npm run lint && npm run audit:ui",
+    "audit:ui": "node scripts/audit-ui.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
