@@ -212,6 +212,36 @@ decision. This is the bulk of the work and it should look boring.
 
 **Gate per route:** `verify` green, and the route's e2e selectors repointed.
 
+**Landed.** The ledger went from **469 violations to none**, and all six rules
+read zero: spacing, chips, tables, colour literals, banned imports, stylesheets.
+It ran in five commits rather than 28, because the work did not divide along route
+boundaries and pretending it did would have produced commits nobody could review.
+
+What it actually took, none of which the plan predicted:
+
+1. **Spacing was 406 of the 469**, across 57 files — plus 10 files spelled
+   correctly and 4 spelled with a different value entirely. Collapsing it file by
+   file would have taken a dozen sessions and still left the same value reading
+   differently in two places, so it went in one reviewed pass with a published
+   equivalence table: **nearest step, ties round down**, so a pass can tighten an
+   interface but never widen one. Nothing can start overflowing as a result.
+2. **The chips were five different colours for one meaning.** Three filter toggles
+   in iNaturalist were emerald, amber and chart-2 depending on which filter was
+   active — they now share `Chip tone={on ? "primary" : "neutral"}`, because all
+   three mean one thing. The homepage's badge tones were a colour string in the
+   page's own data; `badgeTone: string` is now `ChipTone`, so the type system holds
+   the line.
+3. **`monitoring` stopped rendering a chip**, which the rule book asked for and the
+   platform had never done. Only `stable` and `withdrawn` earn one.
+4. **`IucnBadge` carried a 44-line colour map** for seven IUCN codes in two visual
+   variants. It is now the shared `IucnChip`, taking its tone from `IUCN_TONE` —
+   which is precisely what extracting `lib/taxonomy` was for.
+5. **Two raw tables** now use the shared composition, and `#birdTable` kept its
+   `id`, its `#birdTableBody` and its `th`/`td` elements so the e2e suite still
+   finds exactly what it looks for.
+6. **One e2e assertion broke**, exactly as the plan said it would: the checklist
+   table header asserted the old `px-2.5`.
+
 **Step 4 — the e2e suite.**
 
 **37 tests across 9 specs assert on current DOM** (`div.space-y-3`, heading
@@ -221,6 +251,26 @@ behaviour. Prefer role and `data-testid` selectors over structural ones so the
 next rewrite is cheaper.
 
 **Gate:** 37 tests green against the new markup.
+
+**Landed**, and the suite is now **48 tests**, not 37. The gate was already met
+before this step began — the suite passes — so the work here was the part the plan
+actually cared about: making it survive the *next* rewrite.
+
+Checking every selector against the source turned up **six assertions that were
+passing vacuously**. `.hero`, `.toolbar`, `.table-wrapper`, `.checklist-badge`,
+`#filterPanel` and `#filter-buboOnly` do not exist anywhere in the tree, and
+`#radar-analytics` / `#radial-analytics` / `#scatter-analytics` never did. Each was
+a `toHaveCount(0)`, so each passed by matching nothing and would have kept passing
+if the thing it guarded against came back. They now point at real hooks — the
+bird-only ids that must be absent, `#sidebarFilters`, `[data-chip]:has-text("BUBO")`,
+and `.recharts-radar` for the chart type that was actually removed.
+
+Structural selectors were replaced with test ids: `div.space-y-3`,
+`.species-detail-link` (six uses), the three alignment anchors
+(`header > div`, `main > div`, `main > div > div`) and the quiz geometry
+assertions. Getting the alignment anchors wrong the first time was instructive: the
+test caught it with a 31px difference — exactly the `lg:px-8` step its own comment
+warns about — so the fix was measured off the live DOM rather than guessed twice.
 
 **Step 5 — the carve-out and the final sweep.**
 
@@ -235,6 +285,33 @@ next rewrite is cheaper.
 
 **Gate:** all audits green with no exceptions beyond the documented geometry
 ones; `verify` green.
+
+**Landed.** All six audit rules read zero with an empty ledger, and `verify` is
+green with 48/48 e2e.
+
+**The player was kept, and the rule names it.** The plan preferred absorbing it.
+On inspection that is 606 lines of CSS and 1,657 lines of imperative audio and
+transport JavaScript, and it is not part of the app's DOM at all: it is a
+standalone document (`public/bird-review/player-frame.html`) in an iframe, with its
+own stylesheet. Absorbing it is a rewrite of a working media runtime, not a
+carve-out, and the plan allows the alternative — "if it is kept, the rule must name
+it explicitly". It is now named in the platform's rule set and in each audit
+exception, with the reason it is safe: an iframe cannot leak styles into the app.
+
+**The compatibility aliases were dead, which the plan could not have known.**
+`app/globals.css` carried 21 `--bg` / `--text` / `--forest` / `--amber`
+declarations marked "used only by the isolated upload media player". The iframe
+never loaded that file, and nothing else referenced them: a tree-wide search for
+`var(--x)` returns zero for all 21. Removed. The `--shadow-*` and `--font-*`
+declarations beside them were **kept**, because those are Tailwind theme variables
+that `shadow-xs` (94 uses) and `font-mono` (245 uses) actually consume — deleting
+them would have quietly reverted the warm shadows to neutral grey.
+
+**One project-level consequence worth stating.** Because `components/mri` and
+`components/ui` are both installed rather than owned, the platform's audit now
+excludes them, exactly as it always excluded `components/ui`. Auditing installed
+code locally reports this repository's decisions as the platform's drift and breaks
+on every reinstall — which is what the `checkbox` item was fixed to stop.
 
 ### Risks
 
