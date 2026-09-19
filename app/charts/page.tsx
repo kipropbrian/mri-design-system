@@ -8,8 +8,8 @@ import {
   MultiLine,
   Sparkline,
   StatusDonut,
-  CHART_COLORS,
 } from "@/components/mri/charts";
+import { CATEGORICAL, CHART_COLORS } from "@/lib/chart-colors";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
@@ -305,6 +305,54 @@ export default function ChartsPage() {
               </ChartFrame>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="grid gap-3">
+        <SectionHeader
+          eyebrow="Identity"
+          title="The categorical ramp"
+          description="The olive ramp above encodes magnitude, so it cannot encode identity: nine countries drawn from it are nine shades of one colour. These nine steps are for charts that plot entities, and they exist as tokens because their absence produced seventy-one loose hex values across the platform's charts."
+        />
+        <Specimen
+          label="categorical identity · nine steps"
+          note="lightness held in a 0.58–0.64 band so no series reads as more important"
+        >
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-9">
+            {CATEGORICAL.map((color, index) => (
+              <div key={color} className="grid gap-1.5">
+                <span
+                  className="h-12 rounded-lg ring-1 ring-foreground/10"
+                  style={{ background: color }}
+                  aria-hidden="true"
+                />
+                <code className="font-mono text-[0.625rem] text-muted-foreground">
+                  cat-{index + 1}
+                </code>
+              </div>
+            ))}
+          </div>
+        </Specimen>
+        <div className="grid gap-3 md:grid-cols-3">
+          {[
+            {
+              title: "Measured, not chosen by eye",
+              body: "The weakest step clears 3.5:1 on the light card and 6.9:1 on the dark one, past the 3:1 WCAG 1.4.11 asks of a graphical object. The closest of the thirty-six pairs sits at ΔE(OKLab) 0.11.",
+            },
+            {
+              title: "The ramp assumes a legend",
+              body: "ΔE 0.11 is distinguishable side by side and not from memory, so a categorical chart always draws its labels. If there is no room for labels, the chart has too many series for this ramp.",
+            },
+            {
+              title: "Order is stable, or the ramp lies",
+              body: "A country that is red in one figure and teal in the next is worse than two countries sharing a colour, because the reader carries the first chart's key into the second. Sort by the domain, never by the values in hand.",
+            },
+          ].map((rule) => (
+            <div key={rule.title} className="grid gap-1.5 rounded-lg bg-card p-3 ring-1 ring-foreground/10">
+              <h3 className="font-heading text-xs/relaxed font-medium text-foreground">{rule.title}</h3>
+              <p className="text-[0.6875rem] leading-relaxed text-muted-foreground">{rule.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 

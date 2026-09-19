@@ -7,7 +7,11 @@ import {
   SpeakerHighIcon,
   WaveformIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { CountryBar, GroupedBar, CHART_COLORS } from "@/components/mri/charts";
+import {
+  CountryBar,
+  GroupedBar,
+} from "@/components/mri/charts";
+import { CHART_COLORS } from "@/lib/chart-colors";
 import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,

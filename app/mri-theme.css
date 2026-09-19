@@ -27,6 +27,25 @@
    card, so `text-primary` on a tinted chip measured 2.1:1. Every `-ink` below is
    picked to clear WCAG AA (4.5:1) at 10px on the `--card` surface of its own
    theme; every `-foreground` clears it on its solid fill.
+
+   ## The categorical chart ramp
+
+   The preset's `--chart-1 … --chart-5` are one monochrome **olive** ramp, which is
+   right for ordered series and useless for identity: nine countries drawn from it
+   are nine shades of the same colour. `--chart-cat-1 … --chart-cat-9` is the
+   categorical ramp for that job, and it is a documented token set rather than the
+   seventy-one loose hex values that grew in its absence.
+
+   Measured, not asserted. Lightness is held in a narrow band — 0.58–0.64 light and
+   0.74–0.80 dark — so no series reads as more important than another, and the
+   weakest step clears **3.5:1** on the light card and **6.9:1** on the dark one,
+   comfortably past the 3:1 that WCAG 1.4.11 asks of a graphical object. The closest
+   pair of the thirty-six sits at **ΔE(OKLab) 0.11**, which is distinguishable
+   beside a legend and *not* distinguishable from memory.
+
+   That last number is why the ramp does not license colour-only encoding. Use it
+   with the labels `charts.tsx` already draws; if a chart has no room for labels,
+   it has too many series for this ramp and wants the olive ramp at three or fewer.
    ========================================================================== */
 
 @theme inline {
@@ -41,6 +60,15 @@
   --color-notable: var(--notable);
   --color-notable-foreground: var(--notable-foreground);
   --color-notable-ink: var(--notable-ink);
+  --color-chart-cat-1: var(--chart-cat-1);
+  --color-chart-cat-2: var(--chart-cat-2);
+  --color-chart-cat-3: var(--chart-cat-3);
+  --color-chart-cat-4: var(--chart-cat-4);
+  --color-chart-cat-5: var(--chart-cat-5);
+  --color-chart-cat-6: var(--chart-cat-6);
+  --color-chart-cat-7: var(--chart-cat-7);
+  --color-chart-cat-8: var(--chart-cat-8);
+  --color-chart-cat-9: var(--chart-cat-9);
 }
 
 :root {
@@ -65,6 +93,18 @@
   --notable: oklch(0.79 0.15 80);
   --notable-foreground: oklch(0.3 0.07 62);
   --notable-ink: oklch(0.45 0.09 62);
+
+  /* Categorical identity, for charts that plot entities rather than magnitudes.
+     Hues are ~40° apart and lightness alternates inside a 0.58–0.64 band. */
+  --chart-cat-1: oklch(0.593 0.15 18.6);
+  --chart-cat-2: oklch(0.64 0.147 56.2);
+  --chart-cat-3: oklch(0.58 0.111 92.4);
+  --chart-cat-4: oklch(0.58 0.15 137.1);
+  --chart-cat-5: oklch(0.616 0.105 178.4);
+  --chart-cat-6: oklch(0.58 0.111 232.8);
+  --chart-cat-7: oklch(0.636 0.15 269.1);
+  --chart-cat-8: oklch(0.58 0.15 303.7);
+  --chart-cat-9: oklch(0.635 0.15 339.2);
 }
 
 .dark {
@@ -84,4 +124,16 @@
   --notable: oklch(0.84 0.14 83);
   --notable-foreground: oklch(0.22 0.06 60);
   --notable-ink: oklch(0.87 0.13 82);
+
+  /* The same nine identities, lifted into a 0.74–0.80 band so they stay legible
+     on the dark card without any of them shouting. */
+  --chart-cat-1: oklch(0.74 0.14 27.9);
+  --chart-cat-2: oklch(0.8 0.14 65.1);
+  --chart-cat-3: oklch(0.741 0.14 103);
+  --chart-cat-4: oklch(0.8 0.14 142);
+  --chart-cat-5: oklch(0.74 0.124 180.7);
+  --chart-cat-6: oklch(0.8 0.137 220.2);
+  --chart-cat-7: oklch(0.74 0.126 259.3);
+  --chart-cat-8: oklch(0.8 0.115 302.3);
+  --chart-cat-9: oklch(0.74 0.14 341.5);
 }

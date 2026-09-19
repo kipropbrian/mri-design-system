@@ -122,6 +122,28 @@
       ]
     },
     {
+      "name": "charts",
+      "type": "registry:item",
+      "title": "Chart compositions",
+      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL — the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/theme",
+        "chart"
+      ],
+      "files": [
+        {
+          "path": "components/mri/charts.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/charts.tsx"
+        },
+        {
+          "path": "lib/chart-colors.ts",
+          "type": "registry:file",
+          "target": "~/lib/chart-colors.ts"
+        }
+      ]
+    },
+    {
       "name": "layout",
       "type": "registry:item",
       "title": "Page layout primitives",

@@ -20,6 +20,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { OLIVE } from "@/lib/chart-colors";
 
 /**
  * Chart compositions.
@@ -35,16 +36,6 @@ import {
 
 const AXIS_TICK = { fontSize: 10 } as const;
 const GRID = { stroke: "var(--border)", strokeDasharray: "3 3", vertical: false } as const;
-
-const OLIVE = {
-  strong: "var(--chart-4)",
-  mid: "var(--chart-3)",
-  soft: "var(--chart-2)",
-  pale: "var(--chart-1)",
-  primary: "var(--primary)",
-} as const;
-
-export const CHART_COLORS = OLIVE;
 
 function axisProps() {
   return {

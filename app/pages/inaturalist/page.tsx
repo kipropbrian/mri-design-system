@@ -8,7 +8,11 @@ import {
   ShieldCheckIcon,
   TreeIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { InatScanArea, InatTaxaBar, CHART_COLORS } from "@/components/mri/charts";
+import {
+  InatScanArea,
+  InatTaxaBar,
+} from "@/components/mri/charts";
+import { CHART_COLORS } from "@/lib/chart-colors";
 import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,

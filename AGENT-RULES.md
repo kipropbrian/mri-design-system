@@ -78,7 +78,7 @@ Tones: `neutral`, `primary`, `positive`, `info`, `warning`, `notable`,
 **`monitoring` gets no chip.** It is the default state, so it renders as absence.
 Only `stable` and `withdrawn` earn one.
 
-## Four traps that will cost you an hour
+## Five traps that will cost you an hour
 
 1. **The preset `Badge` cannot be recoloured.** Its variants carry
    `dark:bg-input/30`, and Tailwind compiles `dark:` with `:is(.dark *)`, which
@@ -100,3 +100,12 @@ Only `stable` and `withdrawn` earn one.
    link instead. Omitting the flag keeps the link role but logs a dev-only warning
    on every render; `nativeButton={false}` is right only for a genuine action,
    such as `SheetClose` wrapping a link.
+5. **A value imported from a `"use client"` module is not that value.** In a server
+   component the bundler replaces the module with client references, so you get a
+   proxy object. Reading a property off it happens to work, which is why
+   `CHART_COLORS.strong` in a server page has always looked fine — `.map` over an
+   array does not, and fails at prerender with `CATEGORICAL.map is not a function`,
+   naming neither the import nor the cause. Constants belong in a module with no
+   directive; `lib/chart-colors.ts` exists for exactly this reason.
+   The same family of bug: the bare `@phosphor-icons/react` entry calls
+   `createContext`, so icons must come from `@phosphor-icons/react/dist/ssr`.
