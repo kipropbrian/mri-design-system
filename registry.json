@@ -185,6 +185,23 @@
       ]
     },
     {
+      "name": "audio-player",
+      "type": "registry:item",
+      "title": "Audio player",
+      "description": "The audio transport: circle play/pause, waveform, replay with its key hint, scrub track and tabular time. Caller-owned playback state, so one <audio> element can outlive a re-render. Takes surface=overlay to sit on a photograph. Pairs with the format item's formatDuration.",
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/format",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/mri/audio-player.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/audio-player.tsx"
+        }
+      ]
+    },
+    {
       "name": "layout",
       "type": "registry:item",
       "title": "Page layout primitives",

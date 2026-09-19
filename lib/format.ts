@@ -103,6 +103,27 @@ export function formatRelativeDays(
   return months <= 1 ? "1 month ago" : `${months} months ago`;
 }
 
+/**
+ * Playback position and duration: `185` -> `3:05`, `3725` -> `62:05`.
+ *
+ * Minutes are **not** folded into hours. A recording's position is read against
+ * its own duration, and `1:02:05` is harder to compare with `1:01:58` than
+ * `62:05` is. Whole hours are the only case where the hour form is clearer, and
+ * no MRI audio is that long.
+ *
+ * A duration that is not a finite positive number is `0:00` rather than a dash,
+ * because this renders inside a transport control where a dash reads as broken.
+ */
+export function formatDuration(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || !Number.isFinite(seconds) || seconds <= 0) {
+    return "0:00";
+  }
+  const total = Math.floor(seconds);
+  const minutes = Math.floor(total / 60);
+  const remainder = total % 60;
+  return `${minutes}:${String(remainder).padStart(2, "0")}`;
+}
+
 export function initials(value: string | null | undefined): string {
   if (!value) return "??";
   const cleaned = value.replace(/[^a-zA-Z0-9]+/g, " ").trim();

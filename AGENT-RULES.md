@@ -78,6 +78,55 @@ Tones: `neutral`, `primary`, `positive`, `info`, `warning`, `notable`,
 **`monitoring` gets no chip.** It is the default state, so it renders as absence.
 Only `stable` and `withdrawn` earn one.
 
+## Composition
+
+Tables and charts are **data surfaces**, and a row holds at most two — two tables,
+or a table and a chart, never three and never one full-width. A surface that will
+not fit two-up is telling you to drop a column or split it, not to take the page.
+Use `DataRow`; it is the only thing that arranges them.
+
+| need | use | never |
+| --- | --- | --- |
+| a card with a header | `Panel` | a hand-rolled title + description div |
+| a table | `TableCard` around `Table` | your own bordered box, or a shaded header |
+| a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
+| two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
+| a summary band | `MetricStrip` | a data surface — it may run four across |
+
+**The data-card header** is `Panel`'s shape, not a recipe to retype: the title
+carries its count in parentheses, the description is one line and truncates, and
+there is no uppercase eyebrow inside a data card.
+
+**A table header is plain.** No background, no blur, no shadow, no uppercase
+tracking. A shaded header is the most common drift in this system, and it makes one
+table look like two different components on two routes.
+
+**Page padding is not a route's decision.** `PageContainer` owns the gutter
+(`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between
+sections (`gap-10`). A route that passes `py-*`, `pt-*`, `pb-*` or `space-y-*` to
+it is restating the contract; a nav strip is `density="band"`.
+
+## Audio
+
+Audio is the subject, not the illustration, so it has one component: `AudioPlayer`.
+
+- **The player owns transport; the screen owns playback.** Pass `isPlaying`,
+  `currentTime` and `duration`; report intent through `onTogglePlay`, `onReplay` and
+  `onSeek`. Never put the `<audio>` element inside the player — its lifetime must
+  outlive a re-render, and the same element usually drives the waveform.
+- **`onSeek` takes a fraction, 0–1**, from the track's own geometry. The screen
+  converts it against the duration it already owns.
+- **On artwork, `surface="overlay"`.** The default card surface on a photograph is
+  unreadable, the same way an unscrimmed chip is.
+- **Durations come from `formatDuration`.** Minutes do not roll into hours: `62:05`
+  compares against `61:58` and `1:02:05` does not. An unknown duration shows
+  `—:——`, not `0:00`.
+- **Space toggles play, R replays.** Advertise both with `kbd`; bind neither here —
+  the shortcut belongs to the screen that owns focus.
+- **A spectrogram is not a player.** The upload reviewer's canvas annotator keeps
+  its iframe document, but it consumes this system's tokens rather than its own
+  palette, and it has no second set of transport controls.
+
 ## Five traps that will cost you an hour
 
 1. **The preset `Badge` cannot be recoloured.** Its variants carry
