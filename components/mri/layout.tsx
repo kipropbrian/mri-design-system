@@ -56,6 +56,7 @@ export function PageHeader({
   status,
   actions,
   className,
+  titleTag = "h1",
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -63,7 +64,16 @@ export function PageHeader({
   status?: ReactNode;
   actions?: ReactNode;
   className?: string;
+  /**
+   * Set to `"div"` in a loading skeleton. A skeleton must not emit an `<h1>`,
+   * or the real header that replaces it produces a second one and the document
+   * ends up with two top-level headings.
+   */
+  titleTag?: "h1" | "div";
 }) {
+  const titleClassName =
+    "text-balance font-heading text-2xl font-medium tracking-tight text-foreground sm:text-3xl";
+
   return (
     <header
       className={cn(
@@ -73,9 +83,13 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow ? <Eyebrow className="mb-1.5">{eyebrow}</Eyebrow> : null}
-        <h1 className="text-balance font-heading text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
-          {title}
-        </h1>
+        {titleTag === "h1" ? (
+          <h1 className={titleClassName}>{title}</h1>
+        ) : (
+          <div aria-hidden="true" className={titleClassName}>
+            {title}
+          </div>
+        )}
         {description ? (
           <p className="mt-2 max-w-3xl text-pretty text-xs/relaxed text-muted-foreground sm:text-sm/relaxed">
             {description}

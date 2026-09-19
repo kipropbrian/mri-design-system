@@ -466,58 +466,157 @@ function DataState({
 
 /* ---------------------------------------------------------------- skeletons */
 
-export function MetricCardSkeleton({ className }: { className?: string }) {
+/**
+ * Skeletons mirror the geometry of the thing they stand in for, so a route does
+ * not shift when the data lands (zero CLS). That is why each one takes width and
+ * shape overrides: a skeleton that does not match its own table is worse than no
+ * skeleton, because the shift it causes is the thing it was added to prevent.
+ *
+ * None of them invent a size — the widths below are the same arbitrary values
+ * the real cells use.
+ */
+
+export interface MetricCardSkeletonProps {
+  className?: string;
+  labelWidth?: string;
+  valueWidth?: string;
+  detailWidth?: string;
+}
+
+export function MetricCardSkeleton({
+  className,
+  labelWidth = "w-24",
+  valueWidth = "w-20",
+  detailWidth = "w-28",
+}: MetricCardSkeletonProps) {
   return (
     <Card size="sm" className={cn("justify-between gap-3", className)} aria-hidden="true">
       <CardHeader className="gap-2">
-        <Skeleton className="h-2.5 w-24 rounded" />
-        <Skeleton className="h-6 w-20 rounded" />
+        <Skeleton className={cn("h-2.5 rounded", labelWidth)} />
+        <Skeleton className={cn("h-6 rounded", valueWidth)} />
       </CardHeader>
       <CardContent>
-        <Skeleton className="h-2.5 w-28 rounded" />
+        <Skeleton className={cn("h-2.5 rounded", detailWidth)} />
       </CardContent>
     </Card>
   );
 }
 
-export function MetricStripSkeleton({ count = 4 }: { count?: number }) {
+/**
+ * Four identical cards read as a bug rather than as a load, so the widths vary
+ * by position. Deterministic, not random: the same route must skeletonise the
+ * same way every time or the CLS measurement is meaningless.
+ */
+const METRIC_SKELETON_WIDTHS: MetricCardSkeletonProps[] = [
+  { labelWidth: "w-24", valueWidth: "w-20", detailWidth: "w-28" },
+  { labelWidth: "w-28", valueWidth: "w-16", detailWidth: "w-24" },
+  { labelWidth: "w-20", valueWidth: "w-24", detailWidth: "w-32" },
+  { labelWidth: "w-16", valueWidth: "w-14", detailWidth: "w-20" },
+];
+
+export function MetricStripSkeleton({
+  count = 4,
+  label = "Loading summary metrics",
+  className,
+}: {
+  count?: number;
+  label?: string;
+  className?: string;
+}) {
   return (
     <section
-      className="grid grid-cols-2 gap-3 sm:gap-3 lg:grid-cols-4"
+      className={cn("grid grid-cols-2 gap-3 lg:grid-cols-4", className)}
       aria-busy="true"
-      aria-label="Loading summary metrics"
+      aria-label={label}
     >
       {Array.from({ length: count }, (_, index) => (
-        <MetricCardSkeleton key={index} />
+        <MetricCardSkeleton
+          key={index}
+          {...METRIC_SKELETON_WIDTHS[index % METRIC_SKELETON_WIDTHS.length]}
+        />
       ))}
     </section>
   );
 }
 
+export interface TableColumnSkeleton {
+  headerWidth?: string;
+  cellWidth?: string;
+  align?: "left" | "center" | "right";
+  className?: string;
+}
+
+/** Shapes for a bare column count, so `columns={5}` still looks like a table. */
+const DEFAULT_COLUMN_SKELETONS: TableColumnSkeleton[] = [
+  { headerWidth: "w-8", cellWidth: "w-6", align: "center" },
+  { headerWidth: "w-28", cellWidth: "w-4/5" },
+  { headerWidth: "w-32", cellWidth: "w-3/5" },
+  { headerWidth: "w-20", cellWidth: "w-16" },
+  { headerWidth: "w-24", cellWidth: "w-20" },
+  { headerWidth: "w-16", cellWidth: "w-12", align: "right" },
+];
+
+/**
+ * Pass `columns` as a number for a generic table, or as a column config array
+ * when the skeleton has to match a specific table's real column geometry.
+ * `containerClassName` styles the frame; `className` styles the `<table>`.
+ */
 export function TableSkeleton({
   rows = 6,
   columns = 4,
   label = "Loading table",
   className,
+  containerClassName,
 }: {
   rows?: number;
-  columns?: number;
+  columns?: number | TableColumnSkeleton[];
   label?: string;
   className?: string;
+  containerClassName?: string;
 }) {
+  const configs: TableColumnSkeleton[] = Array.isArray(columns)
+    ? columns
+    : [
+        ...DEFAULT_COLUMN_SKELETONS.slice(0, Math.min(columns, DEFAULT_COLUMN_SKELETONS.length)),
+        ...Array.from(
+          { length: Math.max(0, columns - DEFAULT_COLUMN_SKELETONS.length) },
+          () => ({ headerWidth: "w-20", cellWidth: "w-24" }),
+        ),
+      ];
+
   return (
     <div
-      className={cn("overflow-hidden rounded-lg bg-card ring-1 ring-foreground/10", className)}
+      className={cn(
+        "overflow-hidden rounded-lg bg-card ring-1 ring-foreground/10",
+        containerClassName,
+      )}
       aria-busy="true"
       aria-label={label}
     >
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs/relaxed">
+        <table className={cn("w-full border-collapse text-left text-xs/relaxed", className)}>
           <thead className="border-b border-border/60 bg-muted/40">
             <tr>
-              {Array.from({ length: columns }, (_, index) => (
-                <th key={index} className="px-3 py-2">
-                  <Skeleton className="h-2.5 w-16 rounded" />
+              {configs.map((col, index) => (
+                <th
+                  key={index}
+                  scope="col"
+                  className={cn(
+                    "px-3 py-2",
+                    col.align === "center" && "text-center",
+                    col.align === "right" && "text-right",
+                    col.className,
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex items-center",
+                      col.align === "center" && "justify-center",
+                      col.align === "right" && "justify-end",
+                    )}
+                  >
+                    <Skeleton className={cn("h-2.5 rounded", col.headerWidth ?? "w-16")} />
+                  </div>
                 </th>
               ))}
             </tr>
@@ -525,12 +624,25 @@ export function TableSkeleton({
           <tbody className="divide-y divide-border/50">
             {Array.from({ length: rows }, (_, row) => (
               <tr key={row}>
-                {Array.from({ length: columns }, (_, index) => (
-                  <td key={index} className="px-3 py-3">
-                    <Skeleton
-                      className="h-3 rounded"
-                      style={{ width: `${45 + ((row + index) % 4) * 12}%` }}
-                    />
+                {configs.map((col, index) => (
+                  <td
+                    key={index}
+                    className={cn(
+                      "px-3 py-3",
+                      col.align === "center" && "text-center",
+                      col.align === "right" && "text-right",
+                      col.className,
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex items-center",
+                        col.align === "center" && "justify-center",
+                        col.align === "right" && "justify-end",
+                      )}
+                    >
+                      <Skeleton className={cn("h-3 rounded", col.cellWidth ?? "w-3/4")} />
+                    </div>
                   </td>
                 ))}
               </tr>
@@ -538,6 +650,62 @@ export function TableSkeleton({
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The filter bar that sits above a table. It mirrors the real toolbar's
+ * arrangement — search field, selects, action button, and an optional chip row —
+ * because a toolbar that pops in above a table is one of the largest single
+ * sources of layout shift on a data route.
+ */
+export function ToolbarSkeleton({
+  className,
+  showSelect = true,
+  showChips = false,
+  showFiltersButton = true,
+  selectCount = 1,
+  label = "Loading toolbar controls",
+}: {
+  className?: string;
+  showSelect?: boolean;
+  showChips?: boolean;
+  showFiltersButton?: boolean;
+  selectCount?: number;
+  label?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-2 rounded-lg bg-card/95 p-2 ring-1 ring-foreground/10",
+        className,
+      )}
+      aria-busy="true"
+      aria-label={label}
+    >
+      <div className="relative min-w-[180px] flex-1">
+        <Skeleton className="h-8 w-full rounded-md" />
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2 text-xs/relaxed">
+        {showSelect
+          ? Array.from({ length: selectCount }, (_, index) => (
+              <Skeleton key={index} className="h-8 w-32 rounded-md sm:w-36" />
+            ))
+          : null}
+
+        {showFiltersButton ? <Skeleton className="h-8 w-20 rounded-md" /> : null}
+      </div>
+
+      {showChips ? (
+        <div className="flex w-full items-center gap-1.5 border-t border-border/60 pt-2">
+          <Skeleton className="h-6 w-16 rounded-md" />
+          <Skeleton className="h-6 w-20 rounded-md" />
+          <Skeleton className="h-6 w-24 rounded-md" />
+          <Skeleton className="h-6 w-16 rounded-md" />
+        </div>
+      ) : null}
     </div>
   );
 }
