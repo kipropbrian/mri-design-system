@@ -316,20 +316,28 @@ const RULES = {
    * The data-card header is `Panel`'s shape, not a recipe to retype.
    *
    * Fifteen files hand-rolled it before this rule existed, four of them pinning a
-   * `min-h-[48px]` to keep row heights level — which is the component's job and
-   * which they each got slightly wrong. The signature is the pairing of
-   * `font-semibold` with `tracking-tight`: a title treatment specific enough that a
-   * prose heading rarely trips it.
+   * `min-h-[48px]` to keep row heights level — which is the component's job and which
+   * they each got slightly wrong. The signature is `font-semibold` + `tracking-tight`
+   * at a **card** size.
+   *
+   * The size qualifier is not decoration. `font-semibold tracking-tight` is also how a
+   * page's own headings are written, and without it this rule flagged twelve of them —
+   * `/about`'s five editorial section headings, the legal pages, the not-found page.
+   * Those are the page's outline rather than a card's, they are legitimately larger,
+   * and telling an author to wrap a page heading in `Panel` is telling them something
+   * wrong. A card header is `text-sm` or smaller; a page heading is `text-xl` upward.
    */
   headers: {
     title: "hand-rolled data-card header",
     hint: "use <Panel title count description> or <TableCard> from components/mri/patterns.tsx",
     scan(rel, source) {
+      const PAGE_HEADING = /\b(?:sm:|md:|lg:)?text-(?:xl|2xl|3xl|4xl|5xl)\b/;
       const hits = [];
       for (const { literal, line } of literals(source)) {
-        if (/\bfont-semibold\b/.test(literal) && /\btracking-tight\b/.test(literal)) {
-          hits.push({ line, token: "data-card header class string" });
-        }
+        if (!/\bfont-semibold\b/.test(literal)) continue;
+        if (!/\btracking-tight\b/.test(literal)) continue;
+        if (PAGE_HEADING.test(literal)) continue;
+        hits.push({ line, token: "data-card header class string" });
       }
       return hits;
     },
