@@ -33,7 +33,7 @@
       "name": "format",
       "type": "registry:item",
       "title": "Shared formatting",
-      "description": "Number, date and label formatting: grouped counts, integers, compact notation, deltas and ISO-safe dates. Dependency-free, so it installs anywhere — and the one place a numeral's treatment should be decided.",
+      "description": "Number, date and label formatting: grouped counts, integers, compact notation, deltas and ISO-safe dates. Dependency-free, so it installs anywhere \u2014 and the one place a numeral's treatment should be decided.",
       "files": [
         {
           "path": "lib/format.ts",
@@ -86,7 +86,9 @@
       "type": "registry:item",
       "title": "Chip audit",
       "description": "Measures every rendered chip and reports any outside the two allowed sizes. Drop it on a review route.",
-      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/chip"
+      ],
       "files": [
         {
           "path": "components/mri/chip-audit.tsx",
@@ -99,7 +101,7 @@
       "name": "ui-audit",
       "type": "registry:item",
       "title": "UI audit",
-      "description": "The enforcement harness: six rules over class strings and stylesheets — spacing scale, hand-rolled chips, raw tables, colour literals, banned imports, unsanctioned CSS — with a baseline that may only shrink. Project-specific exemptions go in scripts/audit-ui.config.json, never in the script. Wire it into npm run verify.",
+      "description": "The enforcement harness: six rules over class strings and stylesheets \u2014 spacing scale, hand-rolled chips, raw tables, colour literals, banned imports, unsanctioned CSS \u2014 with a baseline that may only shrink. Project-specific exemptions go in scripts/audit-ui.config.json, never in the script. Wire it into npm run verify.",
       "files": [
         {
           "path": "scripts/audit-ui.mjs",
@@ -125,7 +127,7 @@
       "name": "charts",
       "type": "registry:item",
       "title": "Chart compositions",
-      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL — the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
+      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL \u2014 the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
       "registryDependencies": [
         "kipropbrian/mri-design-system/theme",
         "chart"
@@ -140,6 +142,45 @@
           "path": "lib/chart-colors.ts",
           "type": "registry:file",
           "target": "~/lib/chart-colors.ts"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:item",
+      "title": "Sheet, Phosphor import corrected",
+      "description": "The preset sheet with its icon import moved to /dist/ssr. Install this *after* anything that pulls the preset sheet - `sidebar` does - or the bare entry overwrites it and the close button breaks Server Components.",
+      "files": [
+        {
+          "path": "components/ui/sheet.tsx",
+          "type": "registry:file",
+          "target": "~/components/ui/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:item",
+      "title": "Sidebar, Phosphor import corrected",
+      "description": "The preset sidebar and its use-mobile hook, with the icon import moved to /dist/ssr. Depends on this repository's sheet rather than the preset's, because the preset's ships the bare Phosphor entry that breaks Server Components - the same defect that hit checkbox twice.",
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/sheet",
+        "button",
+        "input",
+        "separator",
+        "skeleton",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "components/ui/sidebar.tsx",
+          "type": "registry:file",
+          "target": "~/components/ui/sidebar.tsx"
+        },
+        {
+          "path": "hooks/use-mobile.ts",
+          "type": "registry:file",
+          "target": "~/hooks/use-mobile.ts"
         }
       ]
     },
@@ -160,7 +201,7 @@
       "name": "patterns",
       "type": "registry:item",
       "title": "Page patterns",
-      "description": "Panel — the data card, with the title-carries-its-count header enforced rather than described — plus TableCard, DataRow, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
+      "description": "Panel \u2014 the data card, with the title-carries-its-count header enforced rather than described \u2014 plus TableCard, DataRow, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
       "registryDependencies": [
         "kipropbrian/mri-design-system/chip",
         "kipropbrian/mri-design-system/checkbox",

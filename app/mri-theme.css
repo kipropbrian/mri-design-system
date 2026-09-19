@@ -69,6 +69,14 @@
   --color-chart-cat-7: var(--chart-cat-7);
   --color-chart-cat-8: var(--chart-cat-8);
   --color-chart-cat-9: var(--chart-cat-9);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 :root {
@@ -105,6 +113,34 @@
   --chart-cat-7: oklch(0.636 0.15 269.1);
   --chart-cat-8: oklch(0.58 0.15 303.7);
   --chart-cat-9: oklch(0.635 0.15 339.2);
+
+  /* The application shell's rail.
+     ------------------------------------------------------------------------
+     The preset does define `--sidebar-*` in `globals.css`, so why here? Two
+     reasons, both of which bit:
+
+     1. **They do not survive a rebuild.** A `globals.css` regenerated from the
+        preset, or hand-trimmed of aliases nothing referenced yet, silently loses
+        them — which is exactly what happened to the platform: it had zero
+        sidebar tokens when the shell work started, and `sidebar` from the preset
+        ships no CSS of its own, so it renders against undefined variables.
+     2. **Two of the preset's values are wrong for this system.** Its light
+        `--sidebar-ring` is `oklch(0.737 0.021 106.9)` — the ring value already
+        measured at 2.15:1 and replaced with the 0.58 below, so the sidebar's
+        focus indicator would have failed the contrast the rest of the app now
+        passes. And its `--sidebar-primary` is a *second* green, different from
+        `--primary` in both themes, which is two primaries rather than a role.
+
+     Everything here aliases a token that is already measured, so the rail cannot
+     drift from the rest of the theme. */
+  --sidebar: oklch(0.988 0.003 106.5);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 .dark {
@@ -136,4 +172,14 @@
   --chart-cat-7: oklch(0.74 0.126 259.3);
   --chart-cat-8: oklch(0.8 0.115 302.3);
   --chart-cat-9: oklch(0.74 0.14 341.5);
+
+  /* The rail, aliased to the dark surfaces. */
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }

@@ -85,7 +85,7 @@ export default function ChartsPage() {
   const sparkValues = inat.runs.map((run) => run.newCount);
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Charts"
         title="Data displays on the olive ramp"

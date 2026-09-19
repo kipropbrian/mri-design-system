@@ -87,7 +87,7 @@ const WATCHES: Watch[] = [
 
 export default function PlatformHomePage() {
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       {/* ------------------------------------------------------------- hero */}
       <section className="grid gap-6 border-b border-border/60 pb-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-10">
         <div className="grid gap-4">

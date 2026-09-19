@@ -7,7 +7,7 @@ export default function ReferencePagesLayout({ children }: { children: React.Rea
   return (
     <div className="grid gap-0">
       <div className="border-b border-border/60 bg-muted/30">
-        <PageContainer size="wide" className="flex flex-wrap items-center justify-between gap-3 py-3">
+        <PageContainer size="wide" density="band" className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link
               href="/"

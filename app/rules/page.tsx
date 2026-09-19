@@ -146,7 +146,7 @@ const OVERLAY_RULES = [
 
 export default function RulesPage() {
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Rules"
         title="Three rules, enforced rather than described"

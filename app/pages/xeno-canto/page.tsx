@@ -55,7 +55,7 @@ export default function XenoCantoPage() {
   const weekLabels = ["30 Aug", "6 Sep", "13 Sep", "20 Sep", "27 Sep"];
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="East Africa · Regional sound archive"
         title="Which species still have no recording?"

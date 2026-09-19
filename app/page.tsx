@@ -133,7 +133,7 @@ export default function OverviewPage() {
   const latest = inat.latestRun;
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <section className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-start">
         <div className="grid gap-4">
           <MriLockup />

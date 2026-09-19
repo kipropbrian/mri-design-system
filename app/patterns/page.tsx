@@ -104,7 +104,7 @@ export default function PatternsPage() {
   const contributors = Array.from(new Set(inat.events.map((event) => event.observer))).slice(0, 5);
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Page patterns"
         title="The compositions every MRI screen is built from"

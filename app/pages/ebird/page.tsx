@@ -67,7 +67,7 @@ export default function EbirdPage() {
     .reduce((sum, row) => sum + row.species, 0);
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="East Africa · Regional media archive"
         title="Where are East Africa’s bird records documented?"

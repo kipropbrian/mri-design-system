@@ -69,7 +69,7 @@ export default function ComponentsPage() {
   const contributors = ["ksanderson", "bertogcliment", "brian_maish", "muthama", "jane_doe"];
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Components"
         title="The shadcn primitives, as generated"

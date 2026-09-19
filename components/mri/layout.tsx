@@ -16,16 +16,52 @@ const WIDTHS = {
   reading: "max-w-3xl",
 } as const;
 
+/**
+ * The page container, and the **only** thing that decides page padding.
+ *
+ * ## The contract
+ *
+ * It is a grid with a gutter, so a route lists its sections as children and never
+ * spaces them itself. Three numbers, and no route chooses its own:
+ *
+ * - **Horizontal** `px-4 sm:px-6 lg:px-8` — the shell gutter, 16 / 24 / 32px.
+ * - **Vertical** `py-6 lg:py-10` — 24px, then 40px from `lg`.
+ * - **Between sections** `gap-10` — the 40px of "40px between sections" in the
+ *   spacing scale. Sections space themselves; `space-y-*` here is drift.
+ *
+ * ## Why it is written this way
+ *
+ * Padding used to be inherited rather than decided, and nothing supplied a top
+ * padding at all: the page shell drew a card with `border` and no padding, the
+ * container supplied `px` and whatever `pb` the route happened to pass, and so
+ * content began at **0px** from the top edge while the bottom ended at 40px.
+ * Twenty-four files had grown **seven different padding recipes** between them.
+ *
+ * A route that needs different padding does not have a padding requirement; it has
+ * a layout requirement that this container is not expressing yet. Change the
+ * contract here, in one place, or use `size`.
+ */
 export function PageContainer({
   size = "wide",
+  density = "page",
   className,
   children,
   ...props
-}: React.ComponentProps<"div"> & { size?: keyof typeof WIDTHS }) {
+}: React.ComponentProps<"div"> & {
+  size?: keyof typeof WIDTHS;
+  /**
+   * `page` is a route's content. `band` is a horizontal strip that shares the
+   * page's gutter and width but not its rhythm — a section nav, a sticky filter
+   * bar. A band is not a page with different padding, which is why it is a value
+   * here rather than `className="py-3"` at the call site.
+   */
+  density?: "page" | "band";
+}) {
   return (
     <div
       className={cn(
-        "mx-auto w-full min-w-0 max-w-full px-4 sm:px-6 lg:px-8",
+        "mx-auto grid w-full min-w-0 max-w-full px-4 sm:px-6 lg:px-8",
+        density === "page" ? "gap-10 py-6 lg:py-10" : "py-3",
         WIDTHS[size],
         className,
       )}

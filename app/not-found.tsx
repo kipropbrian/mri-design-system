@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <PageContainer size="wide" className="grid gap-6 py-10">
+    <PageContainer size="wide">
       <div className="grid gap-2">
         <Eyebrow>404 · Not found</Eyebrow>
         <h1 className="text-balance font-heading text-2xl font-medium tracking-tight text-foreground sm:text-3xl">

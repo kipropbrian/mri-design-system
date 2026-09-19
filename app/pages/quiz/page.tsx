@@ -83,7 +83,7 @@ export default function QuizPage() {
   );
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Acoustic identification"
         title="Can you name the call?"

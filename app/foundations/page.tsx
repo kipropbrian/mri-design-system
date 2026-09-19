@@ -223,7 +223,7 @@ function Swatch({ token, size = "size-9" }: { token: string; size?: string }) {
 
 export default function FoundationsPage() {
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="Foundations"
         title="Tokens, type and marks"

@@ -77,7 +77,7 @@ export default function InaturalistPage() {
   const maxCountry = Math.max(...inat.countries.map((country) => country.speciesCount));
 
   return (
-    <PageContainer size="wide" className="grid gap-10 py-10 sm:py-10">
+    <PageContainer size="wide">
       <PageHeader
         eyebrow="East Africa · Weekly species audit"
         title="Which species are new to each country?"
