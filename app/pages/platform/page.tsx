@@ -224,10 +224,10 @@ export default function PlatformHomePage() {
                 loading="lazy"
                 className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-white">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-background">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-medium">Nyungwe forest clearing</span>
-                  <span className="text-white/85">Field recording · Rwanda</span>
+                  <span className="text-background/85">Field recording · Rwanda</span>
                 </div>
               </div>
             </div>
@@ -292,10 +292,10 @@ export default function PlatformHomePage() {
                 loading="lazy"
                 className="size-full object-cover object-[center_30%] transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-white">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-background">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-medium">{birds.featured[1]?.commonName}</span>
-                  <span className="text-white/85">Photo · Macaulay Library</span>
+                  <span className="text-background/85">Photo · Macaulay Library</span>
                 </div>
               </div>
             </div>

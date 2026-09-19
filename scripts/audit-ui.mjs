@@ -158,6 +158,10 @@ const TABLE_COMPOSITION = "components/ui/table.tsx";
 const ALLOWED_CSS = new Map(Object.entries(CONFIG.allowedCss));
 const ALLOWED_COLOUR_FILES = new Map(Object.entries(CONFIG.allowedColourFiles));
 
+/** The named Tailwind palette, which has no business in an MRI interface. */
+const PALETTE_COLOUR =
+  /(?<![\w-])(?:[a-z0-9]+:)*(?:bg|text|border|ring|from|via|to|fill|stroke|outline|divide|decoration|accent|caret|placeholder|shadow)-(?:slate|gray|grey|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|white|black)(?:-\d{2,3})?(?:\/\d{1,3})?\b/g;
+
 /** A colour is a token, never a value. */
 const ARBITRARY_COLOUR =
   /(?<![\w-])(?:bg|text|border|from|via|to|ring|fill|stroke|outline|divide|decoration|accent|caret|placeholder|shadow)-\[[^\]]*(?:#[0-9a-fA-F]{3,8}|rgba?\(|oklch\()/g;
@@ -325,13 +329,15 @@ const RULES = {
    * `/about`'s five editorial section headings, the legal pages, the not-found page.
    * Those are the page's outline rather than a card's, they are legitimately larger,
    * and telling an author to wrap a page heading in `Panel` is telling them something
-   * wrong. A card header is `text-sm` or smaller; a page heading is `text-xl` upward.
+   * wrong. A card header is `text-sm` or smaller; prose and page headings are `text-lg`
+   * upward. A legal document's section heading and a card's title can otherwise look
+   * identical to a class-string scan, and the one at `text-lg` is the document's.
    */
   headers: {
     title: "hand-rolled data-card header",
     hint: "use <Panel title count description> or <TableCard> from components/mri/patterns.tsx",
     scan(rel, source) {
-      const PAGE_HEADING = /\b(?:sm:|md:|lg:)?text-(?:xl|2xl|3xl|4xl|5xl)\b/;
+      const PAGE_HEADING = /\b(?:sm:|md:|lg:)?text-(?:lg|xl|2xl|3xl|4xl|5xl)\b/;
       const hits = [];
       for (const { literal, line } of literals(source)) {
         if (!/\bfont-semibold\b/.test(literal)) continue;
@@ -361,6 +367,43 @@ const RULES = {
         const classes = match[1] ?? match[2] ?? "";
         for (const util of classes.matchAll(/(?<![\w:-])((?:[a-z0-9]+:)*(?:bg|backdrop-blur|shadow)-[^\s"']+)/g)) {
           hits.push({ line: lineOf(source, match.index), token: util[1] });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A colour is a token, never a Tailwind palette name.
+   *
+   * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the
+   * narrow case. The wide one is the named palette: `text-emerald-600` for "good",
+   * `bg-amber-500` for "caution", `text-rose-600` for "bad". Those are not colours that
+   * escaped the system, they are the system's semantic roles — `positive`, `warning`,
+   * `destructive`, `info` — written out by hand, per page, in whichever of the eleven
+   * shades the author happened to pick. `mri-theme.css` already says why the roles
+   * exist: "without these three roles, routes invent them per page — which is exactly
+   * how the platform ended up with amber-500/90 in one card, amber-500/15 in another,
+   * and an olive chip standing in for warning in a third."
+   *
+   * Even `text-white` and `from-black` are covered: on a solid fill the ink is
+   * `-foreground`, and a scrim over a photograph is `foreground/70`, which is what
+   * `AudioPlayer`'s overlay surface uses. There is no colour this rule cannot express
+   * as a token, so it carries no allow-list — an allow-list here would be the drift it
+   * exists to stop, with a reason attached.
+   */
+  palette: {
+    title: "Tailwind palette colour",
+    hint: "use a semantic token: positive -> primary-ink, warning -> warning-ink, negative -> destructive-ink, info -> info-ink; ink on a fill -> -foreground; scrims -> foreground/NN",
+    scan(rel, source) {
+      // The same documentation exemption as the other two colour rules: a page that
+      // publishes the rules has to be able to name the classes it forbids, in prose
+      // and in code samples.
+      if (ALLOWED_COLOUR_FILES.has(rel)) return [];
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(PALETTE_COLOUR)) {
+          hits.push({ line, token: match[0] });
         }
       }
       return hits;

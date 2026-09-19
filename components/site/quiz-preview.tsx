@@ -314,11 +314,11 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                       🦜
                     </div>
                   )}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 text-white">
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/90 via-foreground/50 to-transparent p-3 text-background">
                     <span
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6875rem] font-medium backdrop-blur-md",
-                        isCorrect ? "bg-primary text-primary-foreground" : "bg-destructive/90 text-white",
+                        isCorrect ? "bg-primary text-primary-foreground" : "bg-destructive/90 text-background",
                       )}
                     >
                       {isCorrect ? (
@@ -332,7 +332,7 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                       )}
                     </span>
                     <h4 className="mt-2 font-heading text-base font-medium">{answer.commonName}</h4>
-                    <p className="font-serif text-xs italic text-white/85">{answer.scientificName}</p>
+                    <p className="font-serif text-xs italic text-background/85">{answer.scientificName}</p>
                   </div>
                 </div>
               ) : null}
@@ -366,7 +366,7 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                           "grid size-7 shrink-0 place-items-center rounded-md bg-muted font-mono text-[0.6875rem] font-medium text-muted-foreground",
                           "transition-colors group-hover:bg-primary group-hover:text-primary-foreground",
                           showState && correct && "bg-primary text-primary-foreground",
-                          showState && chosen && !correct && "bg-destructive text-white",
+                          showState && chosen && !correct && "bg-destructive text-background",
                         )}
                       >
                         {showState && correct ? (

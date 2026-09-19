@@ -12,7 +12,7 @@ import {
 import { ChipAudit } from "@/components/mri/chip-audit";
 import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { IucnChip } from "@/components/mri/specimen-card";
-import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
+import { PageContainer, PageHeader, PhotoStandIn, SectionHeader, Specimen } from "@/components/mri/layout";
 import { Panel, StatusBadge, TableCard } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -338,7 +338,8 @@ export default function RulesPage() {
               <p className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-muted-foreground">
                 overlay · 22px · 11px text · own scrim
               </p>
-              <div className="relative h-24 overflow-hidden rounded-lg bg-gradient-to-br from-sky-200 via-amber-100 to-emerald-200">
+              <div className="relative h-24 overflow-hidden rounded-lg">
+                <PhotoStandIn variant="pale" className="absolute inset-0" />
                 <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-1.5">
                   <Chip surface="overlay" appearance="dark" icon={<span aria-hidden="true">🇺🇬</span>}>
                     Uganda
@@ -473,7 +474,8 @@ export default function RulesPage() {
 
         <div className="grid gap-3 lg:grid-cols-2">
           <Specimen label="overlay · correct" note="two scrimmed chips, gradient caption">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br from-sky-100 via-white to-amber-100">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+              <PhotoStandIn variant="pale" className="absolute inset-0" />
               <div className="absolute inset-0 grid place-items-center">
                 <ImageSquareIcon className="size-8 text-muted-foreground/40" />
               </div>
@@ -490,7 +492,8 @@ export default function RulesPage() {
           </Specimen>
 
           <Specimen label="overlay · incorrect" note="the failure that prompted the rule">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br from-sky-100 via-white to-amber-100">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+              <PhotoStandIn variant="pale" className="absolute inset-0" />
               <div className="absolute inset-0 grid place-items-center">
                 <ImageSquareIcon className="size-8 text-muted-foreground/40" />
               </div>
@@ -633,7 +636,8 @@ export default function RulesPage() {
             description="Rarity now has its own hue, so it never reads as a second green"
             contentClassName="grid gap-3"
           >
-            <div className="relative h-28 overflow-hidden rounded-lg bg-gradient-to-br from-sky-100 via-white to-amber-100">
+            <div className="relative h-28 overflow-hidden rounded-lg">
+              <PhotoStandIn variant="pale" className="absolute inset-0" />
               <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
                 <Chip surface="overlay" appearance="dark" icon={<span aria-hidden="true">🇰🇪</span>}>
                   Kenya
