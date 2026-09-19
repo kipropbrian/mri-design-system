@@ -203,6 +203,31 @@ function* literals(source) {
   }
 }
 
+/**
+ * Whether the import statement containing `index` imports only types.
+ *
+ * A `import type { Icon } from "@phosphor-icons/react/dist/lib/types"` is erased
+ * before the module graph is built, so it cannot call `createContext` and cannot
+ * break a Server Component. The icon rules exist to catch a value import, and
+ * flagging a type import is the false positive that trains people to write
+ * exemptions — so the distinction is made explicitly rather than by widening an
+ * allow-list.
+ */
+function isTypeOnlyImport(source, index) {
+  const start = Math.max(0, source.lastIndexOf("import", index));
+  const statement = source.slice(start, index);
+  if (/^import\s+type\b/.test(statement)) return true;
+  const braces = statement.match(/\{([\s\S]*)$/);
+  if (braces) {
+    const names = braces[1]
+      .split(",")
+      .map((name) => name.trim())
+      .filter(Boolean);
+    if (names.length > 0 && names.every((name) => /^type\s/.test(name))) return true;
+  }
+  return false;
+}
+
 const lineOf = (source, index) => source.slice(0, index).split("\n").length;
 const isGenerated = (rel) => GENERATED.some((prefix) => rel.startsWith(prefix));
 
@@ -276,6 +301,7 @@ const RULES = {
       for (const match of source.matchAll(IMPORT_SOURCE)) {
         const spec = match[1];
         const line = lineOf(source, match.index);
+        if (isTypeOnlyImport(source, match.index)) continue;
         if (spec.startsWith("@phosphor-icons/react") && !spec.includes("/dist/ssr")) {
           hits.push({ line, token: spec });
           continue;
@@ -483,9 +509,9 @@ function scanGeneratedPhosphor() {
       const source = readFileSync(file, "utf8");
       for (const match of source.matchAll(IMPORT_SOURCE)) {
         const spec = match[1];
-        if (spec === "@phosphor-icons/react") {
-          hits.push({ rule: "phosphor", file: rel, line: lineOf(source, match.index), token: spec });
-        }
+        if (spec !== "@phosphor-icons/react") continue;
+        if (isTypeOnlyImport(source, match.index)) continue;
+        hits.push({ rule: "phosphor", file: rel, line: lineOf(source, match.index), token: spec });
       }
     }
   }
