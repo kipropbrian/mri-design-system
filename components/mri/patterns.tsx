@@ -51,6 +51,8 @@ import { Skeleton } from "@/components/ui/skeleton";
  *    sharing a row keep level header heights. Longer detail belongs in the body.
  * 3. **No uppercase eyebrow.** There is no prop for one. The title already names
  *    the section, and an eyebrow both duplicates it and breaks row alignment.
+ *
+ * The title is also a **real heading**, not a styled `div` — see `titleTag`.
  */
 export function Panel({
   title,
@@ -62,6 +64,7 @@ export function Panel({
   className,
   contentClassName,
   size = "default",
+  titleTag = "h3",
 }: {
   title?: ReactNode;
   /** The number of items on the surface, rendered as `Title (count)`. */
@@ -73,16 +76,28 @@ export function Panel({
   className?: string;
   contentClassName?: string;
   size?: "default" | "sm";
+  /**
+   * The element the title renders as. Defaults to `h3`, because a card title that is
+   * not a heading is invisible to heading navigation: `CardTitle` renders a `div`, so
+   * before this a page of four data cards offered a screen-reader user four
+   * indistinguishable regions and no way to move between them. `h2` is for a card
+   * that is a page's top-level section; `div` is for a card whose section is already
+   * named by a `SectionHeader` above it, where a heading would duplicate the outline.
+   */
+  titleTag?: "h2" | "h3" | "div";
 }) {
+  const TitleTag = titleTag;
   return (
     <Card size={size} className={cn("min-w-0", className)}>
       {title || description || action ? (
         <CardHeader className="border-b border-border/60 pb-3">
-          <CardTitle className="truncate">
-            {title}
-            {count === undefined || count === null ? null : (
-              <span className="font-normal text-muted-foreground"> ({count})</span>
-            )}
+          <CardTitle>
+            <TitleTag className="truncate font-heading text-sm font-medium">
+              {title}
+              {count === undefined || count === null ? null : (
+                <span className="font-normal text-muted-foreground"> ({count})</span>
+              )}
+            </TitleTag>
           </CardTitle>
           {description ? <CardDescription className="truncate">{description}</CardDescription> : null}
           {action ? <CardAction>{action}</CardAction> : null}
@@ -163,6 +178,7 @@ export function TableCard({
   children,
   className,
   contentClassName,
+  titleTag,
 }: {
   title?: ReactNode;
   count?: ReactNode;
@@ -173,6 +189,7 @@ export function TableCard({
   children: ReactNode;
   className?: string;
   contentClassName?: string;
+  titleTag?: "h2" | "h3" | "div";
 }) {
   return (
     <Panel
@@ -181,6 +198,7 @@ export function TableCard({
       description={description}
       action={action}
       footer={footer}
+      titleTag={titleTag}
       className={className}
       contentClassName={cn(
         "grid gap-0 p-0",
