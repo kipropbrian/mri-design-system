@@ -600,6 +600,21 @@ than two data surfaces.
 
 **Step 4 — tables, ruthlessly.**
 
+**Landed.** Every table is in a `TableCard`: the xeno-canto and iNaturalist country
+tables, both ebird weekly audio views, the xeno-canto country page and the country-firsts
+browser. Each had been a rounded, bordered div — or a raw `Card` — wrapped around a
+`Table`, which is a second definition of what a table card looks like, and two of the
+ebird views also carried a shaded header row.
+
+The `tableBox` rule now checks the line directly above a `Table` for a rounded or bordered
+container. **Narrowing it mattered**: the first version looked four lines up and flagged a
+segmented control that happened to sit two lines over a table. A rule that fires on the
+wrong element is worse than none, because the fix it suggests is wrong too.
+
+The gbif provenance modal's two tables were a real exception in shape but not in
+substance — the modal is already the card, so the bordered box inside it framed a frame.
+The scroll constraint stayed; the border and rounding went.
+
 One `TableCard` everywhere, two-up by default. The three xeno-canto sections
 first, then the remaining 13 files importing the primitive.
 `text-emerald-600` in `weekly-country-breakdown.tsx:110` goes with them. Columns
@@ -661,6 +676,24 @@ stack was not. A route that renders more than one page frame is the symptom, and
 cheaper to check for that than to argue about whether a route deserves an exception.
 
 **Step 7 — lock in.**
+
+**Landed.** Both repositories are tagged: this one at **v0.5.2**, the platform at
+**v1.0.0**. Fifteen rules, zero violations, empty ledger — the ledger began this work at
+492 entries. 48/48 e2e, typecheck and lint clean, `verify` green in both.
+
+The parity check is worth keeping as a habit rather than a one-off: **every installed file
+is byte-identical to this repository's** — `chips`, `layout`, `patterns`, `specimen-card`,
+`audio-player`, `charts`, the three `lib` modules, and `docs/mri-ui-rules.md`. That is the
+strongest guarantee the registry offers, and it is worth *checking* rather than assuming:
+`layout.tsx` had drifted, because `PhotoStandIn` was added to it for a review page's
+benefit. A component that exists for a documentation page has no business shipping into an
+application, so it moved to `components/site/` with the one palette-colour exemption in
+the config, and `layout` is installable again.
+
+`PhotoStandIn` taught the general rule: **anything added to `components/mri/` for this
+repository's own pages will be installed into every consumer**, and the parity check will
+report it as drift rather than as a mistake. Review scaffolding belongs in
+`components/site/`.
 
 New rules fail the build, the ~10 e2e specs the shell change touches are
 repointed, `docs/frontend-design-system.md` and `docs/mri-ui-rules.md` are
