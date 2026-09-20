@@ -204,12 +204,60 @@ function* walk(dir) {
   }
 }
 
-/** String literals only: prose may name a banned value while explaining it. */
+/**
+ * String literals only: prose may name a banned value while explaining it.
+ *
+ * "Prose" means **comments**, and for a long time this did not mean that. It was a
+ * single regex over the raw source, so a documentation comment that named the class it
+ * was warning about — in backticks, which is how these files are written — registered
+ * as a template literal and was reported as the drift it described. Rewriting
+ * `/birds` produced four violations from the comment explaining what the rewrite had
+ * removed.
+ *
+ * The docstring was right and the implementation was wrong. So this walks the source
+ * and skips `//` and `/* *\/` spans, carrying just enough state to know that a `//`
+ * inside a string is not a comment and a quote inside a comment is not a string.
+ *
+ * Only `"` and `` ` `` delimit a literal, as before: a single quote is far more often
+ * an apostrophe in JSX text than the start of a string in this codebase, and treating
+ * it as a delimiter would swallow the rest of a paragraph.
+ */
 function* literals(source) {
-  const pattern = /"((?:[^"\\]|\\.)*)"|`((?:[^`\\]|\\.)*)`/g;
-  for (const match of source.matchAll(pattern)) {
-    const literal = match[1] ?? match[2];
-    if (literal) yield { literal, line: source.slice(0, match.index).split("\n").length };
+  const length = source.length;
+  let index = 0;
+  while (index < length) {
+    const char = source[index];
+    const next = source[index + 1];
+
+    if (char === "/" && next === "/") {
+      const end = source.indexOf("\n", index);
+      index = end === -1 ? length : end + 1;
+      continue;
+    }
+    if (char === "/" && next === "*") {
+      const end = source.indexOf("*/", index + 2);
+      index = end === -1 ? length : end + 2;
+      continue;
+    }
+    if (char === '"' || char === "`") {
+      const quote = char;
+      let cursor = index + 1;
+      let value = "";
+      while (cursor < length) {
+        if (source[cursor] === "\\") {
+          value += source[cursor] + (source[cursor + 1] ?? "");
+          cursor += 2;
+          continue;
+        }
+        if (source[cursor] === quote) break;
+        value += source[cursor];
+        cursor += 1;
+      }
+      if (value) yield { literal: value, line: source.slice(0, index).split("\n").length };
+      index = cursor + 1;
+      continue;
+    }
+    index += 1;
   }
 }
 
