@@ -496,67 +496,65 @@ export default function PatternsPage() {
             action={<Badge variant="outline">Latest {inat.publishedRunId}</Badge>}
             contentClassName="grid gap-0 p-0"
           >
-            <div className="overflow-x-auto">
-              <Table className="min-w-[560px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-8 text-center">#</TableHead>
-                    <TableHead>Species</TableHead>
-                    <TableHead className="hidden sm:table-cell">Country</TableHead>
-                    <TableHead className="hidden md:table-cell">Observer</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">IDs</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {inat.events.slice(0, 8).map((record, index) => (
-                    <TableRow key={record.eventId}>
-                      <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
-                        {index + 1}
-                      </TableCell>
-                      <TableCell className="max-w-[220px]">
-                        <span className="grid min-w-0">
-                          <span className="truncate font-medium text-foreground">
-                            {record.commonName ?? record.scientificName}
-                          </span>
-                          {record.commonName ? (
-                            <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
-                              {record.scientificName}
-                            </span>
-                          ) : null}
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                          <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
-                          <span className="font-mono text-[0.6875rem] text-muted-foreground">
-                            {record.countryCode}
-                          </span>
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden max-w-[140px] truncate text-muted-foreground md:table-cell">
-                        @{record.observer}
-                      </TableCell>
-                      <TableCell>
-                        {record.status === "stable" ? (
-                          <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
-                            Stable
-                          </StatusBadge>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {record.supportCount}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableCaption>
-                  Country counts describe catalog documentation, not wildlife abundance.
-                </TableCaption>
-              </Table>
-            </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-8 text-center">#</TableHead>
+        <TableHead>Species</TableHead>
+        <TableHead className="hidden sm:table-cell">Country</TableHead>
+        <TableHead className="hidden md:table-cell">Observer</TableHead>
+        <TableHead>Status</TableHead>
+        <TableHead className="text-right">IDs</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {inat.events.slice(0, 8).map((record, index) => (
+        <TableRow key={record.eventId}>
+          <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
+            {index + 1}
+          </TableCell>
+          <TableCell className="max-w-[220px]">
+            <span className="grid min-w-0">
+              <span className="truncate font-medium text-foreground">
+                {record.commonName ?? record.scientificName}
+              </span>
+              {record.commonName ? (
+                <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
+                  {record.scientificName}
+                </span>
+              ) : null}
+            </span>
+          </TableCell>
+          <TableCell className="hidden sm:table-cell">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
+              <span className="font-mono text-[0.6875rem] text-muted-foreground">
+                {record.countryCode}
+              </span>
+            </span>
+          </TableCell>
+          <TableCell className="hidden max-w-[140px] truncate text-muted-foreground md:table-cell">
+            @{record.observer}
+          </TableCell>
+          <TableCell>
+            {record.status === "stable" ? (
+              <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
+                Stable
+              </StatusBadge>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )}
+          </TableCell>
+          <TableCell className="text-right tabular-nums">
+            {record.supportCount}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+    <TableCaption>
+      Country counts describe catalog documentation, not wildlife abundance.
+    </TableCaption>
+  </Table>
 
             <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 p-3 sm:flex-row">
               <p className="order-2 text-[0.6875rem] text-muted-foreground sm:order-1">
@@ -773,28 +771,26 @@ export default function PatternsPage() {
           description="The preset is already compact. These are the rules that keep a page dense without becoming cramped."
         />
         <Panel contentClassName="p-0">
-          <div className="overflow-x-auto">
-            <Table className="min-w-[520px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-48">Surface</TableHead>
-                  <TableHead className="w-72">Utility</TableHead>
-                  <TableHead>Applied to</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {DENSITY_RULES.map((row) => (
-                  <TableRow key={row.surface}>
-                    <TableCell className="font-medium text-foreground">{row.surface}</TableCell>
-                    <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
-                      {row.rule}
-                    </TableCell>
-                    <TableCell className="whitespace-normal text-muted-foreground">{row.usage}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-48">Surface</TableHead>
+        <TableHead className="w-72">Utility</TableHead>
+        <TableHead>Applied to</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {DENSITY_RULES.map((row) => (
+        <TableRow key={row.surface}>
+          <TableCell className="font-medium text-foreground">{row.surface}</TableCell>
+          <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
+            {row.rule}
+          </TableCell>
+          <TableCell className="whitespace-normal text-muted-foreground">{row.usage}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
         </Panel>
       </section>
     </PageContainer>

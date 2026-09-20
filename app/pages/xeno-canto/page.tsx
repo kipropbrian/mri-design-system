@@ -206,55 +206,53 @@ export default function XenoCantoPage() {
         />
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <Panel contentClassName="p-0">
-            <div className="overflow-x-auto">
-              <Table className="min-w-[560px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-8 text-center">#</TableHead>
-                    <TableHead>Species</TableHead>
-                    <TableHead className="hidden sm:table-cell">Family</TableHead>
-                    <TableHead className="text-right">Recordings</TableHead>
-                    <TableHead className="text-right">Countries</TableHead>
-                    <TableHead className="hidden text-right md:table-cell">Audio assets</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topSpecies.map((record, index) => (
-                    <TableRow key={record.speciesCode}>
-                      <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
-                        {index + 1}
-                      </TableCell>
-                      <TableCell className="max-w-[240px]">
-                        <span className="grid min-w-0">
-                          <span className="truncate font-medium text-foreground">
-                            {record.commonName}
-                          </span>
-                          <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
-                            {record.scientificName}
-                          </span>
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden max-w-[180px] truncate text-muted-foreground sm:table-cell">
-                        {record.family}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {formatNumber(record.xenoCount)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums text-muted-foreground">
-                        {record.presenceCount}/8
-                      </TableCell>
-                      <TableCell className="hidden text-right tabular-nums text-muted-foreground md:table-cell">
-                        {formatNumber(record.audioCount)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableCaption>
-                  Taxonomy courtesy of Xeno-canto. Audio-asset counts are capped at 30 per species by the
-                  reference catalogue, so identical figures mean “at or above the cap”.
-                </TableCaption>
-              </Table>
-            </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-8 text-center">#</TableHead>
+        <TableHead>Species</TableHead>
+        <TableHead className="hidden sm:table-cell">Family</TableHead>
+        <TableHead className="text-right">Recordings</TableHead>
+        <TableHead className="text-right">Countries</TableHead>
+        <TableHead className="hidden text-right md:table-cell">Audio assets</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {topSpecies.map((record, index) => (
+        <TableRow key={record.speciesCode}>
+          <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
+            {index + 1}
+          </TableCell>
+          <TableCell className="max-w-[240px]">
+            <span className="grid min-w-0">
+              <span className="truncate font-medium text-foreground">
+                {record.commonName}
+              </span>
+              <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
+                {record.scientificName}
+              </span>
+            </span>
+          </TableCell>
+          <TableCell className="hidden max-w-[180px] truncate text-muted-foreground sm:table-cell">
+            {record.family}
+          </TableCell>
+          <TableCell className="text-right tabular-nums">
+            {formatNumber(record.xenoCount)}
+          </TableCell>
+          <TableCell className="text-right tabular-nums text-muted-foreground">
+            {record.presenceCount}/8
+          </TableCell>
+          <TableCell className="hidden text-right tabular-nums text-muted-foreground md:table-cell">
+            {formatNumber(record.audioCount)}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+    <TableCaption>
+      Taxonomy courtesy of Xeno-canto. Audio-asset counts are capped at 30 per species by the
+      reference catalogue, so identical figures mean “at or above the cap”.
+    </TableCaption>
+  </Table>
           </Panel>
 
           <div className="grid content-start gap-3">

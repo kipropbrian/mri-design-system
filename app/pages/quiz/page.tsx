@@ -242,57 +242,55 @@ export default function QuizPage() {
               action={<Badge variant="outline">Last 6 sessions</Badge>}
               contentClassName="grid gap-0 p-0"
             >
-              <div className="overflow-x-auto">
-                <Table className="min-w-[440px]">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Score</TableHead>
-                      <TableHead className="text-right">Accuracy</TableHead>
-                      <TableHead className="hidden text-right sm:table-cell">Avg time</TableHead>
-                      <TableHead className="text-right">Streak</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {HISTORY.map((row) => (
-                      <TableRow key={row.date}>
-                        <TableCell className="text-[0.6875rem] tabular-nums text-muted-foreground">
-                          {row.date}
-                        </TableCell>
-                        <TableCell className="text-right font-medium tabular-nums text-foreground">
-                          {row.score}/{row.total}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <span className="inline-flex items-center justify-end gap-2">
-                            <span className="h-1.5 w-14 overflow-hidden rounded-full bg-muted">
-                              <span
-                                className={
-                                  row.score >= 4
-                                    ? "block h-full rounded-full bg-primary"
-                                    : "block h-full rounded-full bg-chart-4"
-                                }
-                                style={{ width: `${(row.score / row.total) * 100}%` }}
-                              />
-                            </span>
-                            <span className="w-8 text-right tabular-nums text-muted-foreground">
-                              {Math.round((row.score / row.total) * 100)}%
-                            </span>
-                          </span>
-                        </TableCell>
-                        <TableCell className="hidden text-right tabular-nums text-muted-foreground sm:table-cell">
-                          {row.seconds}s
-                        </TableCell>
-                        <TableCell className="text-right tabular-nums text-muted-foreground">
-                          {row.streak}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  <TableCaption>
-                    One session per day counts toward the streak; practice sessions do not.
-                  </TableCaption>
-                </Table>
-              </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead>Date</TableHead>
+        <TableHead className="text-right">Score</TableHead>
+        <TableHead className="text-right">Accuracy</TableHead>
+        <TableHead className="hidden text-right sm:table-cell">Avg time</TableHead>
+        <TableHead className="text-right">Streak</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {HISTORY.map((row) => (
+        <TableRow key={row.date}>
+          <TableCell className="text-[0.6875rem] tabular-nums text-muted-foreground">
+            {row.date}
+          </TableCell>
+          <TableCell className="text-right font-medium tabular-nums text-foreground">
+            {row.score}/{row.total}
+          </TableCell>
+          <TableCell className="text-right">
+            <span className="inline-flex items-center justify-end gap-2">
+              <span className="h-1.5 w-14 overflow-hidden rounded-full bg-muted">
+                <span
+                  className={
+                    row.score >= 4
+                      ? "block h-full rounded-full bg-primary"
+                      : "block h-full rounded-full bg-chart-4"
+                  }
+                  style={{ width: `${(row.score / row.total) * 100}%` }}
+                />
+              </span>
+              <span className="w-8 text-right tabular-nums text-muted-foreground">
+                {Math.round((row.score / row.total) * 100)}%
+              </span>
+            </span>
+          </TableCell>
+          <TableCell className="hidden text-right tabular-nums text-muted-foreground sm:table-cell">
+            {row.seconds}s
+          </TableCell>
+          <TableCell className="text-right tabular-nums text-muted-foreground">
+            {row.streak}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+    <TableCaption>
+      One session per day counts toward the streak; practice sessions do not.
+    </TableCaption>
+  </Table>
               <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 p-3 sm:flex-row">
                 <p className="order-2 text-[0.6875rem] text-muted-foreground sm:order-1">
                   Showing{" "}

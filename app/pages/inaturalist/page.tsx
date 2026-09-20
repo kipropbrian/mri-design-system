@@ -234,88 +234,86 @@ export default function InaturalistPage() {
           action={<Badge variant="secondary">Page 1 of 43</Badge>}
           contentClassName="grid gap-0 p-0"
         >
-          <div className="overflow-x-auto">
-            <Table className="min-w-[680px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10 text-center">#</TableHead>
-                  <TableHead>Species</TableHead>
-                  <TableHead className="hidden sm:table-cell">Country</TableHead>
-                  <TableHead className="hidden md:table-cell">Taxon</TableHead>
-                  <TableHead className="hidden lg:table-cell">Observer</TableHead>
-                  <TableHead className="hidden lg:table-cell">Observed</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">IDs</TableHead>
-                  <TableHead className="hidden text-right xl:table-cell">Detected</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {inat.events.map((record, index) => (
-                  <TableRow key={record.eventId}>
-                    <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell className="max-w-[240px]">
-                      <span className="grid min-w-0">
-                        <span className="truncate font-medium text-foreground">
-                          {record.commonName ?? record.scientificName}
-                        </span>
-                        {record.commonName ? (
-                          <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
-                            {record.scientificName}
-                          </span>
-                        ) : null}
-                      </span>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
-                        <span className="font-mono text-[0.6875rem] text-muted-foreground">
-                          {record.countryCode}
-                        </span>
-                      </span>
-                    </TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
-                      {record.iconicTaxon}
-                    </TableCell>
-                    <TableCell className="hidden max-w-[150px] lg:table-cell">
-                      <span className="flex items-center gap-1.5">
-                        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-muted font-mono text-[0.625rem] font-medium text-foreground">
-                          {initials(record.observer)}
-                        </span>
-                        <span className="truncate text-muted-foreground">@{record.observer}</span>
-                      </span>
-                    </TableCell>
-                    <TableCell className="hidden font-mono text-[0.6875rem] tabular-nums text-muted-foreground lg:table-cell">
-                      {record.observedOn}
-                    </TableCell>
-                    <TableCell>
-                      {/* Monitoring is the default state, so it renders as an
-                          absence rather than a chip — matching the live page. */}
-                      {record.status === "stable" ? (
-                        <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
-                          Stable
-                        </StatusBadge>
-                      ) : record.status === "withdrawn" ? (
-                        <StatusBadge tone="negative">Withdrawn</StatusBadge>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {record.supportCount}
-                    </TableCell>
-                    <TableCell className="hidden text-right font-mono text-[0.6875rem] tabular-nums text-muted-foreground xl:table-cell">
-                      {record.detectedAt.slice(0, 10)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableCaption>
-                Detected date is when MRI found the record; observed date is when the observer recorded it.
-              </TableCaption>
-            </Table>
-          </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-10 text-center">#</TableHead>
+        <TableHead>Species</TableHead>
+        <TableHead className="hidden sm:table-cell">Country</TableHead>
+        <TableHead className="hidden md:table-cell">Taxon</TableHead>
+        <TableHead className="hidden lg:table-cell">Observer</TableHead>
+        <TableHead className="hidden lg:table-cell">Observed</TableHead>
+        <TableHead>Status</TableHead>
+        <TableHead className="text-right">IDs</TableHead>
+        <TableHead className="hidden text-right xl:table-cell">Detected</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {inat.events.map((record, index) => (
+        <TableRow key={record.eventId}>
+          <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
+            {index + 1}
+          </TableCell>
+          <TableCell className="max-w-[240px]">
+            <span className="grid min-w-0">
+              <span className="truncate font-medium text-foreground">
+                {record.commonName ?? record.scientificName}
+              </span>
+              {record.commonName ? (
+                <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
+                  {record.scientificName}
+                </span>
+              ) : null}
+            </span>
+          </TableCell>
+          <TableCell className="hidden sm:table-cell">
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
+              <span className="font-mono text-[0.6875rem] text-muted-foreground">
+                {record.countryCode}
+              </span>
+            </span>
+          </TableCell>
+          <TableCell className="hidden text-muted-foreground md:table-cell">
+            {record.iconicTaxon}
+          </TableCell>
+          <TableCell className="hidden max-w-[150px] lg:table-cell">
+            <span className="flex items-center gap-1.5">
+              <span className="grid size-6 shrink-0 place-items-center rounded-full bg-muted font-mono text-[0.625rem] font-medium text-foreground">
+                {initials(record.observer)}
+              </span>
+              <span className="truncate text-muted-foreground">@{record.observer}</span>
+            </span>
+          </TableCell>
+          <TableCell className="hidden font-mono text-[0.6875rem] tabular-nums text-muted-foreground lg:table-cell">
+            {record.observedOn}
+          </TableCell>
+          <TableCell>
+            {/* Monitoring is the default state, so it renders as an
+                absence rather than a chip — matching the live page. */}
+            {record.status === "stable" ? (
+              <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
+                Stable
+              </StatusBadge>
+            ) : record.status === "withdrawn" ? (
+              <StatusBadge tone="negative">Withdrawn</StatusBadge>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )}
+          </TableCell>
+          <TableCell className="text-right tabular-nums">
+            {record.supportCount}
+          </TableCell>
+          <TableCell className="hidden text-right font-mono text-[0.6875rem] tabular-nums text-muted-foreground xl:table-cell">
+            {record.detectedAt.slice(0, 10)}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+    <TableCaption>
+      Detected date is when MRI found the record; observed date is when the observer recorded it.
+    </TableCaption>
+  </Table>
 
           <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 p-3 sm:flex-row">
             <p className="order-2 text-[0.6875rem] text-muted-foreground sm:order-1">

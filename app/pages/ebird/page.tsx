@@ -199,47 +199,45 @@ export default function EbirdPage() {
         />
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <Panel contentClassName="p-0">
-            <div className="overflow-x-auto">
-              <Table className="min-w-[600px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Family</TableHead>
-                    <TableHead className="hidden sm:table-cell">Order</TableHead>
-                    <TableHead className="text-right">Species</TableHead>
-                    <TableHead className="text-right">Photos</TableHead>
-                    <TableHead className="text-right">Audio</TableHead>
-                    <TableHead className="hidden text-right lg:table-cell">Audio / species</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {birds.mediaByFamily.map((row) => (
-                    <TableRow key={row.family}>
-                      <TableCell className="max-w-[220px] truncate font-medium text-foreground">
-                        {row.family}
-                      </TableCell>
-                      <TableCell className="hidden text-muted-foreground sm:table-cell">
-                        {birds.byFamily.find((family) => family.family === row.family)?.order ?? "—"}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {formatNumber(row.species)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums text-muted-foreground">
-                        {formatNumber(row.photos)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {formatNumber(row.audio)}
-                      </TableCell>
-                      <TableCell className="hidden text-right tabular-nums text-muted-foreground lg:table-cell">
-                        {Math.round(row.audio / Math.max(1, row.species))}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableCaption>
-                  Based on catalogued assets, not observation effort. Coverage is not abundance.
-                </TableCaption>
-              </Table>
-            </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead>Family</TableHead>
+        <TableHead className="hidden sm:table-cell">Order</TableHead>
+        <TableHead className="text-right">Species</TableHead>
+        <TableHead className="text-right">Photos</TableHead>
+        <TableHead className="text-right">Audio</TableHead>
+        <TableHead className="hidden text-right lg:table-cell">Audio / species</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {birds.mediaByFamily.map((row) => (
+        <TableRow key={row.family}>
+          <TableCell className="max-w-[220px] truncate font-medium text-foreground">
+            {row.family}
+          </TableCell>
+          <TableCell className="hidden text-muted-foreground sm:table-cell">
+            {birds.byFamily.find((family) => family.family === row.family)?.order ?? "—"}
+          </TableCell>
+          <TableCell className="text-right tabular-nums">
+            {formatNumber(row.species)}
+          </TableCell>
+          <TableCell className="text-right tabular-nums text-muted-foreground">
+            {formatNumber(row.photos)}
+          </TableCell>
+          <TableCell className="text-right tabular-nums">
+            {formatNumber(row.audio)}
+          </TableCell>
+          <TableCell className="hidden text-right tabular-nums text-muted-foreground lg:table-cell">
+            {Math.round(row.audio / Math.max(1, row.species))}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+    <TableCaption>
+      Based on catalogued assets, not observation effort. Coverage is not abundance.
+    </TableCaption>
+  </Table>
           </Panel>
 
           <div className="grid content-start gap-3">

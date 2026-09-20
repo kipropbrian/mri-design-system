@@ -468,6 +468,43 @@ const RULES = {
   },
 
   /**
+   * A table is not pinned to a minimum width.
+   *
+   * The counterpart to `tableColumns`, and the reason that rule alone was not enough.
+   * Eight tables on the platform carried `min-w-[640px]` (or 540/600/620/700) on the
+   * `<Table>` itself — an earlier answer to "this table is too wide on a phone", where
+   * the fix was to force it wide and let the reader scroll. That directly defeats
+   * hiding columns: measured at 390px, `/inaturalist`'s country grid was still 640px
+   * inside a 360px card *after* four of its eight columns had been marked hidden,
+   * because no amount of hiding can take a table below a floor it was given.
+   *
+   * Per-column `min-w-[140px]` is the same mistake in smaller pieces: five of them sum
+   * to a 600px table without any one of them looking unreasonable.
+   *
+   * A **prefixed** minimum is legitimate and is not flagged: `sm:min-w-[440px]` only
+   * applies from 640px, where a card genuinely has the room, and scoping it is the
+   * correct way to say "this table wants 440px once it can have it".
+   */
+  tableMinWidth: {
+    title: "fixed minimum width on a table",
+    hint: "drop columns with COLUMN.secondary instead of pinning a min-width; scope any remaining minimum to a breakpoint (`sm:min-w-[440px]`)",
+    scan(rel, source) {
+      const hits = [];
+      for (const match of source.matchAll(
+        /<(Table|TableHead|TableCell)\b[^>]*className=(?:"([^"]*)"|\{cn\(\s*"([^"]*)")/g,
+      )) {
+        const classes = match[2] ?? match[3] ?? "";
+        for (const util of classes.matchAll(/(?<![\w:-])((?:[a-z0-9]+:)*min-w-\[[^\]]+\])/g)) {
+          const token = util[1];
+          if (/^[a-z0-9]+:/.test(token)) continue;
+          hits.push({ line: lineOf(source, match.index), token });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A colour is a token, never a Tailwind palette name.
    *
    * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the

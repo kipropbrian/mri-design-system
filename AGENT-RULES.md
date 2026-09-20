@@ -90,6 +90,7 @@ Use `DataRow`; it is the only thing that arranges them.
 | a card with a header | `Panel` | a hand-rolled title + description div |
 | a table | `TableCard` around `Table` | your own bordered box, or a shaded header |
 | a table too wide for a phone | `COLUMN.secondary` / `COLUMN.tertiary` on the column | letting it scroll sideways |
+| a table that needs room at 640px+ | `sm:min-w-[440px]` | an unprefixed `min-w-[640px]` |
 | a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
 | two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
 | a summary band | `MetricStrip` | a data surface — it may run four across |
@@ -115,6 +116,15 @@ cannot see, so any header row of **four or more columns** must mark some with
 Keep the identity column and the number the table exists to answer; drop the rank,
 the share and the sparkline first. `npm run audit:ui` enforces the presence of a
 dropped column, not the choice of which.
+
+**And a table is never pinned to a minimum width.** `min-w-[640px]` on a `<Table>`
+is the older answer to the same problem — force it wide, let the reader scroll —
+and it defeats hiding columns completely: `/inaturalist`'s country grid was still
+640px inside a 360px card *after* four of its eight columns were marked hidden,
+because no amount of hiding takes a table below a floor it was given. Per-column
+`min-w-[140px]` is the same mistake in smaller pieces; five of them sum to a 600px
+table without any one looking unreasonable. A **prefixed** minimum is fine and is
+not flagged — `sm:min-w-[440px]` only applies from 640px, where the card has room.
 
 **Page padding is not a route's decision.** `PageContainer` owns the gutter
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between
