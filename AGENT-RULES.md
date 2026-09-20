@@ -140,7 +140,10 @@ Only `stable` and `withdrawn` earn one.
 Tables and charts are **data surfaces**, and a row holds at most two — two tables,
 or a table and a chart, never three and never one full-width. A surface that will
 not fit two-up is telling you to drop a column or split it, not to take the page.
-Use `DataRow`; it is the only thing that arranges them.
+Use `DataRow`; it is the only thing that arranges them, and it goes two-up at `xl`
+rather than at `lg` so that **a wider viewport is never a narrower card** — with the
+split at `lg` a column hidden on a phone reappeared exactly where the row halved and
+there was least room for it.
 
 | need | use | never |
 | --- | --- | --- |

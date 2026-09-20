@@ -125,6 +125,25 @@ export function Panel({
  *
  * Metric strips are not data surfaces and do not belong here — see
  * `MetricStrip`, which is a summary band and may run four across.
+ *
+ * ## Why the split is at `xl` and not at `lg`
+ *
+ * It was `lg`, and that made card width **non-monotonic in viewport width**: below
+ * `lg` the surfaces stacked and each card took the full page; at `lg` they went
+ * two-up and each card roughly halved; and a column hidden below one breakpoint and
+ * shown above it therefore appeared exactly where there was least room for it.
+ *
+ * Measured, on a table whose columns are `hidden sm:table-cell`:
+ *
+ *   768px   stacked, card 723px    fits
+ *   1024px  two-up,  card 436px    533px of table  ->  +97px
+ *   1280px  two-up,  card 602px    fits
+ *
+ * The table was correct at every width except the one where it was shown more
+ * columns than it had room for. At `xl` the arithmetic is monotonic — a wider
+ * viewport is never a narrower card — so a column can be shown at a breakpoint and
+ * stay shown. 1280px is where half a page is genuinely wide enough for a seven-column
+ * table (about 600px); 1024px is not.
  */
 export function DataRow({
   children,
@@ -140,7 +159,7 @@ export function DataRow({
     <div
       className={cn(
         "grid min-w-0 items-start gap-3",
-        ratio === "even" ? "lg:grid-cols-2" : "lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]",
+        ratio === "even" ? "xl:grid-cols-2" : "xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]",
         className,
       )}
     >
@@ -197,9 +216,10 @@ export const COLUMN = {
    */
   secondary: "hidden sm:table-cell",
   /**
-   * Dropped below `lg` (1024px). For the third-tier column of a table that is one of
-   * two surfaces in a `DataRow`, where by `lg` the card holds half the page and the
-   * column has to earn its place against the chart beside it.
+   * Dropped below `lg` (1024px). For a column that needs a genuine tablet rather than
+   * a phone: a share, a rank, a long label. A table that shares its row with another
+   * surface does **not** need this — `DataRow` only goes two-up at `xl`, so a card is
+   * never narrower at `lg` than it was at `md`.
    */
   tertiary: "hidden lg:table-cell",
 } as const;

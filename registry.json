@@ -218,7 +218,7 @@
       "name": "patterns",
       "type": "registry:item",
       "title": "Page patterns",
-      "description": "Panel \u2014 the data card, with the title-carries-its-count header enforced rather than described \u2014 plus TableCard, DataRow, MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
+      "description": "Panel \u2014 the data card, with the title-carries-its-count header enforced rather than described \u2014 plus TableCard, DataRow (two data surfaces per row, splitting at xl so card width is monotonic in viewport width), MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
       "registryDependencies": [
         "kipropbrian/mri-design-system/chip",
         "kipropbrian/mri-design-system/checkbox",
