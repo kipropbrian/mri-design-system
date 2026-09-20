@@ -233,3 +233,101 @@ export function Specimen({
     </section>
   );
 }
+
+/* -------------------------------------------------------------------- prose */
+
+/**
+ * A document: a policy, a licence list, an about page.
+ *
+ * This is the one text composition the system was missing, and its absence showed:
+ * the platform's `/privacy`, `/terms`, `/licences`, `/legal` and `/contact` routes all
+ * rendered through a hand-written `LegalPage` in `components/legal/`, which restated
+ * `PageContainer`'s padding (`px-4 py-10 sm:py-10 lg:py-10`), reinvented the page
+ * title at `text-3xl font-semibold tracking-tight`, added its own uppercase eyebrow,
+ * and styled every paragraph through a single `[&_p]:text-sm [&_p]:leading-7`
+ * descendant selector. Five routes inheriting one route-level opinion is the drift
+ * this system exists to prevent, and it was invisible to the audit because none of it
+ * broke a class-string rule — it broke the composition rule instead.
+ *
+ * ## Reading is not the same as interface
+ *
+ * The type scale's body size is `text-xs` (12px), and that is right for a table or a
+ * card: dense, scannable, compared in rows. A document is not scanned, it is read, so
+ * `Prose` sets its body at `text-sm/relaxed` (14px with generous leading), keeps
+ * paragraphs under a measure of roughly 70 characters, and reserves `text-base` for a
+ * section heading. That is the one place in this system where body copy is larger than
+ * `text-xs`, and it is deliberate rather than drift.
+ *
+ * ## Use
+ *
+ * ```tsx
+ * <PageContainer size="reading">
+ *   <PageHeader eyebrow="Maiyo Research Institute" title="Privacy policy" description={intro} />
+ *   <Prose>
+ *     <ProseSection title="What we collect">…</ProseSection>
+ *   </Prose>
+ * </PageContainer>
+ * ```
+ */
+export function Prose({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "grid max-w-[70ch] gap-6",
+        // Headings and body, so a section written as plain JSX is still on the scale.
+        "[&_h2]:font-heading [&_h2]:text-base [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-foreground",
+        "[&_h3]:font-heading [&_h3]:text-sm [&_h3]:font-medium [&_h3]:text-foreground",
+        "[&_p]:text-sm/relaxed [&_p]:text-muted-foreground",
+        "[&_p+p]:mt-3",
+        "[&_strong]:font-medium [&_strong]:text-foreground",
+        // A link inside a document is underlined, because a colour shift alone is not
+        // a link cue for a reader who cannot see the colour.
+        "[&_a]:font-medium [&_a]:text-primary-ink [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/40 [&_a:hover]:decoration-primary",
+        "[&_ul]:ml-5 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-1.5",
+        "[&_ol]:ml-5 [&_ol]:grid [&_ol]:list-decimal [&_ol]:gap-1.5",
+        "[&_li]:text-sm/relaxed [&_li]:text-muted-foreground",
+        "[&_li]:marker:text-muted-foreground",
+        // A code span is an identifier, so it is mono and does not reflow.
+        "[&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.6875rem] [&_code]:text-foreground",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * One titled block in a `Prose` document. The heading is a real `h2` with an `id`, so
+ * a long policy can be linked into and navigated by heading.
+ */
+export function ProseSection({
+  title,
+  id,
+  children,
+  className,
+}: {
+  title: ReactNode;
+  id?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cn("grid gap-2", className)}>
+      <h2 id={id}>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+/**
+ * The "who to ask" note that closes a policy. Informational, so it carries the `info`
+ * role rather than the primary one — it is not the page's main action.
+ */
+export function ProseNote({ children }: { children: ReactNode }) {
+  return (
+    <aside className="rounded-lg bg-info/5 px-4 py-3 text-sm/relaxed text-muted-foreground ring-1 ring-info/20">
+      {children}
+    </aside>
+  );
+}

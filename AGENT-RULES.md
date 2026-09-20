@@ -156,6 +156,7 @@ there was least room for it.
 | a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
 | two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
 | a summary band | `MetricStrip` | a data surface — it may run four across |
+| a document (policy, licence list, about) | `PageContainer size="reading"` + `PageHeader` + `Prose` / `ProseSection` | a route-level `LegalPage` that restates padding and the title |
 
 **The data-card header** is `Panel`'s shape, not a recipe to retype: the title
 carries its count in parentheses, the description is one line and truncates, and

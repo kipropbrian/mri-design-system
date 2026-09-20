@@ -205,7 +205,7 @@
       "name": "layout",
       "type": "registry:item",
       "title": "Page layout primitives",
-      "description": "PageContainer, PageHeader, SectionHeader and the specimen labels used to document a pattern. No dependencies: it is layout and text only.",
+      "description": "PageContainer, PageHeader, SectionHeader, Eyebrow, the specimen labels used to document a pattern, and Prose / ProseSection / ProseNote for a document. No dependencies: it is layout and text only. Prose is the one place body copy is larger than text-xs, because a document is read rather than scanned.",
       "files": [
         {
           "path": "components/mri/layout.tsx",
