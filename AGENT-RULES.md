@@ -39,6 +39,50 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
   only for codes, ids, dates and paths.
 - **Run `npm run verify` before you finish.** It includes the audits.
 
+## Type
+
+Inter, one scale, and it is short. The rule is mechanical: a font size is either a
+named utility or one of three `rem` tokens. Anything else fails `npm run audit:ui`.
+
+| px | utility | its one job |
+| --- | --- | --- |
+| 9 | `text-[0.5625rem]` | mono token values inside a reference table |
+| 10 | `text-[0.625rem]` | eyebrow, caption, mono meta |
+| 11 | `text-[0.6875rem]` | the small tier of body copy |
+| 12 | `text-xs` | body copy — the default |
+| 14 | `text-sm` | card and section titles; lead paragraphs |
+| 16 | `text-base` | a section heading inside `SectionHeader` |
+| 24–30 | `text-2xl` · `text-3xl` | page title, via `PageHeader` |
+| 36 | `text-4xl` | the one hero headline on a landing page |
+
+Three rules:
+
+1. **`rem`, never `px`.** `text-[11px]` and `text-[0.6875rem]` render identically
+   until a reader raises their browser's base size, at which point only one of them
+   grows. The platform held **229 of the first and 27 of the second** — the same size
+   written two ways, so two cards side by side could disagree and neither author could
+   see it.
+2. **Nothing below 9px.** The platform carried 7.5px and 8.5px text; below 9px a label
+   is decoration, not information.
+3. **Size carries hierarchy, not weight.** If two things look the same but mean
+   different things, change the size step *or* the colour role — not `font-semibold`
+   on one of them. The platform has 670 weight utilities against 14 uses of
+   `font-heading`.
+
+## Motion
+
+The system has almost none, and it is all colour.
+
+- **A surface never moves on hover.** `group-hover:-translate-y-0.5` was the old
+  default card affordance: two pixels of rise, a shadow, a different duration on
+  every route, and no information. Use `hover:ring-primary/30` — it says "this is
+  interactive" while holding the grid still, and it does not re-run layout on every
+  pointer move. `hover:-translate-*` and `hover:translate-*` fail the audit.
+- **An image may scale inside its frame.** `group-hover:scale-105` on an `<img>` moves
+  nothing and changes no layout, so it stays.
+- **`transition-colors`, not `transition-all`.** `transition-all` animates properties
+  nobody chose, including ones that force layout.
+
 ## The spacing scale
 
 Eight steps. Nothing else.

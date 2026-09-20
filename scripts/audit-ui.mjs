@@ -585,6 +585,83 @@ const RULES = {
   },
 
   /**
+   * Type is on the scale, and the scale is short.
+   *
+   * The spacing rule has existed since the beginning and caught 120 off-scale
+   * utilities. Type had no rule at all, and it drifted further than spacing ever did:
+   * measured across the platform, **401 font sizes were written as px literals** —
+   * 229 `text-[11px]`, 156 `text-[10px]`, and a tail of 7.5, 8.5, 9, 9.5, 10.5, 13 and
+   * 15px. `text-[11px]` and `text-[0.6875rem]` are the same size written two ways, and
+   * the platform contained both, so two cards side by side could hold the same size
+   * spelled differently and nobody could tell whether the difference meant anything.
+   *
+   * The rule is deliberately narrow: it only judges `text-[…]` whose value is a bare
+   * **length**. `text-[#1f6f4a]` and `text-[oklch(…)]` are colours and belong to the
+   * `tokens` and `dataColours` rules; flagging them here would report one mistake
+   * twice under two names.
+   *
+   * The three sanctioned arbitrary values are the ones the preset's own scale does not
+   * name but this system genuinely needs, all in `rem` so they follow the root size:
+   *
+   *   text-[0.5625rem]   9px   mono token values inside a reference table
+   *   text-[0.625rem]   10px   eyebrows, captions and mono meta
+   *   text-[0.6875rem]  11px   the small tier of body copy
+   *
+   * Everything from 12px up has a name — `text-xs`, `text-sm`, `text-base`, `text-lg`
+   * — and a route should use it. `rem` rather than `px` is the point even where the
+   * value matches: a px literal does not follow a reader's font-size preference.
+   */
+  type: {
+    title: "off-scale font size",
+    hint: "use text-xs / text-sm / text-base / text-lg…, or one of text-[0.5625rem] (9px), text-[0.625rem] (10px), text-[0.6875rem] (11px)",
+    scan(rel, source) {
+      const SANCTIONED = new Set(["0.5625rem", "0.625rem", "0.6875rem"]);
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(/(?<![\w:-])text-\[([^\]]+)\]/g)) {
+          const value = match[1];
+          if (!/^[\d.]+(?:px|rem|em)$/.test(value)) continue;
+          if (SANCTIONED.has(value)) continue;
+          hits.push({ line, token: `text-[${value}]` });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A card does not lift off the page on hover.
+   *
+   * `group-hover:-translate-y-0.5` was the platform's default card affordance — a
+   * two-pixel rise with a shadow, copied onto every clickable card. It is motion that
+   * carries no information, and because each route wrote its own it also carried a
+   * different distance and duration each time.
+   *
+   * The system's own hover is a **colour change with no movement**: `hover:ring-primary/30`
+   * on a card, `hover:text-foreground` on a link. Those hold a grid still while still
+   * saying "this is interactive", and they do not re-run layout on every pointer move.
+   *
+   * Only translation is banned. `group-hover:scale-105` on an `<img>` inside a media
+   * card is a different thing — it moves nothing and changes no layout — and it stays.
+   */
+  motion: {
+    title: "hover translation on a surface",
+    hint: "use a colour change that holds the grid still — hover:ring-primary/30, hover:text-foreground — rather than moving the element",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(
+          /(?<![\w-])(?:[a-z0-9]+:)*(?:-translate-[xy]|translate-[xy])-/g,
+        )) {
+          if (!/hover:/.test(match[0])) continue;
+          hits.push({ line, token: match[0] });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A colour is a token, never a Tailwind palette name.
    *
    * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the

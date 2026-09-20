@@ -353,8 +353,8 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                         setStage("reveal");
                       }}
                       className={cn(
-                        "group flex items-center gap-3 rounded-lg bg-background p-3 text-left ring-1 ring-foreground/10 transition-all",
-                        !showState && "hover:-translate-y-0.5 hover:ring-primary/40 hover:shadow-sm",
+                        "group flex items-center gap-3 rounded-lg bg-background p-3 text-left ring-1 ring-foreground/10 transition-colors",
+                        !showState && "hover:ring-primary/40",
                         chosen && !showState && "ring-primary",
                         showState && correct && "bg-primary/10 ring-primary/40",
                         showState && chosen && !correct && "bg-destructive/10 ring-destructive/40",
