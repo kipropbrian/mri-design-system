@@ -165,7 +165,7 @@ export function AudioPlayer({
         >
           <ArrowCounterClockwise className="size-3.5" aria-hidden="true" />
           <span className="hidden sm:inline">Replay</span>
-          <kbd className="hidden rounded bg-muted px-1 font-mono text-[10px] text-muted-foreground sm:inline">
+          <kbd className="hidden rounded bg-muted px-1 font-mono text-[0.625rem] text-muted-foreground sm:inline">
             R
           </kbd>
         </Button>

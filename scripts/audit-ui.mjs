@@ -48,7 +48,8 @@
  *     "baseline":         "scripts/audit-baseline.json",
  *     "spacingAllowed":   { "pr-14": "why this one is geometry, not rhythm" },
  *     "allowedCss":       { "public/x/player.css": "why this stylesheet exists" },
- *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" }
+ *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" },
+ *     "tableAllowed":     { "x/skeleton.tsx": "why this table is not a composition" }
  *   }
  */
 import { readdirSync, readFileSync, statSync, writeFileSync, existsSync } from "node:fs";
@@ -90,6 +91,9 @@ const DEFAULTS = {
 
   /** Files where a colour literal cannot be avoided, with the reason. */
   allowedColourFiles: {},
+
+  /** Files where a raw <table> is the right element, with the reason. */
+  tableAllowed: {},
 };
 
 function loadConfig() {
@@ -112,6 +116,7 @@ function loadConfig() {
     spacingAllowed: { ...DEFAULTS.spacingAllowed, ...(raw.spacingAllowed ?? {}) },
     allowedCss: { ...DEFAULTS.allowedCss, ...(raw.allowedCss ?? {}) },
     allowedColourFiles: { ...DEFAULTS.allowedColourFiles, ...(raw.allowedColourFiles ?? {}) },
+    tableAllowed: { ...DEFAULTS.tableAllowed, ...(raw.tableAllowed ?? {}) },
   };
 }
 
@@ -157,6 +162,7 @@ const TABLE_COMPOSITION = "components/ui/table.tsx";
 
 const ALLOWED_CSS = new Map(Object.entries(CONFIG.allowedCss));
 const ALLOWED_COLOUR_FILES = new Map(Object.entries(CONFIG.allowedColourFiles));
+const TABLE_ALLOWED = new Map(Object.entries(CONFIG.tableAllowed));
 
 /** The named Tailwind palette, which has no business in an MRI interface. */
 const PALETTE_COLOUR =
@@ -270,7 +276,7 @@ const RULES = {
     title: "raw <table>",
     hint: "use the shared table composition in components/ui/table.tsx",
     scan(rel, source) {
-      if (rel === TABLE_COMPOSITION) return [];
+      if (rel === TABLE_COMPOSITION || TABLE_ALLOWED.has(rel)) return [];
       const hits = [];
       for (const match of source.matchAll(/<table[\s>]/g)) {
         hits.push({ line: lineOf(source, match.index), token: "<table>" });
