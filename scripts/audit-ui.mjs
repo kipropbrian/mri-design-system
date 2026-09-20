@@ -486,18 +486,70 @@ const RULES = {
    * correct way to say "this table wants 440px once it can have it".
    */
   tableMinWidth: {
-    title: "fixed minimum width on a table",
-    hint: "drop columns with COLUMN.secondary instead of pinning a min-width; scope any remaining minimum to a breakpoint (`sm:min-w-[440px]`)",
+    title: "table pinned wider than a phone",
+    hint: "drop columns with COLUMN.secondary instead of pinning widths; if a table genuinely needs room, scope the minimum to a breakpoint (`sm:min-w-[440px]`)",
     scan(rel, source) {
       const hits = [];
-      for (const match of source.matchAll(
-        /<(Table|TableHead|TableCell)\b[^>]*className=(?:"([^"]*)"|\{cn\(\s*"([^"]*)")/g,
-      )) {
-        const classes = match[2] ?? match[3] ?? "";
-        for (const util of classes.matchAll(/(?<![\w:-])((?:[a-z0-9]+:)*min-w-\[[^\]]+\])/g)) {
-          const token = util[1];
-          if (/^[a-z0-9]+:/.test(token)) continue;
-          hits.push({ line: lineOf(source, match.index), token });
+      /**
+       * What a card actually offers on the narrowest supported screen. The preset's
+       * page gutter is 16px a side and a card adds its own padding, so a 390px phone
+       * leaves roughly this much for a table. The platform declares `min-width: 320px`
+       * on `html`; at that width the figure is nearer 290, which is why a table sitting
+       * exactly on this line is still worth a look.
+       */
+      const PHONE = 360;
+      /**
+       * An unprefixed `min-w-[…]`. The lookbehind rejects `:` as well as word
+       * characters, so `sm:min-w-[460px]` does not match at all — a scoped minimum is
+       * legitimate and there is nothing left to test for afterwards.
+       */
+      const WIDTH = /(?<![\w:-])(min-w-\[(\d+(?:\.\d+)?)(px|rem)\])/g;
+      /** A cell that hides itself below a breakpoint cannot pin anything on a phone. */
+      const hidesBelow = (classes) =>
+        /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
+      const px = (value, unit) => (unit === "rem" ? Number(value) * 16 : Number(value));
+      const classOf = (tag) => {
+        const match = tag.match(/className=(?:"([^"]*)"|\{cn\(\s*"([^"]*)")/);
+        return match ? (match[1] ?? match[2] ?? "") : "";
+      };
+
+      for (const table of source.matchAll(/<Table\b[\s\S]*?<\/Table>/g)) {
+        const block = table[0];
+        const openTag = block.slice(0, block.indexOf(">") + 1);
+
+        // (a) A floor on the table itself can never be met on a phone, whatever the
+        //     columns do — this is the case that made hiding columns look ineffective.
+        for (const util of classOf(openTag).matchAll(WIDTH)) {
+          hits.push({ line: lineOf(source, table.index), token: util[1] });
+        }
+
+        // (b) Otherwise, the widest single row is what the table cannot go below, so
+        //     the floors are summed per row and the largest row is the one that counts.
+        //     Summing the whole table would multiply by the row count; taking any one
+        //     cell would miss five columns that are each reasonable alone.
+        let widest = 0;
+        let widestTokens = [];
+        for (const row of block.matchAll(/<TableRow\b[\s\S]*?<\/TableRow>/g)) {
+          let total = 0;
+          const tokens = [];
+          for (const cell of row[0].matchAll(/<(?:TableHead|TableCell)\b[^>]*>/g)) {
+            const classes = classOf(cell[0]);
+            if (hidesBelow(classes)) continue;
+            for (const util of classes.matchAll(WIDTH)) {
+              total += px(util[2], util[3]);
+              tokens.push(util[1]);
+            }
+          }
+          if (total > widest) {
+            widest = total;
+            widestTokens = tokens;
+          }
+        }
+        if (widest > PHONE) {
+          hits.push({
+            line: lineOf(source, table.index),
+            token: `${Math.round(widest)}px of column floors (${widestTokens.join(" + ")})`,
+          });
         }
       }
       return hits;
