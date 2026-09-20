@@ -272,6 +272,52 @@ function* literals(source) {
 }
 
 /**
+ * The source with every comment span blanked out, offsets preserved.
+ *
+ * `literals` skips comments because prose may name a value it forbids. The structural
+ * rules need the same treatment for the same reason and a different symptom: the
+ * `singleH1` rule counted an `<h1>` written inside `PageHeader`'s own docstring, and
+ * `cardInCard` would count a `<Card>` named in an example. Blanking rather than
+ * removing keeps every index — and therefore every reported line number — correct.
+ */
+function stripComments(source) {
+  const out = source.split("");
+  const length = source.length;
+  let index = 0;
+  while (index < length) {
+    const char = source[index];
+    const next = source[index + 1];
+    if (char === "/" && next === "/") {
+      const end = source.indexOf("\n", index);
+      const stop = end === -1 ? length : end;
+      for (let i = index; i < stop; i++) out[i] = " ";
+      index = stop;
+      continue;
+    }
+    if (char === "/" && next === "*") {
+      const end = source.indexOf("*/", index + 2);
+      const stop = end === -1 ? length : end + 2;
+      for (let i = index; i < stop; i++) if (out[i] !== "\n") out[i] = " ";
+      index = stop;
+      continue;
+    }
+    if (char === '"' || char === "`") {
+      const quote = char;
+      let cursor = index + 1;
+      while (cursor < length) {
+        if (source[cursor] === "\\") { cursor += 2; continue; }
+        if (source[cursor] === quote) break;
+        cursor += 1;
+      }
+      index = cursor + 1;
+      continue;
+    }
+    index += 1;
+  }
+  return out.join("");
+}
+
+/**
  * Whether the import statement containing `index` imports only types.
  *
  * A `import type { Icon } from "@phosphor-icons/react/dist/lib/types"` is erased
@@ -899,6 +945,102 @@ const RULES = {
             break;
           }
           if (CLOSES.test(lines[i])) break;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A card is not nested inside a card.
+   *
+   * It is the most common structural drift in this system and the hardest to see in a
+   * diff, because each card is correct on its own. What it produces is a box inside a
+   * box inside a box: the inner card's ring sits 12px inside the outer one's, the radii
+   * disagree, and the padding doubles. The platform shipped a "This is the highest
+   * ranked row" note as a full `Panel` inside another `Panel`, a metric card inside a
+   * filter card, and — worst — a whole page's content inside one `Card` whose only
+   * child was another `Card`.
+   *
+   * The fix is almost never "remove the outer card". It is to ask what the outer card
+   * is for: if it groups, it is a `SectionHeader` and a plain `div`; if it is one
+   * figure, the inner thing was not a card at all.
+   *
+   * This walks the file tracking depth rather than looking at a line window, because
+   * the two openings can be a hundred lines apart and a window would either miss them
+   * or fire on unrelated markup. `TableCard` and `ChartFrame` both render a `Panel`
+   * inside themselves, so a route that puts either of those inside a card has done the
+   * same thing and is counted the same way. A self-closing tag opens nothing.
+   */
+  cardInCard: {
+    title: "card nested inside a card",
+    hint: "a card groups nothing but its own content — if the outer box groups, use SectionHeader and a plain div; if it is one figure, the inner thing was not a card",
+    scan(rel, rawSource) {
+      const source = stripComments(rawSource);
+      const CARDS = ["Card", "Panel", "TableCard", "ChartFrame"];
+      const opens = new RegExp(`<(${CARDS.join("|")})\\b`, "g");
+      const closes = new RegExp(`</(${CARDS.join("|")})>`, "g");
+      const events = [];
+      for (const m of source.matchAll(opens)) {
+        // `<Card />` opens nothing. Find the end of this tag to tell.
+        const end = source.indexOf(">", m.index);
+        const selfClosing = end !== -1 && source[end - 1] === "/";
+        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+      }
+      for (const m of source.matchAll(closes)) {
+        events.push({ index: m.index, kind: "close", name: m[1] });
+      }
+      events.sort((a, b) => a.index - b.index);
+
+      const hits = [];
+      const stack = [];
+      for (const event of events) {
+        if (event.kind === "self") continue;
+        if (event.kind === "open") {
+          if (stack.length > 0) {
+            hits.push({
+              line: lineOf(source, event.index),
+              token: `<${event.name}> inside <${stack[stack.length - 1].name}>`,
+            });
+          }
+          stack.push(event);
+        } else {
+          // Pop the nearest matching opener, so one unbalanced card does not cascade.
+          const at = stack.map((s) => s.name).lastIndexOf(event.name);
+          if (at === -1) continue;
+          stack.length = at;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * The page owns the `h1`, and there is exactly one of it.
+   *
+   * A component that renders an `h1` claims to be a page. `species-explorer.tsx` — a
+   * client component rendered by two different routes — emitted the platform's top-level
+   * heading, so the document outline had an `h1` whose text came from a prop, and adding
+   * a second route that used it would have produced two. The heading a page owns is
+   * `PageHeader`'s; a component that needs a heading uses `h2` or below.
+   *
+   * A second `h1` in the same file is the other half: a page with two top-level headings
+   * has no top-level heading.
+   */
+  singleH1: {
+    title: "h1 outside the page header",
+    hint: "the page's h1 comes from PageHeader; a component uses h2 or below, and a file has at most one h1",
+    scan(rel, rawSource) {
+      const source = stripComments(rawSource);
+      const hits = [];
+      const found = [...source.matchAll(/<h1[\s>]/g)].map((m) => m.index);
+      if (found.length === 0) return hits;
+      const inComponents = rel.startsWith("components/") && !rel.startsWith("components/mri/");
+      for (const index of found) {
+        if (inComponents) {
+          hits.push({ line: lineOf(source, index), token: "<h1> in a component" });
+        } else if (found.length > 1 && index !== found[0]) {
+          hits.push({ line: lineOf(source, index), token: "second <h1>" });
         }
       }
       return hits;

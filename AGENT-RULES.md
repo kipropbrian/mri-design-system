@@ -35,6 +35,13 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
   `destructive`, or a `Chip` tone.
 - **Never move an element on hover.** `hover:-translate-y-0.5` is the old card
   affordance and carries no information. Use `hover:ring-primary/30`.
+- **Never put a card inside a card.** The inner ring sits 12px inside the outer one's,
+  the radii disagree and the padding doubles. If the outer box groups, it is a
+  `SectionHeader` and a plain `div`; if it is one figure, the inner thing was not a
+  card. `TableCard` and `ChartFrame` count as cards — both render a `Panel`.
+- **Never render an `h1` from a component.** The page's `h1` is `PageHeader`'s; a
+  component that needs a heading uses `h2` or below, and a file has at most one
+  `h1`.
 - **Never put an eyebrow inside a data card.** The header is the title plus one
   line of detail; an uppercase label above the title duplicates the title and
   breaks row alignment when two of them wrap. `Panel` has no `eyebrow` prop for
