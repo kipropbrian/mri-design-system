@@ -686,6 +686,42 @@ const RULES = {
    * as a token, so it carries no allow-list — an allow-list here would be the drift it
    * exists to stop, with a reason attached.
    */
+  /**
+   * A chart colour is opaque, or it is data.
+   *
+   * `--chart-1 … --chart-5` exist to encode magnitude and identity inside a figure.
+   * Written as a **solid** utility they are doing exactly that: a legend swatch has to
+   * match its series and a bar has to match its own fill, so `bg-chart-3` on an 8px
+   * `<span>` is the legend working.
+   *
+   * Written as a **fraction** they are decoration. `border-chart-3/30 bg-chart-3/5` is
+   * a wash over a whole card: the opacity says "this is a tint, not a colour", which is
+   * the one thing a data colour may never be, because the tint then reads as a category
+   * that no data put it in. `/birds` had six differently tinted workspace cards, one
+   * per card, chosen by nothing, and three "streak" badges washed in `chart-2` — the
+   * green of an area chart.
+   *
+   * A surface that signifies something uses a status role — `primary`, `info`,
+   * `warning`, `notable`, `destructive` — each of which means a state rather than a
+   * series. The split is mechanical: a solid chart utility passes, a fractional one
+   * fails. That is what makes it checkable rather than a matter of taste.
+   */
+  chartTint: {
+    title: "chart colour used as a surface tint",
+    hint: "a chart colour fills a legend swatch or a bar solid; to signify a state on a surface use a status role (primary / info / warning / notable / destructive) or a Chip tone",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(
+          /(?<![\w-])(?:[a-z0-9]+:)*(?:bg|border|text|ring|from|via|to|fill|stroke|outline|decoration|shadow)-chart-\d\/\d+/g,
+        )) {
+          hits.push({ line, token: match[0] });
+        }
+      }
+      return hits;
+    },
+  },
+
   palette: {
     title: "Tailwind palette colour",
     hint: "use a semantic token: positive -> primary-ink, warning -> warning-ink, negative -> destructive-ink, info -> info-ink; ink on a fill -> -foreground; scrims -> foreground/NN",
