@@ -11,7 +11,7 @@ import { ProviderMark } from "@/components/site/brand";
 import { Chip } from "@/components/mri/chips";
 import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
 import { Panel, SourceNote, StatusBadge } from "@/components/mri/patterns";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { birds, inat } from "@/lib/data";
 import { formatCompact, formatNumber } from "@/lib/format";
@@ -110,13 +110,13 @@ export default function PlatformHomePage() {
           </p>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button nativeButton={false} size="lg" render={<Link href="/pages/inaturalist" />}>
+            <Link href="/pages/inaturalist" className={buttonVariants({ size: "lg" })}>
               Explore country firsts
               <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-            <Button nativeButton={false} size="lg" variant="outline" render={<Link href="/pages/quiz" />}>
+            </Link>
+            <Link href="/pages/quiz" className={buttonVariants({ variant: "outline", size: "lg" })}>
               Practice bird sounds
-            </Button>
+            </Link>
           </div>
         </div>
 
@@ -275,10 +275,10 @@ export default function PlatformHomePage() {
               </div>
 
               <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-3">
-                <Button nativeButton={false} size="sm" render={<Link href="/pages/quiz" />}>
+                <Link href="/pages/quiz" className={buttonVariants({ size: "sm" })}>
                   Play the quiz
                   <ArrowRightIcon data-icon="inline-end" />
-                </Button>
+                </Link>
                 <SourceNote>Xeno-canto · 70,253 recordings</SourceNote>
               </div>
             </CardContent>
@@ -344,10 +344,10 @@ export default function PlatformHomePage() {
               </div>
 
               <div className="flex items-center justify-between gap-2 border-t border-border/60 pt-3">
-                <Button nativeButton={false} size="sm" render={<Link href="/pages/inaturalist" />}>
+                <Link href="/pages/inaturalist" className={buttonVariants({ size: "sm" })}>
                   Browse the list
                   <ArrowRightIcon data-icon="inline-end" />
-                </Button>
+                </Link>
                 <SourceNote>{formatNumber(birds.mediaTotals.speciesWithMedia)} species with media</SourceNote>
               </div>
             </CardContent>

@@ -34,7 +34,7 @@ import {
 } from "@/components/mri/patterns";
 import { BirdMediaCard, ObservationCard } from "@/components/mri/specimen-card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import {
@@ -121,14 +121,14 @@ export default function PatternsPage() {
         }
         actions={
           <>
-            <Button nativeButton={false} variant="outline" render={<a href="https://platform.maiyoinstitute.org" target="_blank" rel="noreferrer" />}>
+            <a href="https://platform.maiyoinstitute.org" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}>
               Open the live platform
               <ArrowSquareOutIcon data-icon="inline-end" />
-            </Button>
-            <Button nativeButton={false} render={<Link href="/pages/inaturalist" />}>
+            </a>
+            <Link href="/pages/inaturalist" className={buttonVariants()}>
               See it on a full page
               <ArrowRightIcon data-icon="inline-end" />
-            </Button>
+            </Link>
           </>
         }
       />
@@ -754,10 +754,10 @@ export default function PatternsPage() {
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant="outline">Snapshot, not live</Badge>
-              <Button nativeButton={false} variant="ghost" size="sm" render={<a href="https://www.inaturalist.org" target="_blank" rel="noreferrer" />}>
+              <a href="https://www.inaturalist.org" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "ghost", size: "sm" })}>
                 Data courtesy of iNaturalist
                 <ArrowSquareOutIcon data-icon="inline-end" />
-              </Button>
+              </a>
             </div>
           </div>
         </Specimen>

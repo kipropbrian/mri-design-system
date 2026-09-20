@@ -24,7 +24,7 @@ import {
 } from "@/components/mri/patterns";
 import { QuizPreview, type QuizQuestion } from "@/components/site/quiz-preview";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -102,13 +102,10 @@ export default function QuizPage() {
           </>
         }
         actions={
-          <Button nativeButton={false}
-            variant="outline"
-            render={<a href="https://xeno-canto.org" target="_blank" rel="noreferrer" />}
-          >
+          <a href="https://xeno-canto.org" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}>
             Browse source audio
             <ArrowSquareOutIcon data-icon="inline-end" />
-          </Button>
+          </a>
         }
       />
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeftIcon, MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr";
 import { Eyebrow, PageContainer } from "@/components/mri/layout";
 import { EmptyState } from "@/components/mri/patterns";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -18,10 +18,10 @@ export default function NotFound() {
         title="No such page in the design system"
         description="The route may have been renamed. Everything the template defines is reachable from the overview."
         action={
-          <Button nativeButton={false} render={<Link href="/" />}>
+          <Link href="/" className={buttonVariants()}>
             <ArrowLeftIcon data-icon="inline-start" />
             Back to the overview
-          </Button>
+          </Link>
         }
       />
 
@@ -34,9 +34,9 @@ export default function NotFound() {
           { href: "/patterns", label: "Page patterns" },
           { href: "/pages/inaturalist", label: "iNaturalist watch" },
         ].map((item) => (
-          <Button key={item.href} nativeButton={false} variant="outline" size="sm" render={<Link href={item.href} />}>
+          <Link key={item.href} href={item.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
             {item.label}
-          </Button>
+          </Link>
         ))}
       </div>
     </PageContainer>

@@ -557,6 +557,34 @@ const RULES = {
   },
 
   /**
+   * A link is a link, not a button wearing a link.
+   *
+   * `Button` accepts `render={<Link/>}`, and Base UI then applies `role="button"` to
+   * the anchor — unconditionally, since `useButton` emits `isNativeButton ? {type:
+   * 'button'} : {role: 'button'}` and `isNativeButton` is the prop, not the rendered
+   * element. The control still navigates, but it is announced as a button: it drops
+   * out of a screen reader's link list, loses "open in new tab" from that list, and
+   * promises a button's behaviour while performing a link's.
+   *
+   * This was the pattern the design system itself taught — sixteen call sites across
+   * eight files, and zero uses of `buttonVariants`. The platform had independently
+   * settled on the correct one in thirty-six places. For anything that navigates, put
+   * `buttonVariants()` in the `className` of the `<Link>` or `<a>` and leave `Button`
+   * to the controls that actually do something on the page.
+   */
+  buttonLink: {
+    title: "navigation link rendered through Button",
+    hint: "use className={buttonVariants({ variant, size })} on the <Link> instead; Base UI forces role=\"button\" on a non-<button> and the link stops being a link",
+    scan(rel, source) {
+      const hits = [];
+      for (const match of source.matchAll(/<Button\b[\s\S]{0,400}?render=\{\s*<(Link|a)\b/g)) {
+        hits.push({ line: lineOf(source, match.index), token: `render={<${match[1]}` });
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A colour is a token, never a Tailwind palette name.
    *
    * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the

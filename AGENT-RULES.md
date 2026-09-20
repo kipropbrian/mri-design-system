@@ -91,6 +91,7 @@ Use `DataRow`; it is the only thing that arranges them.
 | a table | `TableCard` around `Table` | your own bordered box, or a shaded header |
 | a table too wide for a phone | `COLUMN.secondary` / `COLUMN.tertiary` on the column | letting it scroll sideways |
 | a table that needs room at 640px+ | `sm:min-w-[440px]` | an unprefixed `min-w-[640px]` |
+| a link that looks like a button | `className={buttonVariants({ variant, size })}` on the `<Link>` | `Button render={<Link/>}` |
 | a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
 | two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
 | a summary band | `MetricStrip` | a data surface — it may run four across |
@@ -125,6 +126,15 @@ because no amount of hiding takes a table below a floor it was given. Per-column
 `min-w-[140px]` is the same mistake in smaller pieces; five of them sum to a 600px
 table without any one looking unreasonable. A **prefixed** minimum is fine and is
 not flagged — `sm:min-w-[440px]` only applies from 640px, where the card has room.
+
+**A link is a link.** `Button render={<Link/>}` looks right and is not: Base UI
+applies `role="button"` to the anchor whichever element it renders, so a control that
+navigates is announced as a button — it leaves the screen reader's link list, loses
+"open in new tab" from that list, and promises a button's behaviour while performing a
+link's. Put `buttonVariants({ variant, size })` in the `className` of the `<Link>` or
+`<a>` and leave `Button` to controls that act on the page. This system taught the wrong
+pattern in sixteen places before the audit caught it; `npm run audit:ui` now fails on
+it.
 
 **Page padding is not a route's decision.** `PageContainer` owns the gutter
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between

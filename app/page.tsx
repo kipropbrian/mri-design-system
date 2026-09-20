@@ -15,7 +15,7 @@ import { MriLockup } from "@/components/site/brand";
 import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
 import { MetricCard, MetricStrip, Panel, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -164,13 +164,13 @@ export default function OverviewPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button nativeButton={false} size="lg" render={<Link href="/patterns" />}>
+            <Link href="/patterns" className={buttonVariants({ size: "lg" })}>
               Review the page patterns
               <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-            <Button nativeButton={false} size="lg" variant="outline" render={<Link href="/foundations" />}>
+            </Link>
+            <Link href="/foundations" className={buttonVariants({ variant: "outline", size: "lg" })}>
               Start with the foundations
-            </Button>
+            </Link>
           </div>
         </div>
 
@@ -231,50 +231,42 @@ export default function OverviewPage() {
           title={`shadcn preset ${PRESET_CODE}`}
           description="Decoded with `npx shadcn@latest preset decode b6t6Ah1yi`"
           action={
-            <Button
-              nativeButton={false}
-              variant="outline"
-              size="sm"
-              render={
-                <a
-                  href={`https://ui.shadcn.com/create?preset=${PRESET_CODE}`}
-                  target="_blank"
-                  rel="noreferrer"
-                />
-              }
+            <a
+              href={`https://ui.shadcn.com/create?preset=${PRESET_CODE}`}
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
             >
               Open in shadcn
               <ArrowUpRightIcon data-icon="inline-end" />
-            </Button>
+            </a>
           }
           contentClassName="grid gap-4"
         >
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-52">Preset key</TableHead>
-                  <TableHead className="w-48">Value</TableHead>
-                  <TableHead>What it controls</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {PRESET_VALUES.map((row) => (
-                  <TableRow key={row.key}>
-                    <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
-                      {row.key}
-                    </TableCell>
-                    <TableCell className="font-mono text-[0.6875rem] font-medium text-foreground">
-                      {row.value}
-                    </TableCell>
-                    <TableCell className="whitespace-normal text-muted-foreground">
-                      {row.note}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-52">Preset key</TableHead>
+        <TableHead className="w-48">Value</TableHead>
+        <TableHead>What it controls</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {PRESET_VALUES.map((row) => (
+        <TableRow key={row.key}>
+          <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
+            {row.key}
+          </TableCell>
+          <TableCell className="font-mono text-[0.6875rem] font-medium text-foreground">
+            {row.value}
+          </TableCell>
+          <TableCell className="whitespace-normal text-muted-foreground">
+            {row.note}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
 
           <div className="rounded-lg bg-muted/40 p-3">
             <p className="mb-1.5 text-[0.625rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -320,10 +312,10 @@ npx shadcn@latest apply ${PRESET_CODE} --only font`}
               </CardHeader>
               <CardContent className="grid gap-3">
                 <p className="text-xs/relaxed text-muted-foreground">{section.description}</p>
-                <Button nativeButton={false} variant="outline" size="sm" className="w-fit" render={<Link href={section.href} />}>
+                <Link href={section.href} className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-fit")}>
                   Open {section.title.toLowerCase()}
                   <ArrowRightIcon data-icon="inline-end" />
-                </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}
