@@ -198,6 +198,12 @@ link's. Put `buttonVariants({ variant, size })` in the `className` of the `<Link
 pattern in sixteen places before the audit caught it; `npm run audit:ui` now fails on
 it.
 
+**A route does not build its own page shell.** A centred, width-capped container with a
+gutter and a rhythm — `mx-auto w-full max-w-4xl px-4 py-10` — is `PageContainer`
+written out a second time, and the second definition does not move when the first
+one does. The platform's five document routes shared one such shell, so a change to
+`PageContainer` would have moved four routes and left five behind.
+
 **Page padding is not a route's decision.** `PageContainer` owns the gutter
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between
 sections (`gap-10`). A route that passes `py-*`, `pt-*`, `pb-*` or `space-y-*` to

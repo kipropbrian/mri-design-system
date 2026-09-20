@@ -12,5 +12,8 @@
   "tableAllowed": {
     "components/mri/patterns.tsx": "TableSkeleton is the skeleton *for* a table, so it has to emit the real elements. It cannot use the shared composition: the whole point is to mirror the geometry of the table that will replace it without importing the data path behind it, and swapping in <Table> would make the skeleton depend on the thing it stands in for.",
     "components/mri/chip-audit.tsx": "The chip audit is a specimen sheet. It prints a grid of every chip surface against every tone, which is a table of specimens rather than a data table, and it is installed as review chrome rather than as a page."
+  },
+  "pageShellAllowed": {
+    "components/site/site-footer.tsx": "The shell chrome. The header and footer are the frame that PageContainer sits inside, not content within it, so they own their gutter and their width by construction. The same is true of the platform's components/shell/ footer, which is named in that project's config."
   }
 }

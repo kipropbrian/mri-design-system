@@ -277,8 +277,10 @@ export function Prose({ children, className }: { children: ReactNode; className?
         // Headings and body, so a section written as plain JSX is still on the scale.
         "[&_h2]:font-heading [&_h2]:text-base [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-foreground",
         "[&_h3]:font-heading [&_h3]:text-sm [&_h3]:font-medium [&_h3]:text-foreground",
+        // No `[&_p+p]:mt-3`. `ProseSection` is already a grid, so a paragraph margin
+        // lands *on top of* the gap and makes body-to-body (20px) wider than
+        // heading-to-body (8px) — the hierarchy inverted by an extra rule.
         "[&_p]:text-sm/relaxed [&_p]:text-muted-foreground",
-        "[&_p+p]:mt-3",
         "[&_strong]:font-medium [&_strong]:text-foreground",
         // A link inside a document is underlined, because a colour shift alone is not
         // a link cue for a reader who cannot see the colour.

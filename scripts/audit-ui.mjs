@@ -49,7 +49,8 @@
  *     "spacingAllowed":   { "pr-14": "why this one is geometry, not rhythm" },
  *     "allowedCss":       { "public/x/player.css": "why this stylesheet exists" },
  *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" },
- *     "tableAllowed":     { "x/skeleton.tsx": "why this table is not a composition" }
+ *     "tableAllowed":     { "x/skeleton.tsx": "why this table is not a composition" },
+ *     "pageShellAllowed": { "components/shell/x.tsx": "why this file owns its own gutter" }
  *   }
  */
 import { readdirSync, readFileSync, statSync, writeFileSync, existsSync } from "node:fs";
@@ -94,6 +95,9 @@ const DEFAULTS = {
 
   /** Files where a raw <table> is the right element, with the reason. */
   tableAllowed: {},
+
+  /** Files that are outside PageContainer by construction and own a gutter. */
+  pageShellAllowed: {},
 };
 
 function loadConfig() {
@@ -117,6 +121,7 @@ function loadConfig() {
     allowedCss: { ...DEFAULTS.allowedCss, ...(raw.allowedCss ?? {}) },
     allowedColourFiles: { ...DEFAULTS.allowedColourFiles, ...(raw.allowedColourFiles ?? {}) },
     tableAllowed: { ...DEFAULTS.tableAllowed, ...(raw.tableAllowed ?? {}) },
+    pageShellAllowed: { ...DEFAULTS.pageShellAllowed, ...(raw.pageShellAllowed ?? {}) },
   };
 }
 
@@ -163,6 +168,7 @@ const TABLE_COMPOSITION = "components/ui/table.tsx";
 const ALLOWED_CSS = new Map(Object.entries(CONFIG.allowedCss));
 const ALLOWED_COLOUR_FILES = new Map(Object.entries(CONFIG.allowedColourFiles));
 const TABLE_ALLOWED = new Map(Object.entries(CONFIG.tableAllowed));
+const PAGE_SHELL_ALLOWED = new Map(Object.entries(CONFIG.pageShellAllowed));
 
 /** The named Tailwind palette, which has no business in an MRI interface. */
 const PALETTE_COLOUR =
@@ -890,6 +896,42 @@ const RULES = {
           }
           if (CLOSES.test(lines[i])) break;
         }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A route does not build its own page shell.
+   *
+   * The `padding` rule below catches a route that passes `py-*` to `PageContainer`.
+   * This catches the other half of the same mistake: a route that never uses
+   * `PageContainer` at all and instead writes the shell itself. The platform's five
+   * document routes shared a hand-written `LegalPage` doing exactly that —
+   * `mx-auto w-full max-w-3xl px-4 py-10 sm:px-6 sm:py-10 lg:px-8` — so the page gutter
+   * was defined twice, and a change to `PageContainer` would have moved four routes
+   * and left five behind.
+   *
+   * The signature is the combination, not any one utility: a centred, width-capped,
+   * gutter-and-rhythm container. Card padding (`px-4 py-3`) and a prose measure
+   * (`mx-auto max-w-sm`) are neither of those things and are not flagged.
+   *
+   * `components/shell/` is outside `PageContainer` by construction — the header and
+   * footer are the frame the container sits inside — so those files own a gutter
+   * legitimately and are named in `pageShellAllowed` with their reason.
+   */
+  pageShell: {
+    title: "route-level page shell",
+    hint: "let PageContainer own the gutter, the rhythm and the width; a route lists its sections as children",
+    scan(rel, source) {
+      if (PAGE_SHELL_ALLOWED.has(rel)) return [];
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        if (!/mx-auto/.test(literal)) continue;
+        if (!/\bmax-w-/.test(literal)) continue;
+        if (!/(?<![\w-])px-(?:4|6|8)\b/.test(literal)) continue;
+        if (!/(?<![\w-])py-(?:6|10)\b/.test(literal)) continue;
+        hits.push({ line, token: "mx-auto + max-w + page gutter and rhythm" });
       }
       return hits;
     },
