@@ -60,7 +60,15 @@ export function PageContainer({
   return (
     <div
       className={cn(
-        "mx-auto grid w-full min-w-0 max-w-full px-4 sm:px-6 lg:px-8",
+        // `grid-cols-[minmax(0,1fr)]` is load-bearing, not decoration. A grid's implicit
+        // column is `auto`, whose minimum is the largest child's **min-content** width —
+        // so one child that cannot wrap drags the column, and with it every sibling.
+        // Measured on `/gbif`: an unwrappable dataset title gave one child a 688px
+        // min-content, which stretched the page header to 688px inside a 320px viewport
+        // and silently clipped the h1. An explicit `minmax(0,1fr)` column means a child
+        // that will not shrink overflows *itself* — where it can be seen and fixed —
+        // instead of the page.
+        "mx-auto grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)] px-4 sm:px-6 lg:px-8",
         density === "page" ? "gap-10 py-6 lg:py-10" : "py-3",
         WIDTHS[size],
         className,
