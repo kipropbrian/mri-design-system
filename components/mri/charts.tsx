@@ -21,6 +21,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { OLIVE } from "@/lib/chart-colors";
+import { cn } from "cn";
 
 /**
  * Chart compositions.
@@ -32,6 +33,20 @@ import { OLIVE } from "@/lib/chart-colors";
  *
  * Series read `var(--color-<key>)`, which `ChartContainer` injects from
  * `config[key].color` — the documented shadcn chart contract.
+ *
+ * ## Why every container also gets `w-full`
+ *
+ * The generated `ChartContainer` ships `aspect-video` and no width of its own.
+ * `ChartFrame` then wraps it in a fixed `h-64`, which leaves the height definite
+ * and the width to the aspect ratio — so the chart resolves to `256 × 16/9 ≈ 455px`
+ * whatever card it is in. That fits a two-up row on a desktop and silently
+ * overflows a single-column card on a phone, where the rightmost bars are clipped
+ * with no scrollbar to reach them.
+ *
+ * A definite width makes the ratio inert, which is what a chart that has already
+ * been given a height and a parent wants. `min-w-0` is the other half: without it
+ * a grid child refuses to shrink below its content and pushes the card wider than
+ * the page.
  */
 
 const AXIS_TICK = { fontSize: 10 } as const;
@@ -69,7 +84,7 @@ const scanConfig = {
 
 export function InatScanArea({ data, className }: { data: ScanPoint[]; className?: string }) {
   return (
-    <ChartContainer config={scanConfig} className={className}>
+    <ChartContainer config={scanConfig} className={cn("w-full min-w-0", className)}>
       <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} accessibilityLayer>
         <defs>
           <linearGradient id="inat-new" x1="0" y1="0" x2="0" y2="1">
@@ -123,7 +138,7 @@ const taxaConfig = {
 
 export function InatTaxaBar({ data, className }: { data: TaxonPoint[]; className?: string }) {
   return (
-    <ChartContainer config={taxaConfig} className={className}>
+    <ChartContainer config={taxaConfig} className={cn("w-full min-w-0", className)}>
       <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, bottom: 4, left: 4 }}>
         <CartesianGrid horizontal={false} stroke="var(--border)" strokeDasharray="3 3" />
         <XAxis type="number" hide />
@@ -175,7 +190,7 @@ export function CountryBar({
   const config = { [dataKey]: { label: seriesLabel, color } } satisfies ChartConfig;
 
   return (
-    <ChartContainer config={config} className={className}>
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid {...GRID} />
         <XAxis dataKey="code" {...axisProps()} />
@@ -213,7 +228,7 @@ export function GroupedBar({
   ) satisfies ChartConfig;
 
   return (
-    <ChartContainer config={config} className={className}>
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid {...GRID} />
         <XAxis dataKey={xKey} {...axisProps()} />
@@ -253,7 +268,7 @@ export function StatusDonut({ data, className }: { data: DonutPoint[]; className
   ) satisfies ChartConfig;
 
   return (
-    <ChartContainer config={config} className={className}>
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <PieChart>
         <ChartTooltip cursor={false} content={<ChartTooltipContent nameKey="key" hideLabel />} />
         <Pie
@@ -299,7 +314,7 @@ export function MultiLine({
   ) satisfies ChartConfig;
 
   return (
-    <ChartContainer config={config} className={className}>
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid {...GRID} />
         <XAxis dataKey="year" {...axisProps()} />
