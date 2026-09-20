@@ -27,6 +27,15 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
   on an image.
 - **Never write a colour literal** (`#hex`, `rgb()`, `oklch()`) in a class name or
   a style. Use a semantic token.
+- **Never tint a surface with a chart colour.** `bg-chart-3/5`, `border-chart-2/30`
+  and `text-chart-1` are decoration: a data colour at a fraction reads as a category
+  that no data put it in. A chart colour is either **solid** — a legend swatch, a bar
+  fill, matching a series that exists — or it is not on the surface at all. A surface
+  that signifies a state uses a status role: `primary`, `info`, `warning`, `notable`,
+  `destructive`, or a `Chip` tone.
+- **Never move an element on hover.** `hover:-translate-y-0.5` is the old card
+  affordance and carries no information. Use `hover:ring-primary/30`.
+- **Never write an off-scale font size.** The scale is below.
 
 ## Always
 
@@ -136,6 +145,7 @@ Use `DataRow`; it is the only thing that arranges them.
 | a table too wide for a phone | `COLUMN.secondary` / `COLUMN.tertiary` on the column | letting it scroll sideways |
 | a table that needs room at 640px+ | `sm:min-w-[440px]` | an unprefixed `min-w-[640px]` |
 | a link that looks like a button | `className={buttonVariants({ variant, size })}` on the `<Link>` | `Button render={<Link/>}` |
+| signalling a state on a surface | a status role — `primary`, `info`, `warning`, `notable`, `destructive` — or a `Chip` tone | `bg-chart-3/5` |
 | a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
 | two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
 | a summary band | `MetricStrip` | a data surface — it may run four across |
