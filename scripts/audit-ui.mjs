@@ -50,7 +50,7 @@
  *     "allowedCss":       { "public/x/player.css": "why this stylesheet exists" },
  *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" },
  *     "tableAllowed":     { "x/skeleton.tsx": "why this table is not a composition" },
- *     "pageShellAllowed": { "components/shell/x.tsx": "why this file owns its own gutter" }
+ *     "pageShellAllowed": { "components/shell/x.tsx": "why this file owns its own gutter" },
  *   }
  */
 import { readdirSync, readFileSync, statSync, writeFileSync, existsSync } from "node:fs";
@@ -799,15 +799,42 @@ const RULES = {
       const lines = source.split("\n");
       const OPENS = /<(Card|Panel)\b/;
       const CLOSES = /<\/(Card|Panel)>/;
-      for (const match of source.matchAll(/<Eyebrow\b/g)) {
-        const line = lineOf(source, match.index);
+      // Two carve-outs, both narrow.
+      //
+      // A page that publishes the rules has to be able to show the treatment it is
+      // naming — the same reason `allowedColourFiles` exempts those pages from the
+      // colour rules. And the installed layer is where these treatments are *defined*:
+      // `MetricCard`'s micro-caps label is the metric strip's naming, not an eyebrow
+      // duplicating a title, so the inline half does not apply there. Its `<Eyebrow>`
+      // half still does.
+      const documentsTheRules = ALLOWED_COLOUR_FILES.has(rel);
+      const definesTheTreatments = rel.startsWith("components/mri/");
+
+      const report = (line, token) => {
         for (let i = line - 2; i >= Math.max(0, line - 21); i--) {
-          if (CLOSES.test(lines[i])) break;
+          if (CLOSES.test(lines[i])) return;
           if (OPENS.test(lines[i])) {
-            hits.push({ line, token: `${lines[i].match(OPENS)[1]} + Eyebrow` });
-            break;
+            hits.push({ line, token: `${lines[i].match(OPENS)[1]} + ${token}` });
+            return;
           }
         }
+      };
+
+      for (const match of source.matchAll(/<Eyebrow\b/g)) {
+        report(lineOf(source, match.index), "Eyebrow");
+      }
+
+      // The same treatment written out by hand. `<Eyebrow>` was the only spelling this
+      // rule knew, and it is not the one the platform used: the uppercase wide-tracked
+      // label appeared inline 33 times, so a card could carry an eyebrow that the rule
+      // meant to forbid and the rule would not see it. The signature is the
+      // combination — `uppercase` **and** a wide `tracking-` — because `uppercase`
+      // alone is legitimate on a mono country code or an acronym.
+      for (const { literal, line } of literals(source)) {
+        if (!/\buppercase\b/.test(literal)) continue;
+        if (!/(?<![\w-])tracking-(?:\[\d*\.?\d+em\]|wide|wider)(?![\w-])/.test(literal)) continue;
+        if (documentsTheRules || definesTheTreatments) continue;
+        report(line, "inline uppercase label");
       }
       return hits;
     },

@@ -236,9 +236,6 @@ export default function PlatformHomePage() {
               <div className="grid gap-3">
                 <div className="flex items-center justify-between gap-2">
                   <StatusBadge tone="positive">Ear training & practice</StatusBadge>
-                  <span className="text-[0.625rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                    Interactive
-                  </span>
                 </div>
 
                 <div className="flex items-start gap-3">
@@ -304,9 +301,6 @@ export default function PlatformHomePage() {
               <div className="grid gap-3">
                 <div className="flex items-center justify-between gap-2">
                   <Chip tone="notable">Regional checklist</Chip>
-                  <span className="text-[0.625rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                    Authoritative reference
-                  </span>
                 </div>
 
                 <div className="flex items-start gap-3">

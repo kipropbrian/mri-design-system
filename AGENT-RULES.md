@@ -27,7 +27,7 @@ lives only in a document is a rule that gets followed until the first deadline.
 | | `chartTint` | a chart colour used as a fractional wash on a surface |
 | **components** | `chips` | a hand-rolled chip, pill, tag or status marker |
 | | `headers` | a hand-rolled data-card header |
-| | `cardEyebrow` | an uppercase eyebrow inside a card |
+| | `cardEyebrow` | an uppercase eyebrow inside a card, written as `<Eyebrow>` or by hand |
 | **tables** | `tables` | a raw `<table>` outside the shared composition |
 | | `tableBox` | a hand-rolled bordered box around a table |
 | | `tableHeaders` | a shaded table header |

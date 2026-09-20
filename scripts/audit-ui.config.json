@@ -1,5 +1,5 @@
 {
-  "$comment": "Project-specific exemptions for scripts/audit-ui.mjs. The rules live in the script and are shared; which files may break them is a property of this project. The allow-lists merge over the script's defaults, so an entry here only ever adds an exemption.",
+  "$comment": "Project-specific exemptions for scripts/audit-ui.mjs. `allowedColourFiles` means \"files that publish the rules\": it exempts them from the colour rules and from `cardEyebrow`'s inline half, because a page that documents a treatment has to be able to show it. The rules live in the script and are shared; which files may break them is a property of this project. The allow-lists merge over the script's defaults, so an entry here only ever adds an exemption.",
   "generated": [
     "components/ui/"
   ],
