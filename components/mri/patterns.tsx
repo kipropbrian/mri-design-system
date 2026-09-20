@@ -150,6 +150,61 @@ export function DataRow({
 }
 
 /**
+ * Column priority: which columns a table keeps when there is no room for all of them.
+ *
+ * ## The problem this solves
+ *
+ * `TableCell` and `TableHead` ship `whitespace-nowrap`, so a table's width is the sum
+ * of its longest cell in every column and never shrinks. `Table` does wrap itself in
+ * `overflow-x-auto`, and for a long time that was the whole answer here: "containment
+ * is horizontal, long rows stay reachable." Measured on a 390px phone, it was not an
+ * answer at all —
+ *
+ *   `/inaturalist` country grid   8 columns   890px in a 423px box   +467px
+ *   `/inaturalist` observers      7 columns   560px in a 393px box   +167px
+ *   `/` country-first records     4 columns   476px in a 360px box   +116px
+ *
+ * — and the first of those still overflowed at 768px. A horizontal scrollbar is not a
+ * plan for a table that is more than twice its container: the reader sees three columns
+ * and no indication that five more exist, and on a touch device the swipe competes with
+ * the page's own scroll. **Dropping columns is the fix, and scrolling is the fallback.**
+ *
+ * ## How to use it
+ *
+ * Mark each column by how much it is worth, and hide the ones that are not worth a
+ * phone's width:
+ *
+ * ```tsx
+ * <TableHead className={COLUMN.secondary}>Species on file</TableHead>
+ * <TableCell className={cn(COLUMN.secondary, "text-right tabular-nums")}>…</TableCell>
+ * ```
+ *
+ * The `<th>` and the `<td>` for a column must carry the **same** token, or the header
+ * row and the body row disagree about which column is which — which is worse than the
+ * overflow it was meant to fix. Nothing enforces that pairing mechanically; the audit
+ * only requires that a wide table has dropped *something*.
+ *
+ * ## Choosing a tier
+ *
+ * Keep the first column and whatever the table exists to answer. Drop identity before
+ * quantity, and quantity before the one number a reader came for: a country and its
+ * count survive; the rank, the share and the trend sparkline do not.
+ */
+export const COLUMN = {
+  /**
+   * Dropped on a phone, shown from `sm` (640px). The usual tier for a supporting
+   * figure — a share, a count, a secondary date.
+   */
+  secondary: "hidden sm:table-cell",
+  /**
+   * Dropped below `lg` (1024px). For the third-tier column of a table that is one of
+   * two surfaces in a `DataRow`, where by `lg` the card holds half the page and the
+   * column has to earn its place against the chart beside it.
+   */
+  tertiary: "hidden lg:table-cell",
+} as const;
+
+/**
  * A table in a card.
  *
  * The arrangement every table on the platform shares, so no route has to decide
@@ -160,8 +215,11 @@ export function DataRow({
  *   the same table look different on two routes.
  * - the table **bleeds to the card's edges** (`p-0`), which is what makes a table
  *   read as a table rather than as a list in a box.
- * - containment is horizontal. `Table` already scrolls its own overflow, so long
- *   rows stay reachable instead of being truncated to fit.
+ * - **width is managed by dropping columns**, not by scrolling them. `Table` scrolls
+ *   its own overflow, but that is the fallback for a genuinely long value rather than
+ *   the plan — see `COLUMN` above for the measurements that settled this. A header row
+ *   of four or more columns is required by the audit to mark some as `secondary` or
+ *   `tertiary`.
  * - the **outer columns align with the card's own padding**, applied here once
  *   rather than by every route. A table whose first column starts 4px inside the
  *   title above it reads as misaligned even when every value is correct.

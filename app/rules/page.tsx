@@ -14,7 +14,7 @@ import { Chip, ChipRow, OverlayCaption } from "@/components/mri/chips";
 import { IucnChip } from "@/components/mri/specimen-card";
 import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import { PhotoStandIn } from "@/components/site/photo-stand-in";
-import { Panel, StatusBadge, TableCard } from "@/components/mri/patterns";
+import { COLUMN, Panel, StatusBadge, TableCard } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -175,7 +175,9 @@ export default function RulesPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Step</TableHead>
-                <TableHead>Value</TableHead>
+                {/* The step and the utility are what a reader writes; the pixel value
+                    is the same information in a second unit. It goes first on a phone. */}
+                <TableHead className={COLUMN.secondary}>Value</TableHead>
                 <TableHead>Utility</TableHead>
                 <TableHead>Its one job</TableHead>
               </TableRow>
@@ -186,7 +188,9 @@ export default function RulesPage() {
                   <TableCell className="font-mono text-[0.6875rem] tabular-nums text-foreground">
                     {row.step}
                   </TableCell>
-                  <TableCell className="font-mono text-[0.6875rem] tabular-nums text-muted-foreground">
+                  <TableCell
+                    className={`font-mono text-[0.6875rem] tabular-nums text-muted-foreground ${COLUMN.secondary}`}
+                  >
                     {row.value}
                   </TableCell>
                   <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
@@ -604,8 +608,11 @@ export default function RulesPage() {
               <TableRow>
                 <TableHead>Role</TableHead>
                 <TableHead>Chip</TableHead>
-                <TableHead>Light</TableHead>
-                <TableHead>Dark</TableHead>
+                {/* The two hex-value columns are the longest cells here and the least
+                    useful on a phone: a reader checking "what does warning look like"
+                    reads the chip, not the oklch triple behind it. */}
+                <TableHead className={COLUMN.secondary}>Light</TableHead>
+                <TableHead className={COLUMN.secondary}>Dark</TableHead>
                 <TableHead>What it is for</TableHead>
               </TableRow>
             </TableHeader>
@@ -618,10 +625,14 @@ export default function RulesPage() {
                   <TableCell>
                     <Chip tone={role.tone}>{role.label}</Chip>
                   </TableCell>
-                  <TableCell className="font-mono text-[0.5625rem] text-muted-foreground">
+                  <TableCell
+                    className={`font-mono text-[0.5625rem] text-muted-foreground ${COLUMN.secondary}`}
+                  >
                     {role.light}
                   </TableCell>
-                  <TableCell className="font-mono text-[0.5625rem] text-muted-foreground">
+                  <TableCell
+                    className={`font-mono text-[0.5625rem] text-muted-foreground ${COLUMN.secondary}`}
+                  >
                     {role.dark}
                   </TableCell>
                   <TableCell className="whitespace-normal text-muted-foreground">{role.use}</TableCell>

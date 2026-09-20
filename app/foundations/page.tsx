@@ -19,7 +19,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { MriLockup, MriMark, MriMarkInverse, ProviderMark } from "@/components/site/brand";
 import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
-import { Panel, StatusBadge } from "@/components/mri/patterns";
+import { COLUMN, Panel, StatusBadge } from "@/components/mri/patterns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -384,7 +384,10 @@ export default function FoundationsPage() {
                 <TableHead className="w-10" />
                 <TableHead>Token</TableHead>
                 <TableHead>Light / dark value</TableHead>
-                <TableHead>Used for</TableHead>
+                {/* The longest cell in the table and the least load-bearing of the
+                    four: on a phone the token and its value are the reference, and
+                    the sentence about what it is for can wait. */}
+                <TableHead className={COLUMN.secondary}>Used for</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -399,7 +402,7 @@ export default function FoundationsPage() {
                   <TableCell className="font-mono text-[0.5625rem] text-muted-foreground">
                     {token.value}
                   </TableCell>
-                  <TableCell className="whitespace-normal text-muted-foreground">
+                  <TableCell className={`whitespace-normal text-muted-foreground ${COLUMN.secondary}`}>
                     {token.usage}
                   </TableCell>
                 </TableRow>

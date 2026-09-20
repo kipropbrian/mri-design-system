@@ -89,6 +89,7 @@ Use `DataRow`; it is the only thing that arranges them.
 | --- | --- | --- |
 | a card with a header | `Panel` | a hand-rolled title + description div |
 | a table | `TableCard` around `Table` | your own bordered box, or a shaded header |
+| a table too wide for a phone | `COLUMN.secondary` / `COLUMN.tertiary` on the column | letting it scroll sideways |
 | a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
 | two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
 | a summary band | `MetricStrip` | a data surface — it may run four across |
@@ -100,6 +101,20 @@ there is no uppercase eyebrow inside a data card.
 **A table header is plain.** No background, no blur, no shadow, no uppercase
 tracking. A shaded header is the most common drift in this system, and it makes one
 table look like two different components on two routes.
+
+**A wide table drops columns; it does not scroll them.** `TableCell` ships
+`whitespace-nowrap`, so a table is the sum of its longest cell in every column and
+never shrinks. `Table` does scroll its own overflow, and this system used to treat
+that as the answer — "containment is horizontal". Measured on a 390px phone it was
+not an answer: `/inaturalist`'s country grid was 890px inside a 423px box, and it
+still overflowed at 768px. A reader does not find five columns behind a swipe they
+cannot see, so any header row of **four or more columns** must mark some with
+`COLUMN.secondary` (`hidden sm:table-cell`) or `COLUMN.tertiary`
+(`hidden lg:table-cell`) from `patterns.tsx`. The `<th>` and its `<td>` carry the
+**same** token, or the header and the body disagree about which column is which.
+Keep the identity column and the number the table exists to answer; drop the rank,
+the share and the sparkline first. `npm run audit:ui` enforces the presence of a
+dropped column, not the choice of which.
 
 **Page padding is not a route's decision.** `PageContainer` owns the gutter
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between

@@ -412,6 +412,62 @@ const RULES = {
   },
 
   /**
+   * A wide table drops columns on a phone.
+   *
+   * `TableCell` and `TableHead` ship `whitespace-nowrap`, so a table is as wide as the
+   * sum of its longest cell in every column and never shrinks. `Table` does wrap itself
+   * in `overflow-x-auto`, and this system previously treated that as sufficient —
+   * "containment is horizontal, long rows stay reachable". Measured on a 390px phone it
+   * was not sufficient at all:
+   *
+   *   /inaturalist country grid    8 columns   890px in a 423px box   +467px
+   *   /inaturalist observers       7 columns   560px in a 393px box   +167px
+   *   / country-first records      4 columns   476px in a 360px box   +116px
+   *
+   * and the first still overflowed at 768px. A reader does not discover five columns
+   * behind a swipe they cannot see, so the rule is the one this system already states
+   * in prose: **if a table displays too much information, drop some columns.**
+   *
+   * The check is deliberately about the *header block* rather than about total width,
+   * because a class-string scan cannot measure rendered text. Four or more columns is
+   * the threshold at which a phone-sized card has to lose one, and the requirement is
+   * only that it lost *something* — which column is a judgement the audit cannot make.
+   *
+   * Both spellings are accepted: the shared `COLUMN.secondary` / `COLUMN.tertiary`
+   * tokens, and the literal utility, because the generated `TableHead` cannot be
+   * wrapped and a route is free to write the class directly.
+   */
+  tableColumns: {
+    title: "wide table with no mobile column priority",
+    hint: "a header row of four or more columns must drop some on a phone — mark them with COLUMN.secondary or COLUMN.tertiary from components/mri/patterns.tsx",
+    scan(rel, source) {
+      // A class string on the header row is enough: the matching body cells are not
+      // required to carry it, because a `<td>` inside a `.map` renders one cell per
+      // row and the header is the single place the column is declared.
+      //
+      // The test is per class string rather than across the whole block, because the
+      // two halves of the idiom are frequently separated — `hidden text-right
+      // sm:table-cell` is one column being dropped, and a block-wide "contains hidden,
+      // contains a variant" test would also pass a table where one column is hidden by
+      // an unrelated utility and no column is dropped at all.
+      const dropsAColumn = (classes) =>
+        /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
+      const hits = [];
+      for (const match of source.matchAll(/<TableHeader\b[\s\S]*?<\/TableHeader>/g)) {
+        const block = match[0];
+        const columns = (block.match(/<TableHead\b/g) ?? []).length;
+        if (columns < 4) continue;
+        const dropped =
+          [...block.matchAll(/"([^"]*)"/g)].some((literal) => dropsAColumn(literal[1])) ||
+          /COLUMN\.(?:secondary|tertiary)/.test(block);
+        if (dropped) continue;
+        hits.push({ line: lineOf(source, match.index), token: `${columns} columns, none dropped` });
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A colour is a token, never a Tailwind palette name.
    *
    * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the
