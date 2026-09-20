@@ -90,7 +90,25 @@ export function Panel({
   return (
     <Card size={size} className={cn("min-w-0", className)}>
       {title || description || action ? (
-        <CardHeader className="border-b border-border/60 pb-3">
+        <CardHeader
+          className={cn(
+            "border-b border-border/60 pb-3",
+            // The generated `CardHeader` places an action in a second column and lets
+            // the title column take `1fr` — but `1fr` is `minmax(auto, 1fr)`, so the
+            // title still floors at its own min-content and a wide action has nowhere
+            // to go. Measured: the sound pages' three-way view switch (172px) and the
+            // iNaturalist chart switch (205px) both left their card at a 320px
+            // viewport, 30px and 57px past the edge.
+            //
+            // Below `sm` the action moves under the title. `row-start-auto` is the
+            // load-bearing part: the primitive pins it to `row-start-1`, which would
+            // put it on top of the title once there is only one column.
+            "has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)]",
+            "[&>[data-slot=card-action]]:col-start-1 [&>[data-slot=card-action]]:row-start-auto [&>[data-slot=card-action]]:justify-self-start",
+            "sm:has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto]",
+            "sm:[&>[data-slot=card-action]]:col-start-2 sm:[&>[data-slot=card-action]]:row-start-1 sm:[&>[data-slot=card-action]]:justify-self-end",
+          )}
+        >
           <CardTitle>
             <TitleTag className="truncate font-heading text-sm font-medium">
               {title}
