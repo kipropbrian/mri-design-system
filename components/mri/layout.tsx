@@ -285,8 +285,8 @@ export function Prose({ children, className }: { children: ReactNode; className?
         // A link inside a document is underlined, because a colour shift alone is not
         // a link cue for a reader who cannot see the colour.
         "[&_a]:font-medium [&_a]:text-primary-ink [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-primary/40 [&_a:hover]:decoration-primary",
-        "[&_ul]:ml-5 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-1.5",
-        "[&_ol]:ml-5 [&_ol]:grid [&_ol]:list-decimal [&_ol]:gap-1.5",
+        "[&_ul]:ml-6 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-1.5",
+        "[&_ol]:ml-6 [&_ol]:grid [&_ol]:list-decimal [&_ol]:gap-1.5",
         "[&_li]:text-sm/relaxed [&_li]:text-muted-foreground",
         "[&_li]:marker:text-muted-foreground",
         // A code span is an identifier, so it is mono and does not reflow.

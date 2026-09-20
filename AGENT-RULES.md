@@ -111,6 +111,9 @@ Eight steps. Nothing else.
 | 24 | `gap-6` | section heading to its content |
 | 40 | `gap-10` | between page sections |
 
+Margin is on the same scale, and it is the second choice: prefer `gap` on a grid over
+`mt-*` on a child, because a margin is invisible to the parent that is arranging things.
+
 Plus four rules:
 
 1. **Nothing is flush.** Every content edge keeps at least `--card-spacing`. The

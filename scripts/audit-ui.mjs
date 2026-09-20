@@ -151,7 +151,11 @@ const SKIP_DIRS = new Set([
 
 /** 8 steps, one job each. Anything else is drift, not a decision. */
 const SPACING_SCALE = new Set(["0", "0.5", "1", "1.5", "2", "3", "4", "6", "10"]);
-const SPACING_UTILITY = /(?<![\w-])(gap|p|px|py|pt|pr|pb|pl|space-x|space-y)-(\d+(?:\.\d+)?)(?![\d.])/g;
+// Margin is on the same scale as padding and gap, and was simply not scanned: the
+// rule covered `gap`, `p*` and `space-y` and left `m*` alone, so `mt-7` (28px)
+// and `mt-8` (32px) sat in the platform next to a scale whose largest step below
+// the page rhythm is 24px. `mx-auto` is untouched: the pattern requires a number.
+const SPACING_UTILITY = /(?<![\w-])(gap|p|px|py|pt|pr|pb|pl|m|mx|my|mt|mr|mb|ml|space-x|space-y)-(\d+(?:\.\d+)?)(?![\d.])/g;
 const SPACING_ALLOWED = new Map(Object.entries(CONFIG.spacingAllowed));
 
 /** The one chip module owns every chip-shaped class string. */
@@ -298,7 +302,7 @@ const isGenerated = (rel) => GENERATED.some((prefix) => rel.startsWith(prefix));
 const RULES = {
   spacing: {
     title: "off-scale spacing",
-    hint: "use one of: 0 / 0.5 / 1 / 1.5 / 2 / 3 / 4 / 6 / 10",
+    hint: "use one of: 0 / 0.5 / 1 / 1.5 / 2 / 3 / 4 / 6 / 10 — and prefer gap on a grid over margin on a child",
     scan(rel, source) {
       const hits = [];
       for (const { literal, line } of literals(source)) {
