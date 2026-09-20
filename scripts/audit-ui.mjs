@@ -716,6 +716,48 @@ const RULES = {
   },
 
   /**
+   * A data card has no eyebrow.
+   *
+   * This is rule one of the data-card header and the only one that had no enforcement.
+   * `Panel` carries it structurally — there is no `eyebrow` prop, and the docstring
+   * says why: "the title already names the section, and an eyebrow both duplicates it
+   * and breaks row alignment." But a route building its own `Card` can put an
+   * `Eyebrow` above the title, and six cards in a row then have six different header
+   * heights because two of the eyebrows wrap.
+   *
+   * The audit's `headers` rule cannot see this: it looks for `font-semibold` plus
+   * `tracking-tight`, and `Eyebrow` is `font-medium uppercase tracking-[0.14em]`. A
+   * different signature for the same mistake.
+   *
+   * The check is a **proximity** one, like `twoUp`: for each `<Eyebrow`, look up to
+   * twenty lines back for a `<Card` or `<Panel` that has not been closed yet. That is
+   * the closest a class-string audit gets to "these two are in the same box", and it is
+   * a prompt to look rather than a proof — which is why the fix is usually to move the
+   * label into the title's own detail line rather than to argue with the rule.
+   */
+  cardEyebrow: {
+    title: "uppercase eyebrow inside a data card",
+    hint: "a card header is the title plus one line of detail — fold the eyebrow's text into that line, or use <Panel>, which has no eyebrow by design",
+    scan(rel, source) {
+      const hits = [];
+      const lines = source.split("\n");
+      const OPENS = /<(Card|Panel)\b/;
+      const CLOSES = /<\/(Card|Panel)>/;
+      for (const match of source.matchAll(/<Eyebrow\b/g)) {
+        const line = lineOf(source, match.index);
+        for (let i = line - 2; i >= Math.max(0, line - 21); i--) {
+          if (CLOSES.test(lines[i])) break;
+          if (OPENS.test(lines[i])) {
+            hits.push({ line, token: `${lines[i].match(OPENS)[1]} + Eyebrow` });
+            break;
+          }
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * A colour is a token, never a Tailwind palette name.
    *
    * The `tokens` rule above catches arbitrary values (`text-[#3b82f6]`), which is the
