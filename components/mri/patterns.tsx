@@ -332,12 +332,17 @@ export function MetricCard({
 }) {
   return (
     <Card size="sm" className={cn("justify-between gap-3", className)}>
-      <CardHeader className="gap-1">
-        <CardDescription className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.12em]">
+      {/* `min-w-0` on both, and it is not decoration. `CardHeader` is a grid, and a grid
+          item's default `min-width: auto` refuses to shrink below its content — so the
+          `truncate` on the label and the value had nothing to truncate against. At a
+          320px viewport a two-up `MetricStrip` leaves each card about 138px of interior
+          and a value like "16,468,494" at `text-xl` is 160px, so it clipped silently. */}
+      <CardHeader className="grid-cols-[minmax(0,1fr)] gap-1">
+        <CardDescription className="flex min-w-0 items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.12em]">
           {icon}
-          <span className="truncate">{label}</span>
+          <span className="min-w-0 truncate">{label}</span>
         </CardDescription>
-        <CardTitle className="truncate text-xl font-medium tabular-nums text-foreground">
+        <CardTitle className="min-w-0 truncate text-xl font-medium tabular-nums text-foreground">
           {value}
         </CardTitle>
       </CardHeader>
