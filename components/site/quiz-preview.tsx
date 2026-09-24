@@ -286,12 +286,15 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                   </StatusBadge>
                 }
                 footer={
-                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
+                  <div className="flex flex-col gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+                    <span className="hidden items-center gap-1.5 sm:flex">
                       <KeyboardIcon className="size-3.5" />
                       Press <Kbd>Space</Kbd> to play/pause, <Kbd>A</Kbd>–<Kbd>D</Kbd> to answer
                     </span>
-                    <Button type="button" onClick={() => setStage("question")}>
+                    <span className="text-xs text-muted-foreground sm:hidden">
+                      5 randomised calls · ~2 mins
+                    </span>
+                    <Button type="button" onClick={() => setStage("question")} className="w-full sm:w-auto">
                       Start today’s session
                       <PlayIcon data-icon="inline-end" weight="fill" />
                     </Button>
@@ -339,7 +342,7 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                       <CompassIcon className="size-4" weight="bold" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center justify-between gap-1">
                         <span className="text-xs font-medium text-foreground">
                           Today&apos;s Focus: Montane Canopy &amp; Understory
                         </span>
@@ -400,11 +403,12 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                 title="Which species is calling?"
                 description="Listen to the recording and choose from the four regional candidates below."
                 footer={
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-[0.6875rem] text-muted-foreground">
-                    <span className="flex items-center gap-1">
+                  <div className="flex items-center justify-between gap-2 text-[0.6875rem] text-muted-foreground">
+                    <span className="hidden items-center gap-1 sm:flex">
                       <KeyboardIcon className="size-3.5" />
                       Press <Kbd>A</Kbd>–<Kbd>D</Kbd> to answer, <Kbd>Space</Kbd> to play/pause
                     </span>
+                    <span className="sm:hidden">Tap a candidate to answer</span>
                     <span className="font-mono tabular-nums">4 candidates</span>
                   </div>
                 }
@@ -501,12 +505,12 @@ export function QuizPreview({ question }: { question: QuizQuestion }) {
                   </StatusBadge>
                 }
                 footer={
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <Button variant="outline" size="sm" onClick={reset}>
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <Button variant="outline" size="sm" onClick={reset} className="flex-1 sm:flex-initial">
                       <ArrowCounterClockwiseIcon data-icon="inline-start" />
                       Try again
                     </Button>
-                    <Button size="sm" onClick={() => setStage("summary")}>
+                    <Button size="sm" onClick={() => setStage("summary")} className="flex-1 sm:flex-initial">
                       Next call
                       <ArrowRightIcon data-icon="inline-end" />
                     </Button>
