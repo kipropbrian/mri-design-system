@@ -99,7 +99,8 @@ export default function ChartsPage() {
         }
       />
 
-      <section className="grid gap-3">
+      {/* ---------------------------------------------------------- contract */}
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Contract"
           title="How a chart is wired"
@@ -129,7 +130,7 @@ export default function ChartsPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Time series" title="Area and line" />
         <ChartFrame
           title="Weekly scan activity (10 runs)"
@@ -164,7 +165,7 @@ export default function ChartsPage() {
         </ChartFrame>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Comparison" title="Bars and grouped bars" />
         <div className="grid gap-3 lg:grid-cols-2">
           <ChartFrame
@@ -215,7 +216,7 @@ export default function ChartsPage() {
         </ChartFrame>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Composition" title="Donut and small multiples" />
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
           <ChartFrame
@@ -308,7 +309,7 @@ export default function ChartsPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Identity"
           title="The categorical ramp"
@@ -356,7 +357,7 @@ export default function ChartsPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="States"
           title="Empty and loading charts"
@@ -398,7 +399,7 @@ export default function ChartsPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Rules"
           title="Chart guidance"

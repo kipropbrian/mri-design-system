@@ -8,7 +8,7 @@ import {
   HeadphonesIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { ProviderMark } from "@/components/site/brand";
-import { Chip } from "@/components/mri/chips";
+import { Chip, OverlayCaption } from "@/components/mri/chips";
 import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
 import { Panel, SourceNote, StatusBadge } from "@/components/mri/patterns";
 import { buttonVariants } from "@/components/ui/button";
@@ -89,7 +89,7 @@ export default function PlatformHomePage() {
   return (
     <PageContainer size="wide">
       {/* ------------------------------------------------------------- hero */}
-      <section className="grid gap-6 border-b border-border/60 pb-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-10">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-10">
         <div className="grid gap-4">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[0.625rem] font-medium uppercase tracking-[0.14em] text-primary-ink">
@@ -146,7 +146,7 @@ export default function PlatformHomePage() {
       </section>
 
       {/* ---------------------------------------------------- weekly watches */}
-      <section aria-labelledby="weekly-watches" className="grid gap-3">
+      <section aria-labelledby="weekly-watches" className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Weekly biodiversity watches"
           title="What changed across East Africa"
@@ -203,11 +203,9 @@ export default function PlatformHomePage() {
           ))}
         </div>
       </section>
-
-      <hr className="border-border/60" />
-
-      {/* --------------------------------------------------------- tools */}
-      <section aria-labelledby="field-tools" className="grid gap-3">
+ 
+       {/* --------------------------------------------------------- tools */}
+      <section aria-labelledby="field-tools" className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Field & reference tools"
           title="Reference and sound practice for East Africa"
@@ -224,12 +222,12 @@ export default function PlatformHomePage() {
                 loading="lazy"
                 className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-background">
-                <div className="flex items-center justify-between gap-2">
+              <OverlayCaption>
+                <span className="flex items-center justify-between gap-2">
                   <span className="font-medium">Nyungwe forest clearing</span>
-                  <span className="text-background/85">Field recording · Rwanda</span>
-                </div>
-              </div>
+                  <span>Field recording · Rwanda</span>
+                </span>
+              </OverlayCaption>
             </div>
 
             <CardContent className="grid flex-1 content-between gap-4 py-(--card-spacing)">
@@ -289,12 +287,12 @@ export default function PlatformHomePage() {
                 loading="lazy"
                 className="size-full object-cover object-[center_30%] transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/45 to-transparent px-3 pt-10 pb-2 text-[0.625rem] text-background">
-                <div className="flex items-center justify-between gap-2">
+              <OverlayCaption>
+                <span className="flex items-center justify-between gap-2">
                   <span className="font-medium">{birds.featured[1]?.commonName}</span>
-                  <span className="text-background/85">Photo · Macaulay Library</span>
-                </div>
-              </div>
+                  <span>Photo · Macaulay Library</span>
+                </span>
+              </OverlayCaption>
             </div>
 
             <CardContent className="grid flex-1 content-between gap-4 py-(--card-spacing)">

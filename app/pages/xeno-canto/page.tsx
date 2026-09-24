@@ -110,7 +110,7 @@ export default function XenoCantoPage() {
         />
       </MetricStrip>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Snapshot"
           title="Weekly snapshot navigator"
@@ -143,7 +143,7 @@ export default function XenoCantoPage() {
         </Specimen>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Coverage"
           title="Recordings by country"
@@ -194,7 +194,7 @@ export default function XenoCantoPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Species"
           title="Best-documented species"
@@ -304,7 +304,7 @@ export default function XenoCantoPage() {
         </div>
       </section>
 
-      <Specimen label="provenance" note="closes the snapshot">
+      <Specimen label="provenance" note="closes the snapshot" className="border-t border-border/60 pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-muted/40 px-3 py-3 ring-1 ring-foreground/10">
           <div className="grid gap-1">
             <SourceNote>Taxonomy courtesy of Xeno-canto.org</SourceNote>

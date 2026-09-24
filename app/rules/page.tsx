@@ -73,9 +73,9 @@ const SPACE_RULES = [
     was: "The quiz hero used content-between and stretched three blocks across a tall column.",
   },
   {
-    title: "Section rhythm is 40 / 24 / 12",
-    body: "40px between sections, 24px from a section heading to its content, 12px inside a block. There is no fourth value.",
-    was: "Sections used 8, 10, 24 and 40 inconsistently.",
+    title: "Section rhythm is 24 / 24 / 12 with top hairline dividers",
+    body: "24px between sections (gap-6), 24px from a section heading to its content (pt-6 / gap-6), and 12px inside a block (gap-3). Major sections separate with a single top border (border-t border-border/60 pt-6). SectionHeader does not carry a bottom border, and standalone <hr> grid items inside PageContainer are prohibited to avoid double-line clutter.",
+    was: "Standalone <hr> and boxed SectionHeader borders created double-line breaks and 80px+ gaps.",
   },
   {
     title: "Media has a fixed ratio, text does not drive height",
@@ -143,6 +143,11 @@ const OVERLAY_RULES = [
     body: "Never bare text on a photograph. from-black/80 via-black/45, minimum 32px tall, white/85 text, truncated to one line.",
     was: "Attribution was consistent already — this one is unchanged.",
   },
+  {
+    title: "Never place flow badges or un-scrimmed text on an image",
+    body: "Flow badges (like StatusBadge or Badge) and raw text rely on low-opacity tints that bleed into photograph pixels. Text and controls over images must be explicitly scrimmed via Chip(surface=\"overlay\"), OverlayCaption, or dedicated overlay surfaces.",
+    was: "The quiz reveal screen placed a flow StatusBadge on the bird photograph; its 10% tint was completely unreadable against the background.",
+  },
 ];
 
 export default function RulesPage() {
@@ -164,7 +169,7 @@ export default function RulesPage() {
       />
 
       {/* ------------------------------------------------------------- space */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="01 · Space"
           title="Eight steps, each with one job"
@@ -308,7 +313,7 @@ export default function RulesPage() {
       </section>
 
       {/* -------------------------------------------------------------- chips */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="02 · Chips"
           title="One component, two surfaces, seven tones"
@@ -470,11 +475,11 @@ export default function RulesPage() {
       </section>
 
       {/* ----------------------------------------------------------- overlays */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="03 · Overlay"
           title="Text on a photograph"
-          description="A photograph is the only surface in the interface whose contrast we do not control. These four rules make that someone else's problem."
+          description="A photograph is the only surface in the interface whose contrast we do not control. These five rules make that someone else's problem."
         />
 
         <div className="grid gap-3 lg:grid-cols-2">
@@ -589,8 +594,8 @@ export default function RulesPage() {
           </Panel>
         </div>
       </section>
-
-      <section className="grid gap-3">
+ 
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Extension"
           title="The three roles the preset does not ship"

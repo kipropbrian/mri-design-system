@@ -237,7 +237,7 @@ export default function FoundationsPage() {
       />
 
       {/* ------------------------------------------------------------- brand */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Brand"
           title="The MRI mark"
@@ -311,7 +311,7 @@ export default function FoundationsPage() {
       </section>
 
       {/* ------------------------------------------------------------ colour */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Colour"
           title="Semantic roles, never raw hex"
@@ -444,7 +444,7 @@ export default function FoundationsPage() {
       </section>
 
       {/* ------------------------------------------------------------ fonts */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Fonts"
           title="Inter renders, Atkinson is the fallback"
@@ -515,7 +515,7 @@ export default function FoundationsPage() {
       </section>
 
       {/* -------------------------------------------------------- typography */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Typography"
           title="One scale, one family"
@@ -539,7 +539,7 @@ export default function FoundationsPage() {
       </section>
 
       {/* ------------------------------------------------------------ radius */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Shape"
           title="Radius scale"
@@ -560,7 +560,7 @@ export default function FoundationsPage() {
       </section>
 
       {/* ------------------------------------------------------------ icons */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Iconography"
           title="Phosphor, one weight per role"

@@ -134,7 +134,7 @@ export default function PatternsPage() {
       />
 
       {/* ------------------------------------------------------ 1. page shell */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="01 · Shell"
           title="Container and header"
@@ -178,7 +178,7 @@ export default function PatternsPage() {
       </section>
 
       {/* ---------------------------------------------------- 2. metric strip */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="02 · Summary"
           title="Metric strip"
@@ -225,7 +225,7 @@ export default function PatternsPage() {
       </section>
 
       {/* --------------------------------------------------- 3. data card header */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="03 · Panels"
           title="The data-card header"
@@ -328,7 +328,7 @@ export default function PatternsPage() {
       </section>
 
       {/* ------------------------------------------------------- 4. filter bar */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="04 · Input"
           title="Filter bar"
@@ -483,7 +483,7 @@ export default function PatternsPage() {
       </section>
 
       {/* ------------------------------------------------------- 5. data table */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="05 · Records"
           title="Table card with pagination"
@@ -624,7 +624,7 @@ export default function PatternsPage() {
       </section>
 
       {/* --------------------------------------------------------- 6. media */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="06 · Media"
           title="Specimen and media cards"
@@ -682,7 +682,7 @@ export default function PatternsPage() {
       </section>
 
       {/* -------------------------------------------------------- 7. states */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="07 · States"
           title="Loading, empty and error"
@@ -733,7 +733,7 @@ export default function PatternsPage() {
       </section>
 
       {/* ---------------------------------------------------- 8. provenance */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="08 · Provenance"
           title="Source strip"
@@ -764,7 +764,7 @@ export default function PatternsPage() {
       </section>
 
       {/* ------------------------------------------------------- 9. density */}
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="09 · Density"
           title="The compact scale, in one table"

@@ -134,7 +134,7 @@ export default function OverviewPage() {
 
   return (
     <PageContainer size="wide">
-      <section className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-start">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:items-start">
         <div className="grid gap-4">
           <MriLockup />
 
@@ -221,7 +221,7 @@ export default function OverviewPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="The baseline"
           title="What the preset gives us, unchanged"
@@ -284,7 +284,7 @@ npx shadcn@latest apply ${PRESET_CODE} --only font`}
         </Panel>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="What is in the box"
           title="Five layers, in review order"
@@ -322,7 +322,7 @@ npx shadcn@latest apply ${PRESET_CODE} --only font`}
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Reference pages"
           title="Five live routes, rebuilt"
@@ -348,7 +348,7 @@ npx shadcn@latest apply ${PRESET_CODE} --only font`}
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="House rules"
           title="Six principles the template encodes"

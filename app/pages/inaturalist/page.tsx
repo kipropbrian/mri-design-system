@@ -127,7 +127,7 @@ export default function InaturalistPage() {
         />
       </MetricStrip>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Trends"
           title="Scan activity and taxon mix"
@@ -162,7 +162,7 @@ export default function InaturalistPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Coverage"
           title={`National catalog distribution (${inat.countries.length})`}
@@ -205,7 +205,7 @@ export default function InaturalistPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Records"
           title="Latest verified country firsts"
@@ -219,7 +219,7 @@ export default function InaturalistPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Ledger"
           title="Country-first ledger"
@@ -347,7 +347,7 @@ export default function InaturalistPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Method" title="How a record becomes stable" />
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <Panel contentClassName="grid gap-3">

@@ -98,7 +98,7 @@ export function AudioPlayer({
       className={cn(
         "grid gap-3 rounded-xl p-4",
         overlay
-          ? "bg-foreground/70 text-background backdrop-blur-sm"
+          ? "bg-foreground/80 text-background backdrop-blur-md shadow-md"
           : "border border-border bg-card shadow-xs",
         className,
       )}
@@ -114,7 +114,7 @@ export function AudioPlayer({
             "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
             "hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50",
             overlay
-              ? "bg-background text-foreground focus-visible:ring-background focus-visible:ring-offset-foreground/70"
+              ? "bg-background text-foreground focus-visible:ring-background focus-visible:ring-offset-foreground/80"
               : "bg-primary text-primary-foreground focus-visible:ring-ring hover:bg-primary/90",
           )}
         >
@@ -141,7 +141,7 @@ export function AudioPlayer({
                       ? "bg-background"
                       : "bg-primary"
                     : overlay
-                      ? "bg-background/35"
+                      ? "bg-background/50"
                       : "bg-muted-foreground/30",
                   isPlaying && "animate-pulse motion-reduce:animate-none",
                 )}
@@ -198,7 +198,7 @@ export function AudioPlayer({
         <div
           className={cn(
             "flex items-center justify-between font-mono text-xs tabular-nums",
-            overlay ? "text-background/80" : "text-muted-foreground",
+            overlay ? "text-background/90" : "text-muted-foreground",
           )}
         >
           <span className="flex items-center gap-1">

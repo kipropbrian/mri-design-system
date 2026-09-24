@@ -26,8 +26,8 @@ const WIDTHS = {
  *
  * - **Horizontal** `px-4 sm:px-6 lg:px-8` — the shell gutter, 16 / 24 / 32px.
  * - **Vertical** `py-6 lg:py-10` — 24px, then 40px from `lg`.
- * - **Between sections** `gap-10` — the 40px of "40px between sections" in the
- *   spacing scale. Sections space themselves; `space-y-*` here is drift.
+ * - **Between sections** `gap-6` — the 24px of "24 / 24 / 12" in the section
+ *   rhythm. Sections space themselves; `space-y-*` here is drift.
  *
  * ## Why it is written this way
  *
@@ -69,7 +69,7 @@ export function PageContainer({
         // that will not shrink overflows *itself* — where it can be seen and fixed —
         // instead of the page.
         "mx-auto grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)] px-4 sm:px-6 lg:px-8",
-        density === "page" ? "gap-10 py-6 lg:py-10" : "py-3",
+        density === "page" ? "gap-6 py-6 lg:py-10" : "py-3",
         WIDTHS[size],
         className,
       )}
@@ -153,6 +153,7 @@ export function SectionHeader({
   action,
   className,
   id,
+  divider = false,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -160,11 +161,13 @@ export function SectionHeader({
   action?: ReactNode;
   className?: string;
   id?: string;
+  divider?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-end justify-between gap-3 border-b border-border/60 pb-3",
+        "flex flex-wrap items-end justify-between gap-3",
+        divider && "border-b border-border/60 pb-3",
         className,
       )}
     >

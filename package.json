@@ -12,7 +12,10 @@
     "typecheck": "tsc --noEmit",
     "data:extract": "node scripts/extract-platform-data.mjs",
     "data:assets": "python3 scripts/prepare-assets.py",
-    "verify": "npm run typecheck && npm run lint && npm run audit:ui",
+    "test": "npm run test:audit-ui && npm run test:tab-stability",
+    "test:audit-ui": "node --test scripts/audit-ui.test.mjs",
+    "test:tab-stability": "node --test scripts/tab-stability.test.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run audit:ui && npm run test",
     "audit:ui": "node scripts/audit-ui.mjs"
   },
   "dependencies": {

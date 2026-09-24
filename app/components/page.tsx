@@ -83,7 +83,8 @@ export default function ComponentsPage() {
         }
       />
 
-      <section className="grid gap-4">
+      {/* ----------------------------------------------------------- actions */}
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Actions" title="Buttons" description="Six variants, four sizes, one focus treatment." />
         <Specimen label="button · variants" contentClassName="grid gap-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -127,7 +128,7 @@ export default function ComponentsPage() {
         </Specimen>
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Containers" title="Cards" description="Default and small spacing, plus the media-first variant used across the platform." />
         <div className="grid gap-3 lg:grid-cols-3">
           <Card>
@@ -176,7 +177,7 @@ export default function ComponentsPage() {
         </div>
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Input" title="Forms and choices" description="Uncontrolled where the value is not needed, controlled where the UI reacts." />
         <Panel contentClassName="grid gap-4">
           <OverlayDemos />
@@ -185,7 +186,7 @@ export default function ComponentsPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Navigation" title="Tabs, breadcrumbs and pagination" />
         <div className="grid gap-3 lg:grid-cols-2">
           <Panel title="Tabs" description="Line and default variants share the same API">
@@ -242,12 +243,12 @@ export default function ComponentsPage() {
         </div>
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Disclosure" title="Accordion and collapsible" />
         <DisclosureDemos />
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Data display"
           title="Tables and lists"
@@ -336,7 +337,7 @@ export default function ComponentsPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-4">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader eyebrow="Feedback" title="Alerts, progress and states" />
         <div className="grid gap-3 lg:grid-cols-3">
           <Alert>

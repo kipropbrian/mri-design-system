@@ -117,7 +117,7 @@ export default function EbirdPage() {
         />
       </MetricStrip>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Comparison"
           title="Coverage by country and family"
@@ -170,7 +170,7 @@ export default function EbirdPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Media"
           title="Featured additions"
@@ -188,7 +188,7 @@ export default function EbirdPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Taxonomy"
           title="Family ledger"
@@ -281,7 +281,7 @@ export default function EbirdPage() {
         </div>
       </section>
 
-      <section className="grid gap-3">
+      <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
           eyebrow="Coverage"
           title="Documented species against national checklists"

@@ -1043,6 +1043,158 @@ const RULES = {
   },
 
   /**
+   * A card is not nested inside a tab content panel.
+   *
+   * A tab panel (`TabsContent`) is the dynamic body of a view, not a card container.
+   * Nesting a `<Card>`, `<Panel>`, `<TableCard>`, or `<ChartFrame>` inside
+   * `<TabsContent>` breaks container stability: each tab switch unmounts and remounts
+   * card chrome (borders, background, header) and produces jarring layout shifts (CLS)
+   * when sibling tabs have different heights, paddings, or footers.
+   *
+   * If tabs switch views within a card, the card wraps the tabs and puts `TabsList`
+   * in the card's `action` slot:
+   *
+   *   <Tabs defaultValue="history">
+   *     <TableCard action={<TabsList>...</TabsList>}>
+   *       <TabsContent value="history"><Table>...</Table></TabsContent>
+   *       <TabsContent value="mastery"><Table>...</Table></TabsContent>
+   *     </TableCard>
+   *   </Tabs>
+   *
+   * If tabs switch between independent sections on a page, each tab content contains
+   * plain layout rather than cards wearing detached tab triggers.
+   */
+  cardInTabs: {
+    title: "card nested inside tab content",
+    hint: "wrap the tabs in <Panel action={<TabsList>}> or <TableCard> instead of nesting cards inside <TabsContent>, which causes layout shifts",
+    scan(rel, rawSource) {
+      const source = stripComments(rawSource);
+      const CARDS = ["Card", "Panel", "TableCard", "ChartFrame"];
+      const opens = new RegExp(`<(${CARDS.join("|")}|TabsContent)\\b`, "g");
+      const closes = new RegExp(`</(${CARDS.join("|")}|TabsContent)>`, "g");
+      const events = [];
+      for (const m of source.matchAll(opens)) {
+        const end = source.indexOf(">", m.index);
+        const selfClosing = end !== -1 && source[end - 1] === "/";
+        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+      }
+      for (const m of source.matchAll(closes)) {
+        events.push({ index: m.index, kind: "close", name: m[1] });
+      }
+      events.sort((a, b) => a.index - b.index);
+
+      const hits = [];
+      const stack = [];
+      for (const event of events) {
+        if (event.kind === "self") {
+          if (event.name !== "TabsContent" && stack.includes("TabsContent")) {
+            hits.push({
+              line: lineOf(source, event.index),
+              token: `<${event.name}> inside <TabsContent>`,
+            });
+          }
+          continue;
+        }
+        if (event.kind === "open") {
+          if (event.name !== "TabsContent" && stack.includes("TabsContent")) {
+            hits.push({
+              line: lineOf(source, event.index),
+              token: `<${event.name}> inside <TabsContent>`,
+            });
+          }
+          stack.push(event.name);
+        } else {
+          const at = stack.lastIndexOf(event.name);
+          if (at === -1) continue;
+          stack.length = at;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * Standalone <hr> is not placed directly inside <PageContainer>.
+   *
+   * PageContainer is a grid layout with a defined row gap (24px). Placing a standalone
+   * `<hr>` as a direct child of PageContainer causes it to occupy an entire grid track,
+   * applying the row gap both above and below the hairline divider. This doubles the
+   * inter-section spacing and creates layout disconnect.
+   *
+   * Major section boundaries must be styled directly on the `<section>`:
+   *
+   *   <section className="grid gap-6 border-t border-border/60 pt-6">
+   *
+   * Standalone `<hr>` tags (such as `<hr className="border-border/40" />`) are only
+   * permitted inside `<Specimen>`, `<section>`, `<Panel>`, or other components as
+   * intra-component dividers.
+   */
+  hrInPageContainer: {
+    title: "standalone <hr> directly inside <PageContainer>",
+    hint: "separate sections with border-t border-border/60 pt-6 on <section> instead of a standalone <hr> grid child, which produces double spacing",
+    scan(rel, rawSource) {
+      const source = stripComments(rawSource);
+      if (!source.includes("PageContainer") || !source.includes("<hr")) return [];
+
+      const CONTAINERS = [
+        "PageContainer",
+        "section",
+        "Specimen",
+        "div",
+        "Panel",
+        "Card",
+        "TableCard",
+        "ChartFrame",
+        "MetricStrip",
+        "Tabs",
+        "Table",
+        "form",
+        "main",
+        "article",
+        "aside",
+        "nav",
+        "ul",
+        "ol",
+        "li",
+      ];
+      const opens = new RegExp(`<(${CONTAINERS.join("|")}|hr)\\b`, "g");
+      const closes = new RegExp(`</(${CONTAINERS.join("|")})>`, "g");
+      const events = [];
+      for (const m of source.matchAll(opens)) {
+        const end = source.indexOf(">", m.index);
+        const selfClosing = (end !== -1 && source[end - 1] === "/") || m[1] === "hr";
+        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+      }
+      for (const m of source.matchAll(closes)) {
+        events.push({ index: m.index, kind: "close", name: m[1] });
+      }
+      events.sort((a, b) => a.index - b.index);
+
+      const hits = [];
+      const stack = [];
+      for (const event of events) {
+        if (event.kind === "self") {
+          if (event.name === "hr" && stack.length > 0 && stack[stack.length - 1] === "PageContainer") {
+            hits.push({
+              line: lineOf(source, event.index),
+              token: "<hr> directly inside <PageContainer>",
+            });
+          }
+          continue;
+        }
+        if (event.kind === "open") {
+          stack.push(event.name);
+        } else {
+          const at = stack.lastIndexOf(event.name);
+          if (at === -1) continue;
+          stack.length = at;
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
    * The page owns the `h1`, and there is exactly one of it.
    *
    * A component that renders an `h1` claims to be a page. `species-explorer.tsx` — a
