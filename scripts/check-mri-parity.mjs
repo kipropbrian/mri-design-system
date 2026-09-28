@@ -52,7 +52,13 @@ async function upstream(path) {
     return existsSync(file) ? readFileSync(file) : null;
   }
   const url = `https://raw.githubusercontent.com/${designSystem.repo}/${designSystem.ref}/${path}`;
-  const response = await fetch(url, token ? { headers: { Authorization: `Bearer ${token}` } } : {});
+  // Anonymous first: a public repository needs no token, and a token scoped to some
+  // other repository (CI's GITHUB_TOKEN is the consumer's) can turn a 200 into a 404.
+  // Only a private repository reaches the authenticated retry.
+  let response = await fetch(url);
+  if (response.status === 404 && token) {
+    response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  }
   if (response.status === 404) return null;
   if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
   return Buffer.from(await response.arrayBuffer());
