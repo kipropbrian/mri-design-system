@@ -20,7 +20,6 @@ import {
 import { MriLockup, MriMark, MriMarkInverse, ProviderMark } from "@/components/site/brand";
 import { PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import { COLUMN, Panel, StatusBadge } from "@/components/mri/patterns";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -32,6 +31,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "cn";
 import { FONT_OPTIONS } from "@/lib/font-preference";
+import { Chip } from "@/components/mri/chips";
 
 export const metadata: Metadata = {
   title: "Foundations",
@@ -231,7 +231,7 @@ export default function FoundationsPage() {
         status={
           <>
             <StatusBadge tone="positive">Generated, not hand-tuned</StatusBadge>
-            <Badge variant="outline">globals.css · 129 lines</Badge>
+            <Chip>globals.css · 129 lines</Chip>
           </>
         }
       />
@@ -376,7 +376,7 @@ export default function FoundationsPage() {
         <Panel
           title="MRI semantic extension"
           description="The state roles the preset does not ship, plus the readable ink tier — defined once in app/mri-theme.css"
-          action={<Badge variant="outline">portable</Badge>}
+          action={<Chip>portable</Chip>}
         >
           <Table>
             <TableHeader>
@@ -414,7 +414,7 @@ export default function FoundationsPage() {
         <Panel
           title="Chart ramp"
           description="chartColor: olive produces a monochrome ramp, not five hues — this is the single most important consequence of the preset"
-          action={<Badge variant="outline">review point</Badge>}
+          action={<Chip>review point</Chip>}
         >
           <div className="grid gap-4">
             <div className="grid grid-cols-5 gap-2">
@@ -485,7 +485,7 @@ export default function FoundationsPage() {
           <Panel
             title="Shortlist for review"
             description="Switch live from the header picker; each option is previewed in its own face"
-            action={<Badge variant="outline">Preview only</Badge>}
+            action={<Chip>Preview only</Chip>}
             contentClassName="grid gap-0"
           >
             <div className="grid gap-0 divide-y divide-border/60">

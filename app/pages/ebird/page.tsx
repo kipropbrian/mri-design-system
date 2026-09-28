@@ -24,7 +24,6 @@ import {
   StatusBadge,
 } from "@/components/mri/patterns";
 import { BirdMediaCard, IucnChip } from "@/components/mri/specimen-card";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
@@ -37,6 +36,7 @@ import {
 } from "@/components/ui/table";
 import { birds, IUCN_LABEL } from "@/lib/data";
 import { formatCompact, formatNumber } from "@/lib/format";
+import { Chip } from "@/components/mri/chips";
 
 export const metadata: Metadata = {
   title: "eBird & Macaulay watch",
@@ -78,8 +78,8 @@ export default function EbirdPage() {
               <ChartLineUpIcon className="size-3" weight="bold" />
               {formatNumber(birds.totalSpecies)} species in scope
             </StatusBadge>
-            <Badge variant="outline">{formatNumber(birds.mediaTotals.speciesWithMedia)} with media</Badge>
-            <Badge variant="outline">{birds.countries.length} countries</Badge>
+            <Chip>{formatNumber(birds.mediaTotals.speciesWithMedia)} with media</Chip>
+            <Chip>{birds.countries.length} countries</Chip>
           </>
         }
         actions={
@@ -175,7 +175,7 @@ export default function EbirdPage() {
           eyebrow="Media"
           title="Featured additions"
           description="Highest-scoring species with recent verified media. Each card carries its family, IUCN status, media counts and regional presence."
-          action={<Badge variant="outline">Top {birds.featured.length} by occurrence score</Badge>}
+          action={<Chip>Top {birds.featured.length} by occurrence score</Chip>}
         />
         <p className="text-[0.6875rem] text-muted-foreground">
           Media counts are capped at 30 per species by the reference catalogue, so a row of identical

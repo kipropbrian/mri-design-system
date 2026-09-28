@@ -22,7 +22,6 @@ import {
   SourceNote,
   StatusBadge,
 } from "@/components/mri/patterns";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui/table";
 import { birds, countryFlag } from "@/lib/data";
 import { formatCompact, formatNumber } from "@/lib/format";
+import { Chip } from "@/components/mri/chips";
 
 export const metadata: Metadata = {
   title: "Xeno-canto watch",
@@ -66,11 +66,11 @@ export default function XenoCantoPage() {
               <WaveformIcon className="size-3" weight="bold" />
               {formatNumber(birds.xeno.totals.speciesWithAudio)} species with audio
             </StatusBadge>
-            <Badge variant="outline">
+            <Chip>
               {formatNumber(birds.xeno.totals.cataloguedSpecies - birds.xeno.totals.speciesWithAudio)}{" "}
               gaps
-            </Badge>
-            <Badge variant="outline">Snapshot week 38 · 2026</Badge>
+            </Chip>
+            <Chip>Snapshot week 38 · 2026</Chip>
           </>
         }
         actions={
@@ -115,7 +115,7 @@ export default function XenoCantoPage() {
           eyebrow="Snapshot"
           title="Weekly snapshot navigator"
           description="Snapshots are immutable. A reviewer can always step back to the week a claim was made."
-          action={<Badge variant="secondary">Latest</Badge>}
+          action={<Chip>Latest</Chip>}
         />
         <Specimen label="snapshot · weekly switcher" note="chips, not a dropdown — the week is part of the page's identity">
           <div className="flex flex-wrap items-center gap-2 rounded-lg bg-card p-3 ring-1 ring-foreground/10">
@@ -199,7 +199,7 @@ export default function XenoCantoPage() {
           eyebrow="Species"
           title="Best-documented species"
           description="Top ten by recording count. Useful as a reference list and as an ear-training source."
-          action={<Badge variant="outline">Top 10</Badge>}
+          action={<Chip>Top 10</Chip>}
         />
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <Panel contentClassName="p-0">

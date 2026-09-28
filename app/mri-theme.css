@@ -183,3 +183,41 @@
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 }
+
+/* ==========================================================================
+   Type stacks and base treatment
+   --------------------------------------------------------------------------
+   The preset supplies `--font-sans` and nothing else, so every MRI project used to
+   pick its own mono and serif — and the platform's headings were tracked tighter
+   than the design system's, because only its globals.css said so. They live here
+   so that a project importing this file renders scientific names, identifiers and
+   headings the same way as every other.
+
+   - mono is the system stack, for codes, ids, dates and paths — never measures.
+   - serif is for binomials (`font-serif italic`), set in a book face.
+   ========================================================================== */
+:root {
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

@@ -5,11 +5,12 @@ fails `npm run verify`. Read this before writing UI.
 
 The full rule book, with the reasoning and live demonstrations, is the wiki page
 `concepts/mri-design-system`, and the reference implementation is
-`~/Developer/MRI/projects/mri-design-system/`.
+<https://github.com/kipropbrian/mri-design-system> (`npm run dev`, then `/rules` and
+`/patterns`).
 
 ## What is enforced
 
-Twenty-four rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
+Twenty-seven rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
 class strings, stylesheets and tag structure, and a violation fails the build. Nothing
 here is a matter of taste that a reviewer has to catch, which is the point: a rule that
 lives only in a document is a rule that gets followed until the first deadline.
@@ -26,6 +27,8 @@ lives only in a document is a rule that gets followed until the first deadline.
 |                    | `dataColours`   | a colour literal (`#hex`, `rgb()`, `oklch()`) outside a class name                 |
 |                    | `chartTint`     | a chart colour used as a fractional wash on a surface                              |
 | **components**     | `chips`         | a hand-rolled chip, pill, tag or status marker                                     |
+|                    | `badge`         | the preset `Badge` imported outside the generated layer                            |
+|                    | `charts`        | a `recharts` import outside `components/mri/charts.tsx`                            |
 |                    | `choices`       | a hand-rolled choice-strip item — a country-nav or parameter-picker link or button |
 |                    | `headers`       | a hand-rolled data-card header                                                     |
 |                    | `cardEyebrow`   | an uppercase eyebrow inside a card, written as `<Eyebrow>` or by hand              |
@@ -36,6 +39,7 @@ lives only in a document is a rule that gets followed until the first deadline.
 |                    | `tableMinWidth` | a table pinned wider than a phone                                                  |
 | **links & motion** | `buttonLink`    | a navigation link rendered through `Button`                                        |
 |                    | `motion`        | hover translation on a surface                                                     |
+|                    | `transitionAll` | `transition-all` — name the property that animates                                 |
 | **structure**      | `cardInCard`    | a card nested inside a card                                                        |
 |                    | `singleH1`      | an `h1` rendered by a component, or two in one file                                |
 |                    | `navPosition`   | a `*_NAV` tree sliced or indexed by position                                       |
@@ -143,6 +147,27 @@ Three rules:
    on one of them. The platform has 670 weight utilities against 14 uses of
    `font-heading`.
 
+## Phones
+
+Every MRI tool is opened on a phone in the field, and most of what went wrong on the
+platform went wrong only there.
+
+- **A touch target is at least 36px.** The preset's `icon-sm` button is 24px; on a phone
+  bar use `size="icon"` with `size-9`.
+- **A phone header carries one control.** The platform put its account avatar 6px from
+  a 24px menu button, and a thumb reaching for the menu opened the account instead. Below
+  `lg`, the account lives inside the navigation sheet.
+- **Ten choices do not fit a phone row.** A band that scrolls sideways shows three of
+  them and hides the rest behind a swipe nobody sees. `ChoiceNav` is a native select
+  below `sm` and a wrapping band above it.
+- **A form control's text is 16px on a phone.** iOS Safari zooms the page when a
+  control under 16px takes focus.
+- **The first client render matches the server's.** Anything the server cannot know —
+  the session, `window`, the viewer's locale — is read after hydration
+  (`useSyncExternalStore` with a server snapshot), never during the first render. A
+  mismatch makes React regenerate the whole page tree, and every tap that lands during
+  it is lost: the platform's "finicky" menu button was this.
+
 ## Motion
 
 The system has almost none, and it is all colour.
@@ -220,6 +245,7 @@ there was least room for it.
 | a chart in a card                                                 | `ChartFrame`                                                                              | `Panel` plus an invented legend                                  |
 | which months each station, site or recorder reported              | `AvailabilityGrid` in a `ChartFrame height="h-auto"`                                      | bars on a linear time axis (a Gantt)                             |
 | a strip of choices outside a card — country nav, parameter picker | `ChoiceStrip` + `ChoiceLink` / `ChoiceButton`                                             | `Button size="xs"` on one page and hand-rolled links on the next |
+| navigation between sibling pages — a country switcher             | `ChoiceNav`, directly under the `PageHeader`                                               | a band above the title, or a strip that scrolls sideways on a phone |
 | a view switch in a card header's action slot                      | `Button size="xs"`, `secondary` when on, `ghost` when off, with `aria-pressed`            | a `ChoiceStrip` inside the card                                  |
 | two surfaces side by side                                         | `DataRow`                                                                                 | `grid-cols-3` or a full-width table                              |
 | a summary band                                                    | `MetricStrip`                                                                             | a data surface — it may run four across                          |

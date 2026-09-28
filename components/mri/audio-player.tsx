@@ -135,7 +135,7 @@ export function AudioPlayer({
               <span
                 key={index}
                 className={cn(
-                  "w-1 rounded-full transition-all duration-150",
+                  "w-1 rounded-full transition-colors duration-150",
                   passed
                     ? overlay
                       ? "bg-background"
@@ -184,7 +184,7 @@ export function AudioPlayer({
         >
           <div
             className={cn(
-              "h-1.5 w-full overflow-hidden rounded-full transition-all group-hover:h-2",
+              "h-1.5 w-full overflow-hidden rounded-full transition-[height] group-hover:h-2",
               overlay ? "bg-background/30" : "bg-muted",
             )}
           >

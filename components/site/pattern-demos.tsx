@@ -7,7 +7,7 @@ import {
   type AvailabilityLevel,
   type AvailabilityRow,
 } from "@/components/mri/availability-grid";
-import { ChoiceButton, ChoiceLink, ChoiceStrip } from "@/components/mri/choice-strip";
+import { ChoiceButton, ChoiceNav, ChoiceStrip } from "@/components/mri/choice-strip";
 
 const AVAILABILITY_LEVELS: AvailabilityLevel[] = [
   { key: "complete", label: "Reported", className: "bg-primary" },
@@ -93,20 +93,26 @@ export function ChoiceStripDemo() {
 
   return (
     <div className="grid gap-4">
-      <ChoiceStrip label="Country" kind="nav" band>
-        <ChoiceLink href="#choice-strip" active>
-          <span className="font-mono text-[0.6875rem] font-medium">RW</span>
-          Rwanda
-        </ChoiceLink>
-        <ChoiceLink href="#choice-strip" active={false}>
-          <span className="font-mono text-[0.6875rem] font-medium">KE</span>
-          Kenya
-        </ChoiceLink>
-        <ChoiceLink href="#choice-strip" active={false}>
-          <span className="font-mono text-[0.6875rem] font-medium">UG</span>
-          Uganda
-        </ChoiceLink>
-      </ChoiceStrip>
+      {/* Ten choices, as the platform's country switchers have: a native select on a
+          phone, a wrapping band from sm up. Resize to compare. */}
+      <ChoiceNav
+        label="Choose an East African country"
+        activeHref="#choice-strip-rw"
+        items={[
+          { href: "#choice-strip", label: "All East Africa" },
+          ...[
+            ["BI", "Burundi"],
+            ["CD", "Democratic Republic of the Congo"],
+            ["ET", "Ethiopia"],
+            ["KE", "Kenya"],
+            ["RW", "Rwanda"],
+            ["SO", "Somalia"],
+            ["SS", "South Sudan"],
+            ["TZ", "Tanzania"],
+            ["UG", "Uganda"],
+          ].map(([code, name]) => ({ href: `#choice-strip-${code.toLowerCase()}`, prefix: code, label: name })),
+        ]}
+      />
 
       <ChoiceStrip label="Reporting period">
         {[

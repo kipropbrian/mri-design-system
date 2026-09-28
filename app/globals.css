@@ -145,12 +145,9 @@
    live by setting `data-font` on <html>; they add no new tokens and change
    nothing about how the preset itself renders.
 
-   `--font-mono` is intentionally not a webfont: the platform uses the system
-   monospace stack, and mono is reserved for codes and identifiers.
+   The mono and serif stacks are not here: they are MRI decisions, not review
+   scaffolding, so they live in app/mri-theme.css with the rest of the extension.
    ========================================================================== */
-:root {
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-}
 
 html {
   --font-sans: var(--font-inter);

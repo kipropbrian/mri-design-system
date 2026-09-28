@@ -22,13 +22,11 @@ That is why this needs no hosting, no build step and no server:
   `GH_TOKEN` in CI. Nothing else is configured.
 - Pin with a ref for reproducibility: `…#v1.0.0` or `…#<commit-sha>`.
 
-**One input needed: the GitHub owner.** `registry.json` uses `OWNER` in six
-places (the homepage plus five `registryDependencies`), because a same-repo
-dependency must be a full `owner/repo/item` address. `shadcn build` does not
-resolve them, so it validates either way — but **install would fail until they
-are real.** Replace `OWNER` once the repository exists.
+**Resolved: the owner is `kipropbrian`.** Every same-repo dependency is a full
+`kipropbrian/mri-design-system/<item>` address, and every item declares its npm
+`dependencies`, so an install is complete without hand-editing `package.json`.
 
-What is published, and why these eight:
+What was first published, and why these eight (there are now twenty-two — see the README):
 
 | Item | Carries |
 | --- | --- |
@@ -741,6 +739,14 @@ The cheap half is done: the platform's chart semantics are no longer assumed, an
 palette debt the mismatch was hiding — 321 Tailwind palette classes across 27 files —
 is at zero. The remaining half is one question: adopt the preset's theme, or keep the
 warm one and make it the documented theme.
+
+**Resolved: the platform adopted the preset's theme.** Its `globals.css` now carries
+the preset's oklch values and a `.dark` block, so `charts.tsx`'s olive-ramp assumption
+holds there too. What remained divergent — the mono and serif stacks, heading tracking
+and the selection colour, which only the platform's `globals.css` set — moved into
+`mri-theme.css` in v0.7.0, so every project that imports the theme renders them alike.
+The platform still has no theme toggle, so dark mode is supported but unreachable; that
+is the next decision, not this one.
 
 ### Risks
 
