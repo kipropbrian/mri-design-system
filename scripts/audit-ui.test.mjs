@@ -429,3 +429,28 @@ test("fails on standalone <hr> directly inside <PageContainer>, allows intra-sec
   });
 });
 
+
+/* ------------------------------------------------------------- navigation */
+
+test("fails on a navigation tree arranged by position, allows a computed layout", () => {
+  // The footer bug: columns sliced for five groups; a sixth shifted every later one.
+  const positional = fixture({
+    "footer.tsx": `const columns = [SIDEBAR_NAV.slice(0, 2), SIDEBAR_NAV.slice(2, 3), SIDEBAR_NAV.slice(3)];\nconst first = TOP_NAV[0];\n`,
+  });
+  withCleanup(positional, () => {
+    const { code, out } = run(positional);
+    assert.equal(code, 1);
+    assert.match(out, /navigation tree arranged by position/);
+    assert.match(out, /SIDEBAR_NAV\.slice\(/);
+    assert.match(out, /TOP_NAV\[0/);
+  });
+
+  // Mapping the whole tree or computing its columns is fine, and prose may name the bug.
+  const computed = fixture({
+    "footer.tsx": `// Never SIDEBAR_NAV.slice(0, 2): the columns are computed.\nconst columns = footerColumns(SIDEBAR_NAV, 3);\nconst labels = SIDEBAR_NAV.map((group) => group.label);\n`,
+  });
+  withCleanup(computed, () => {
+    const { code, out } = run(computed);
+    assert.equal(code, 0, out);
+  });
+});

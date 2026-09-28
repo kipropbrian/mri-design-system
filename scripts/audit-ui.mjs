@@ -695,6 +695,36 @@ const RULES = {
   },
 
   /**
+   * A navigation tree is arranged by computation, never by position.
+   *
+   * The platform footer split its route tree into columns with
+   * `[NAV.slice(0, 2), NAV.slice(2, 3), NAV.slice(3)]` — correct for exactly the five
+   * groups it was written against. Adding a sixth group ("Environment") in the middle
+   * shifted every later group one slot: Birds, Data and Institute all landed in the
+   * third column, which grew to fourteen rows beside a two-row column, and the footer
+   * ended in a band of empty space. Nothing about the new group was wrong; the layout
+   * had silently encoded the tree's length and order.
+   *
+   * So a `*_NAV` constant is never sliced, spliced or indexed by a literal position.
+   * Columns are computed from the tree (balanced by rendered rows), or declared by
+   * group name where a design genuinely needs a fixed arrangement — both survive a
+   * new group. Filtering or mapping the whole tree is fine; `.at(-1)` and `[0]` are
+   * the same positional assumption as `.slice(0, 2)`.
+   */
+  navPosition: {
+    title: "navigation tree arranged by position",
+    hint: "compute the arrangement from the tree (e.g. balance footer columns by rendered rows) or declare it by group name; never slice or index a *_NAV constant by position",
+    scan(rel, source) {
+      const code = stripComments(source);
+      const hits = [];
+      for (const match of code.matchAll(/\b[A-Z][A-Z0-9_]*_NAV\b\s*(?:\.\s*(?:slice|splice|at)\s*\(|\[\s*-?\d)/g)) {
+        hits.push({ line: lineOf(code, match.index), token: match[0].replace(/\s+/g, "") });
+      }
+      return hits;
+    },
+  },
+
+  /**
    * Type is on the scale, and the scale is short.
    *
    * The spacing rule has existed since the beginning and caught 120 off-scale

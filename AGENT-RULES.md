@@ -9,7 +9,7 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
 
 ## What is enforced
 
-Twenty-two rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
+Twenty-three rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
 class strings, stylesheets and tag structure, and a violation fails the build. Nothing
 here is a matter of taste that a reviewer has to catch, which is the point: a rule that
 lives only in a document is a rule that gets followed until the first deadline.
@@ -37,6 +37,7 @@ lives only in a document is a rule that gets followed until the first deadline.
 | | `motion` | hover translation on a surface |
 | **structure** | `cardInCard` | a card nested inside a card |
 | | `singleH1` | an `h1` rendered by a component, or two in one file |
+| | `navPosition` | a `*_NAV` tree sliced or indexed by position |
 | **icons** | `icons` | an icon import that is not the RSC-safe Phosphor entry |
 
 Two global rules sit outside that table: **`css`** (a stylesheet that no config entry
@@ -88,6 +89,11 @@ An exemption nobody wants is visible in the diff that added it.
   breaks row alignment when two of them wrap. `Panel` has no `eyebrow` prop for
   this reason — fold the label into the detail line.
 - **Never write an off-scale font size.** The scale is below.
+- **Never arrange a navigation tree by position.** `NAV.slice(0, 2)` encodes the
+  tree's length and order into a layout. The footer did exactly that for five
+  groups; a sixth pushed three groups into one column, fourteen rows beside two,
+  and the footer ended in empty space. Compute the arrangement from the tree —
+  footer columns are balanced by rendered rows — or declare it by group name.
 
 ## Always
 
