@@ -55,7 +55,9 @@ test("passes on a clean tree with no baseline", () => {
 });
 
 test("fails on off-scale spacing", () => {
-  const root = fixture({ "page.tsx": `export const A = () => <div className="gap-2.5" />;\n` });
+  const root = fixture({
+    "page.tsx": `export const A = () => <div className="gap-2.5" />;\n`,
+  });
   withCleanup(root, () => {
     const { code, out } = run(root);
     assert.equal(code, 1);
@@ -75,13 +77,39 @@ test("fails on a hand-rolled chip", () => {
   });
 });
 
+test("fails on a hand-rolled choice-strip item", () => {
+  const root = fixture({
+    "page.tsx": `export const A = () => <a className="rounded-md bg-primary px-2 py-1 text-primary-foreground" />;\n`,
+  });
+  withCleanup(root, () => {
+    const { code, out } = run(root);
+    assert.equal(code, 1);
+    assert.match(out, /hand-rolled choice-strip item/);
+    assert.match(out, /choice-strip-shaped class string/);
+  });
+});
+
+test("allows ChoiceLink and does not confuse py-1.5 with py-1", () => {
+  const root = fixture({
+    "page.tsx": `export const A = () => <><ChoiceLink active href="/">Current</ChoiceLink><a className="rounded-md bg-primary px-2 py-1.5" /></>;\n`,
+  });
+  withCleanup(root, () => {
+    const { code, out } = run(root);
+    assert.equal(code, 0, out);
+  });
+});
+
 test("fails on a raw table but allows the shared composition", () => {
-  const raw = fixture({ "page.tsx": `export const A = () => <table><tbody /></table>;\n` });
+  const raw = fixture({
+    "page.tsx": `export const A = () => <table><tbody /></table>;\n`,
+  });
   withCleanup(raw, () => {
     assert.equal(run(raw).code, 1);
   });
 
-  const shared = fixture({ "page.tsx": `export const A = () => <table><tbody /></table>;\n` });
+  const shared = fixture({
+    "page.tsx": `export const A = () => <table><tbody /></table>;\n`,
+  });
   mkdirSync(join(shared, "components", "ui"), { recursive: true });
   withCleanup(shared, () => {
     assert.equal(run(shared).code, 1, "a table anywhere outside components/ui/table.tsx fails");
@@ -89,19 +117,25 @@ test("fails on a raw table but allows the shared composition", () => {
 });
 
 test("fails on an arbitrary colour utility but allows a semantic token", () => {
-  const bad = fixture({ "page.tsx": `export const A = () => <div className="bg-[#f8f6f1]" />;\n` });
+  const bad = fixture({
+    "page.tsx": `export const A = () => <div className="bg-[#f8f6f1]" />;\n`,
+  });
   withCleanup(bad, () => {
     assert.equal(run(bad).code, 1);
   });
 
-  const good = fixture({ "page.tsx": `export const A = () => <div className="bg-background text-primary" />;\n` });
+  const good = fixture({
+    "page.tsx": `export const A = () => <div className="bg-background text-primary" />;\n`,
+  });
   withCleanup(good, () => {
     assert.equal(run(good).code, 0);
   });
 });
 
 test("fails on a non-SSR phosphor import and allows the SSR entry", () => {
-  const bad = fixture({ "page.tsx": `import { Tree } from "@phosphor-icons/react";\nexport const A = () => <Tree />;\n` });
+  const bad = fixture({
+    "page.tsx": `import { Tree } from "@phosphor-icons/react";\nexport const A = () => <Tree />;\n`,
+  });
   withCleanup(bad, () => {
     const { code, out } = run(bad);
     assert.equal(code, 1);
@@ -132,7 +166,9 @@ test("a baselined violation passes and is reported as debt", () => {
 
 test("a violation beyond the baselined count fails", () => {
   const root = fixture(
-    { "page.tsx": `export const A = () => <><div className="gap-2.5" /><div className="gap-2.5" /></>;\n` },
+    {
+      "page.tsx": `export const A = () => <><div className="gap-2.5" /><div className="gap-2.5" /></>;\n`,
+    },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -142,7 +178,9 @@ test("a violation beyond the baselined count fails", () => {
 
 test("an unrelated new violation fails even when the file is already in the ledger", () => {
   const root = fixture(
-    { "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n` },
+    {
+      "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n`,
+    },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -153,10 +191,7 @@ test("an unrelated new violation fails even when the file is already in the ledg
 });
 
 test("a stale baseline entry fails, so the ledger can only shrink", () => {
-  const root = fixture(
-    { "page.tsx": CLEAN },
-    { "spacing|app/page.tsx|gap-2.5": 1 },
-  );
+  const root = fixture({ "page.tsx": CLEAN }, { "spacing|app/page.tsx|gap-2.5": 1 });
   withCleanup(root, () => {
     const { code, out } = run(root);
     assert.equal(code, 1);
@@ -176,7 +211,9 @@ test("--update-baseline shrinks the ledger and the tree then passes", () => {
 
 test("--update-baseline refuses to grow an existing ledger", () => {
   const root = fixture(
-    { "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n` },
+    {
+      "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n`,
+    },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -189,7 +226,9 @@ test("--update-baseline refuses to grow an existing ledger", () => {
 });
 
 test("--report always exits 0, even on a dirty tree", () => {
-  const root = fixture({ "page.tsx": `export const A = () => <div className="gap-2.5" />;\n` });
+  const root = fixture({
+    "page.tsx": `export const A = () => <div className="gap-2.5" />;\n`,
+  });
   withCleanup(root, () => {
     const { code, out } = run(root, "--report");
     assert.equal(code, 0);
@@ -228,7 +267,7 @@ test("fails on a table that drops no columns, allows one that does", () => {
     assert.equal(run(narrow).code, 0);
   });
 
-  for (const marker of ['className={COLUMN.secondary}', 'className="hidden sm:table-cell"']) {
+  for (const marker of ["className={COLUMN.secondary}", 'className="hidden sm:table-cell"']) {
     const dropped = fixture({
       "page.tsx": `export const A = () => (
         <TableCard>
@@ -360,7 +399,7 @@ test("prose in a comment may name a banned value", () => {
       " * The previous version washed this card in `bg-chart-3/5` and lifted it on",
       " * hover with `hover:-translate-y-0.5`. Both are gone.",
       " */",
-      "export const A = () => <div className=\"flex gap-3\" />;",
+      'export const A = () => <div className="flex gap-3" />;',
       "",
     ].join("\n"),
   });
@@ -428,7 +467,6 @@ test("fails on standalone <hr> directly inside <PageContainer>, allows intra-sec
     assert.equal(code, 0);
   });
 });
-
 
 /* ------------------------------------------------------------- navigation */
 

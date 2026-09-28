@@ -21,7 +21,7 @@ Press <kbd>d</kbd> anywhere, or use the header control, to switch light/dark.
 
 ## Install it in a project
 
-The registry *is* this repository. Nothing is hosted and nothing is built —
+The registry _is_ this repository. Nothing is hosted and nothing is built —
 the CLI reads `registry.json` and the source files from GitHub directly.
 
 ```sh
@@ -39,20 +39,22 @@ Pin a release so a project cannot drift:
 npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
 ```
 
-| Item | What it carries |
-| --- | --- |
-| `theme` | `app/mri-theme.css` — the semantic roles and the `-ink` tier |
-| `agent-rules` | `docs/mri-ui-rules.md` — the imperative rules, for agents |
-| `format` | `lib/format.ts` — counts, integers, compact notation, dates, initials |
-| `taxonomy` | `lib/taxonomy.ts` — IUCN tones and labels, record types, `countryFlag` |
-| `checkbox` | `components/ui/checkbox.tsx`, Phosphor import corrected |
-| `chip` | the one chip: two surfaces, seven tones, overlay scrims |
-| `layout` | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen` |
-| `patterns` | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
-| `specimen-card` | `ObservationCard`, `BirdMediaCard`, `IucnChip` |
-| `ui-audit` | `scripts/audit-ui.mjs` — the six-rule CI gate |
-| `spacing-audit` | deprecated alias for `ui-audit`; installs the same file |
-| `chip-audit` | `components/mri/chip-audit.tsx` — measures the rendered DOM |
+| Item                | What it carries                                                                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme`             | `app/mri-theme.css` — the semantic roles and the `-ink` tier                                                                            |
+| `agent-rules`       | `docs/mri-ui-rules.md` — the imperative rules, for agents                                                                               |
+| `format`            | `lib/format.ts` — counts, integers, compact notation, dates, initials                                                                   |
+| `taxonomy`          | `lib/taxonomy.ts` — IUCN tones and labels, record types, `countryFlag`                                                                  |
+| `checkbox`          | `components/ui/checkbox.tsx`, Phosphor import corrected                                                                                 |
+| `chip`              | the one chip: two surfaces, seven tones, overlay scrims                                                                                 |
+| `choice-strip`      | `ChoiceStrip`, `ChoiceLink`, `ChoiceButton` — the one pick-one strip for navigation and parameters                                      |
+| `availability-grid` | fixed-width monthly availability cells, pinned row labels, shared tooltip and legend                                                    |
+| `layout`            | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen`                                                                              |
+| `patterns`          | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
+| `specimen-card`     | `ObservationCard`, `BirdMediaCard`, `IucnChip`                                                                                          |
+| `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-four-rule CI gate                                                                                   |
+| `spacing-audit`     | deprecated alias for `ui-audit`; installs the same file                                                                                 |
+| `chip-audit`        | `components/mri/chip-audit.tsx` — measures the rendered DOM                                                                             |
 
 `theme` is a file, not a component: add `@import "./mri-theme.css";` to
 `app/globals.css` next to the `tailwindcss` import after installing it.
@@ -68,10 +70,10 @@ overwriting a consumer's corrected file. Depend on this item instead.
 short name the preset prints. A bare style id makes the CLI request
 `styles/mira/card.json`, which does not exist:
 
-| Preset prints | `components.json` must say |
-| --- | --- |
-| `style: mira` (Base UI) | `base-mira` |
-| `style: vega` (Radix) | `radix-vega` |
+| Preset prints           | `components.json` must say |
+| ----------------------- | -------------------------- |
+| `style: mira` (Base UI) | `base-mira`                |
+| `style: vega` (Radix)   | `radix-vega`               |
 
 This fails on **every** `add`, including base primitives like `card`. If you see
 
@@ -83,19 +85,19 @@ the fault is the style id, not the item name and not this registry.
 
 ## What is in here
 
-| Route | What it reviews |
-| --- | --- |
-| `/` | Scope, the decoded preset, adoption commands, house rules |
-| `/rules` | **The three enforced rules**: space scale, chip system, image overlays |
-| `/foundations` | Colour roles, chart ramp, type scale, fonts, radii, icons, MRI mark |
-| `/components` | All 37 installed shadcn primitives with real content |
-| `/charts` | ChartContainer wiring, five chart types, empty/loading states |
-| `/patterns` | Page header, metric strip, data-card header, filter bar, table, media cards, data states, provenance |
-| `/pages/platform` | Landing page composition (weekly watches + field tools) |
-| `/pages/inaturalist` | Country-first audit dashboard |
-| `/pages/ebird` | Regional media dashboard (eBird / Macaulay) |
-| `/pages/xeno-canto` | Bioacoustic snapshot with snapshot navigation |
-| `/pages/quiz` | Bird sound quiz: start → question → reveal + gates and history |
+| Route                | What it reviews                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `/`                  | Scope, the decoded preset, adoption commands, house rules                                            |
+| `/rules`             | **The three enforced rules**: space scale, chip system, image overlays                               |
+| `/foundations`       | Colour roles, chart ramp, type scale, fonts, radii, icons, MRI mark                                  |
+| `/components`        | All 37 installed shadcn primitives with real content                                                 |
+| `/charts`            | ChartContainer wiring, five chart types, empty/loading states                                        |
+| `/patterns`          | Page header, metric strip, data-card header, filter bar, table, media cards, data states, provenance |
+| `/pages/platform`    | Landing page composition (weekly watches + field tools)                                              |
+| `/pages/inaturalist` | Country-first audit dashboard                                                                        |
+| `/pages/ebird`       | Regional media dashboard (eBird / Macaulay)                                                          |
+| `/pages/xeno-canto`  | Bioacoustic snapshot with snapshot navigation                                                        |
+| `/pages/quiz`        | Bird sound quiz: start → question → reveal + gates and history                                       |
 
 ## The three rules
 
@@ -104,16 +106,16 @@ to make again. `/rules` documents all three and audits itself live.
 
 ### Space — eight steps, one job each
 
-| Step | px | Utility | Its one job |
-| --- | --- | --- | --- |
-| 0.5 | 2 | `gap-0.5` | Glyph to glyph inside a chip |
-| 1 | 4 | `gap-1` | Icon to label inside a control |
-| 1.5 | 6 | `gap-1.5` | Chip to chip in a row |
-| 2 | 8 | `gap-2` | Stacked text lines; label to value |
-| 3 | 12 | `gap-3` · `--card-spacing` | Card padding; card-grid gutter |
-| 4 | 16 | `gap-4` | Panel padding; large-block gutter |
-| 6 | 24 | `gap-6` | Section heading to its content |
-| 10 | 40 | `gap-10` | Between page sections |
+| Step | px  | Utility                    | Its one job                        |
+| ---- | --- | -------------------------- | ---------------------------------- |
+| 0.5  | 2   | `gap-0.5`                  | Glyph to glyph inside a chip       |
+| 1    | 4   | `gap-1`                    | Icon to label inside a control     |
+| 1.5  | 6   | `gap-1.5`                  | Chip to chip in a row              |
+| 2    | 8   | `gap-2`                    | Stacked text lines; label to value |
+| 3    | 12  | `gap-3` · `--card-spacing` | Card padding; card-grid gutter     |
+| 4    | 16  | `gap-4`                    | Panel padding; large-block gutter  |
+| 6    | 24  | `gap-6`                    | Section heading to its content     |
+| 10   | 40  | `gap-10`                   | Between page sections              |
 
 Enforced by `npm run audit:ui`, which extracts every class-list literal and
 fails on anything outside the scale. Before it existed the platform carried **120
@@ -166,11 +168,11 @@ research tool also reports at-risk status, provenance context and rarity, so
 those roles are defined once in **`app/mri-theme.css`** — a separate file that a
 preset re-apply cannot clobber and that other MRI projects can copy wholesale.
 
-| Role | What it is for |
-| --- | --- |
-| `--info` | Provenance and context — neither good nor bad news |
+| Role        | What it is for                                            |
+| ----------- | --------------------------------------------------------- |
+| `--info`    | Provenance and context — neither good nor bad news        |
 | `--warning` | At-risk taxa, needs-review records, near-threshold values |
-| `--notable` | Rarity. The "Global first" accent, now a real token |
+| `--notable` | Rarity. The "Global first" accent, now a real token       |
 
 **Each role has three values, because one colour cannot do three jobs:**
 
@@ -181,12 +183,12 @@ preset re-apply cannot clobber and that other MRI projects can copy wholesale.
 ```
 
 Skipping `-ink` is what breaks dark mode: a `--primary` dark enough to carry
-white button text is far too dark to *be* text on a dark card. Before the ink
+white button text is far too dark to _be_ text on a dark card. Before the ink
 tier a positive chip measured 2.1:1 and the notable chip 1.2:1 — invisible.
 `--primary-ink` and `--destructive-ink` do the same job for the two preset roles.
 
 Verified by pixel-sampling every chip in both themes: **worst contrast 4.95:1,
-all AA.** Success is deliberately *not* a separate role — in this preset the
+all AA.** Success is deliberately _not_ a separate role — in this preset the
 brand colour is green and the positive state is green, so a second green would
 recreate the ambiguity the tokens exist to remove.
 
@@ -202,7 +204,7 @@ The preset specifies `font: inter` and nothing else, so **Inter is what every
 page renders** — that is also what the live platform uses. Monospace is not a
 webfont: it is the platform's system stack (`ui-monospace, SFMono-Regular,
 Menlo …`), used only for codes, ids, dates and paths. Four alternatives are
-*loaded* so the picker can swap live; none of them is rendered unless chosen.
+_loaded_ so the picker can swap live; none of them is rendered unless chosen.
 
 The rule that keeps type consistent:
 
@@ -215,13 +217,13 @@ The header carries a **font picker** that swaps `--font-sans` across the whole
 interface (headings, body, tables, charts) so the shortlist can be compared
 live. It is preview-only and changes no preset token.
 
-| Option | Note |
-| --- | --- |
-| **Inter** | Preset default · what the live platform uses |
+| Option                    | Note                                                               |
+| ------------------------- | ------------------------------------------------------------------ |
+| **Inter**                 | Preset default · what the live platform uses                       |
 | **Atkinson Hyperlegible** | Braille Institute · the legibility fallback for low-vision reading |
-| Geist | Vercel · tighter, more geometric |
-| IBM Plex Sans | IBM · technical, institutional |
-| Source Sans 3 | Adobe · open, very high legibility |
+| Geist                     | Vercel · tighter, more geometric                                   |
+| IBM Plex Sans             | IBM · technical, institutional                                     |
+| Source Sans 3             | Adobe · open, very high legibility                                 |
 
 Inter leads because the preset ships `font: inter` and the platform uses it.
 Atkinson Hyperlegible is retained rather than dropped: the Braille Institute
@@ -236,7 +238,9 @@ faces side by side.
 ```
 app/                     routes (see the table above)
 components/ui/           the preset's shadcn primitives — do not hand-edit semantics
-components/mri/          the MRI layer: the five registry items, plus its own charts
+components/mri/          the MRI layer: shared registry items and its own charts
+  availability-grid.tsx fixed-cell monthly availability with a shared tooltip
+  choice-strip.tsx       pick-one navigation and parameter controls
   chips.tsx              the one chip: two surfaces, seven tones, overlay scrims
   chip-audit.tsx         measures every rendered chip, used by /rules
   layout.tsx             PageContainer, PageHeader, SectionHeader, Specimen
@@ -302,7 +306,7 @@ retouched.
 2. **Navigation links are styled links, never `Button`s.** Base UI's `Button`
    compiles to `isNativeButton ? { type: "button" } : { role: "button" }`, so the
    `nativeButton={false}` it asks for when `render` produces an anchor silently
-   *overrides the link role*. `<Button nativeButton={false} render={<Link/>}>`
+   _overrides the link role_. `<Button nativeButton={false} render={<Link/>}>`
    therefore looks right and navigates, but announces as a button and stops
    matching `getByRole("link")`. Every navigational link here is a plain
    `<Link>`/`<a>` carrying `buttonVariants()`. Omitting the flag is not a fix: it
@@ -330,21 +334,20 @@ retouched.
    `notable`) and the readable `-ink` tier. `globals.css` imports it alongside the
    other imports; everything else in `globals.css` is preset output.
 10. **`Chip` is a `<span>`, not the preset `Badge`.** This is the one place the
-   preset component cannot be used as-is: `Badge`'s variants carry
-   `dark:bg-input/30`, and Tailwind compiles `dark:` with `:is(.dark *)`, which
-   adds a class of specificity. A dark variant therefore always beats a base
-   utility, and tailwind-merge will not remove it (different conflict groups), so
-   any background passed to `<Badge variant="outline" className="bg-...">` is
-   silently replaced by a grey tint in dark mode. `Chip` owns its class string;
-   the preset `Badge` is untouched and still shown on `/components`.
+    preset component cannot be used as-is: `Badge`'s variants carry
+    `dark:bg-input/30`, and Tailwind compiles `dark:` with `:is(.dark *)`, which
+    adds a class of specificity. A dark variant therefore always beats a base
+    utility, and tailwind-merge will not remove it (different conflict groups), so
+    any background passed to `<Badge variant="outline" className="bg-...">` is
+    silently replaced by a grey tint in dark mode. `Chip` owns its class string;
+    the preset `Badge` is untouched and still shown on `/components`.
 11. **Titles carry `font-heading`.** A fresh `shadcn add` emits card, dialog and
-   sheet titles as `text-sm font-medium`; here they are `font-heading text-sm
+    sheet titles as `text-sm font-medium`; here they are `font-heading text-sm
    font-medium`, and `globals.css` defines `--font-heading` (currently an alias of
-   `--font-sans`) so that the utility resolves at all. Both halves are needed, or
-   a re-added primitive silently drifts from the reviewed set. This is the one
-   deviation a `diff` against a fresh `add` will always show — see
-   "Adding components".
-
+    `--font-sans`) so that the utility resolves at all. Both halves are needed, or
+    a re-added primitive silently drifts from the reviewed set. This is the one
+    deviation a `diff` against a fresh `add` will always show — see
+    "Adding components".
 
 ## Review points worth a decision
 

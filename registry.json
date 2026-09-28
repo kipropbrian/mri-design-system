@@ -86,9 +86,7 @@
       "type": "registry:item",
       "title": "Chip audit",
       "description": "Measures every rendered chip and reports any outside the two allowed sizes. Drop it on a review route.",
-      "registryDependencies": [
-        "kipropbrian/mri-design-system/chip"
-      ],
+      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
       "files": [
         {
           "path": "components/mri/chip-audit.tsx",
@@ -98,10 +96,36 @@
       ]
     },
     {
+      "name": "choice-strip",
+      "type": "registry:item",
+      "title": "Choice strip",
+      "description": "The one pick-one strip for country navigation and parameter selection: ChoiceStrip with semantic ChoiceLink and ChoiceButton items, 24px tall with a primary-filled current choice.",
+      "files": [
+        {
+          "path": "components/mri/choice-strip.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/choice-strip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "availability-grid",
+      "type": "registry:item",
+      "title": "Availability grid",
+      "description": "A fixed-cell monthly availability grid for stations, sites and recorders, with pinned labels, newest-month-first scrolling, shared pointer tooltip and a matching AvailabilityLegend.",
+      "files": [
+        {
+          "path": "components/mri/availability-grid.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/availability-grid.tsx"
+        }
+      ]
+    },
+    {
       "name": "ui-audit",
       "type": "registry:item",
       "title": "UI audit",
-      "description": "The enforcement harness: twenty-three rules (the installed components/mri layer included) over class strings and stylesheets \u2014 the spacing scale, the type scale, hover translation, chart colours used as surface tints, hand-rolled chips, raw tables, colour literals, banned imports, unsanctioned CSS, icon entry points, hand-rolled data-card headers and table boxes, eyebrows inside a data card (as a component or written by hand), shaded table headers, tables that drop no column on a phone, tables pinned wider than a phone, rows holding three data surfaces, page padding restated around PageContainer, route-level page shells, cards nested in cards, and an h1 outside the page header, navigation links rendered through Button, and navigation trees sliced or indexed by position \u2014 with a baseline that may only shrink. Project-specific exemptions go in scripts/audit-ui.config.json, never in the script. Wire it into npm run verify.",
+      "description": "The enforcement harness: twenty-four rules (the installed components/mri layer included) over class strings and stylesheets \u2014 the spacing scale, the type scale, hover translation, chart colours used as surface tints, hand-rolled chips and choice strips, raw tables, colour literals, banned imports, unsanctioned CSS, icon entry points, hand-rolled data-card headers and table boxes, eyebrows inside a data card (as a component or written by hand), shaded table headers, tables that drop no column on a phone, tables pinned wider than a phone, rows holding three data surfaces, page padding restated around PageContainer, route-level page shells, cards nested in cards, and an h1 outside the page header, navigation links rendered through Button, and navigation trees sliced or indexed by position \u2014 with a baseline that may only shrink. Project-specific exemptions go in scripts/audit-ui.config.json, never in the script. Wire it into npm run verify.",
       "files": [
         {
           "path": "scripts/audit-ui.mjs",
@@ -128,10 +152,7 @@
       "type": "registry:item",
       "title": "Chart compositions",
       "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL \u2014 the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
-      "registryDependencies": [
-        "kipropbrian/mri-design-system/theme",
-        "chart"
-      ],
+      "registryDependencies": ["kipropbrian/mri-design-system/theme", "chart"],
       "files": [
         {
           "path": "components/mri/charts.tsx",
@@ -189,10 +210,7 @@
       "type": "registry:item",
       "title": "Audio player",
       "description": "The audio transport: circle play/pause, waveform, replay with its key hint, scrub track and tabular time. Caller-owned playback state, so one <audio> element can outlive a re-render. Takes surface=overlay to sit on a photograph. Pairs with the format item's formatDuration.",
-      "registryDependencies": [
-        "kipropbrian/mri-design-system/format",
-        "button"
-      ],
+      "registryDependencies": ["kipropbrian/mri-design-system/format", "button"],
       "files": [
         {
           "path": "components/mri/audio-player.tsx",

@@ -9,36 +9,37 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
 
 ## What is enforced
 
-Twenty-three rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
+Twenty-four rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
 class strings, stylesheets and tag structure, and a violation fails the build. Nothing
 here is a matter of taste that a reviewer has to catch, which is the point: a rule that
 lives only in a document is a rule that gets followed until the first deadline.
 
-| group | rule | catches |
-| --- | --- | --- |
-| **space** | `spacing` | an off-scale `p*`, `m*`, `gap*` or `space-*` value |
-| | `padding` | a route passing `py-*` / `pt-*` / `pb-*` / `space-y-*` to `PageContainer` |
-| | `pageShell` | a route building its own centred, width-capped, gutter-and-rhythm container |
-| | `twoUp` | a three-or-more column grid around a table or a chart |
-| **type** | `type` | a font size that is neither a named utility nor one of the three rem tokens |
-| **colour** | `tokens` | an arbitrary colour value in a class name |
-| | `palette` | a named Tailwind palette colour (`text-emerald-600`) |
-| | `dataColours` | a colour literal (`#hex`, `rgb()`, `oklch()`) outside a class name |
-| | `chartTint` | a chart colour used as a fractional wash on a surface |
-| **components** | `chips` | a hand-rolled chip, pill, tag or status marker |
-| | `headers` | a hand-rolled data-card header |
-| | `cardEyebrow` | an uppercase eyebrow inside a card, written as `<Eyebrow>` or by hand |
-| **tables** | `tables` | a raw `<table>` outside the shared composition |
-| | `tableBox` | a hand-rolled bordered box around a table |
-| | `tableHeaders` | a shaded table header |
-| | `tableColumns` | a header row of four or more columns that drops none on a phone |
-| | `tableMinWidth` | a table pinned wider than a phone |
-| **links & motion** | `buttonLink` | a navigation link rendered through `Button` |
-| | `motion` | hover translation on a surface |
-| **structure** | `cardInCard` | a card nested inside a card |
-| | `singleH1` | an `h1` rendered by a component, or two in one file |
-| | `navPosition` | a `*_NAV` tree sliced or indexed by position |
-| **icons** | `icons` | an icon import that is not the RSC-safe Phosphor entry |
+| group              | rule            | catches                                                                            |
+| ------------------ | --------------- | ---------------------------------------------------------------------------------- |
+| **space**          | `spacing`       | an off-scale `p*`, `m*`, `gap*` or `space-*` value                                 |
+|                    | `padding`       | a route passing `py-*` / `pt-*` / `pb-*` / `space-y-*` to `PageContainer`          |
+|                    | `pageShell`     | a route building its own centred, width-capped, gutter-and-rhythm container        |
+|                    | `twoUp`         | a three-or-more column grid around a table or a chart                              |
+| **type**           | `type`          | a font size that is neither a named utility nor one of the three rem tokens        |
+| **colour**         | `tokens`        | an arbitrary colour value in a class name                                          |
+|                    | `palette`       | a named Tailwind palette colour (`text-emerald-600`)                               |
+|                    | `dataColours`   | a colour literal (`#hex`, `rgb()`, `oklch()`) outside a class name                 |
+|                    | `chartTint`     | a chart colour used as a fractional wash on a surface                              |
+| **components**     | `chips`         | a hand-rolled chip, pill, tag or status marker                                     |
+|                    | `choices`       | a hand-rolled choice-strip item — a country-nav or parameter-picker link or button |
+|                    | `headers`       | a hand-rolled data-card header                                                     |
+|                    | `cardEyebrow`   | an uppercase eyebrow inside a card, written as `<Eyebrow>` or by hand              |
+| **tables**         | `tables`        | a raw `<table>` outside the shared composition                                     |
+|                    | `tableBox`      | a hand-rolled bordered box around a table                                          |
+|                    | `tableHeaders`  | a shaded table header                                                              |
+|                    | `tableColumns`  | a header row of four or more columns that drops none on a phone                    |
+|                    | `tableMinWidth` | a table pinned wider than a phone                                                  |
+| **links & motion** | `buttonLink`    | a navigation link rendered through `Button`                                        |
+|                    | `motion`        | hover translation on a surface                                                     |
+| **structure**      | `cardInCard`    | a card nested inside a card                                                        |
+|                    | `singleH1`      | an `h1` rendered by a component, or two in one file                                |
+|                    | `navPosition`   | a `*_NAV` tree sliced or indexed by position                                       |
+| **icons**          | `icons`         | an icon import that is not the RSC-safe Phosphor entry                             |
 
 Two global rules sit outside that table: **`css`** (a stylesheet that no config entry
 justifies) and the config allow-lists, which are the only way to exempt anything. There
@@ -57,6 +58,12 @@ An exemption nobody wants is visible in the diff that added it.
   for colour, no keyframes. Tokens and utilities only.
 - **Never write a raw `<table>`.** Use the shared table composition.
 - **Never build a chip, pill, tag, badge or status marker.** Use `Chip`.
+- **Never hand-roll a choice strip.** A row of choices outside a card — a country
+  nav, a parameter picker — is `ChoiceStrip` holding `ChoiceLink` (it navigates) or
+  `ChoiceButton` (it changes state on the page): 24px items, 12px text, the current
+  one filled with `primary`. The OpenAQ overview's parameter buttons were 20px with
+  10px text while the country page's were 24px with 12px, the same strip at two
+  sizes, and the class string behind the larger one had been pasted seven times.
 - **Never use `Button` for navigation.** Base UI's `Button` renders
   `role="button"`, which erases the link role for screen readers and for
   `getByRole("link")`. Put `buttonVariants()` on the `<Link>` or `<a>` itself.
@@ -111,16 +118,16 @@ An exemption nobody wants is visible in the diff that added it.
 Inter, one scale, and it is short. The rule is mechanical: a font size is either a
 named utility or one of three `rem` tokens. Anything else fails `npm run audit:ui`.
 
-| px | utility | its one job |
-| --- | --- | --- |
-| 9 | `text-[0.5625rem]` | mono token values inside a reference table |
-| 10 | `text-[0.625rem]` | eyebrow, caption, mono meta |
-| 11 | `text-[0.6875rem]` | the small tier of body copy |
-| 12 | `text-xs` | body copy — the default |
-| 14 | `text-sm` | card and section titles; lead paragraphs |
-| 16 | `text-base` | a section heading inside `SectionHeader` |
-| 24–30 | `text-2xl` · `text-3xl` | page title, via `PageHeader` |
-| 36 | `text-4xl` | the one hero headline on a landing page |
+| px    | utility                 | its one job                                |
+| ----- | ----------------------- | ------------------------------------------ |
+| 9     | `text-[0.5625rem]`      | mono token values inside a reference table |
+| 10    | `text-[0.625rem]`       | eyebrow, caption, mono meta                |
+| 11    | `text-[0.6875rem]`      | the small tier of body copy                |
+| 12    | `text-xs`               | body copy — the default                    |
+| 14    | `text-sm`               | card and section titles; lead paragraphs   |
+| 16    | `text-base`             | a section heading inside `SectionHeader`   |
+| 24–30 | `text-2xl` · `text-3xl` | page title, via `PageHeader`               |
+| 36    | `text-4xl`              | the one hero headline on a landing page    |
 
 Three rules:
 
@@ -132,7 +139,7 @@ Three rules:
 2. **Nothing below 9px.** The platform carried 7.5px and 8.5px text; below 9px a label
    is decoration, not information.
 3. **Size carries hierarchy, not weight.** If two things look the same but mean
-   different things, change the size step *or* the colour role — not `font-semibold`
+   different things, change the size step _or_ the colour role — not `font-semibold`
    on one of them. The platform has 670 weight utilities against 14 uses of
    `font-heading`.
 
@@ -154,16 +161,16 @@ The system has almost none, and it is all colour.
 
 Eight steps. Nothing else.
 
-| px | utility | its one job |
-| --- | --- | --- |
-| 2 | `gap-0.5` | glyph to glyph inside a chip |
-| 4 | `gap-1` | icon to label inside a control |
-| 6 | `gap-1.5` | chip to chip in a row |
-| 8 | `gap-2` | stacked text lines; label to value |
-| 12 | `gap-3` · `--card-spacing` | card padding; card-grid gutter |
-| 16 | `gap-4` | panel padding; large-block gutter |
-| 24 | `gap-6` | section heading to its content |
-| 40 | `gap-10` | between page sections |
+| px  | utility                    | its one job                        |
+| --- | -------------------------- | ---------------------------------- |
+| 2   | `gap-0.5`                  | glyph to glyph inside a chip       |
+| 4   | `gap-1`                    | icon to label inside a control     |
+| 6   | `gap-1.5`                  | chip to chip in a row              |
+| 8   | `gap-2`                    | stacked text lines; label to value |
+| 12  | `gap-3` · `--card-spacing` | card padding; card-grid gutter     |
+| 16  | `gap-4`                    | panel padding; large-block gutter  |
+| 24  | `gap-6`                    | section heading to its content     |
+| 40  | `gap-10`                   | between page sections              |
 
 Margin is on the same scale, and it is the second choice: prefer `gap` on a grid over
 `mt-*` on a child, because a margin is invisible to the parent that is arranging things.
@@ -181,9 +188,9 @@ Plus four rules:
 
 One component, two sizes, decided by **surface** — never by page.
 
-| surface | size | for |
-| --- | --- | --- |
-| flow | 20px tall, 10px text | every chip in the page flow |
+| surface | size                 | for                                             |
+| ------- | -------------------- | ----------------------------------------------- |
+| flow    | 20px tall, 10px text | every chip in the page flow                     |
 | overlay | 22px tall, 11px text | chips on a photograph; must carry its own scrim |
 
 Tones: `neutral`, `primary`, `positive`, `info`, `warning`, `notable`,
@@ -202,18 +209,21 @@ rather than at `lg` so that **a wider viewport is never a narrower card** — wi
 split at `lg` a column hidden on a phone reappeared exactly where the row halved and
 there was least room for it.
 
-| need | use | never |
-| --- | --- | --- |
-| a card with a header | `Panel` | a hand-rolled title + description div |
-| a table | `TableCard` around `Table` | your own bordered box, or a shaded header |
-| a table too wide for a phone | `COLUMN.secondary` / `COLUMN.tertiary` on the column | letting it scroll sideways |
-| a table that needs room at 640px+ | `sm:min-w-[440px]` | an unprefixed `min-w-[640px]` |
-| a link that looks like a button | `className={buttonVariants({ variant, size })}` on the `<Link>` | `Button render={<Link/>}` |
-| signalling a state on a surface | a status role — `primary`, `info`, `warning`, `notable`, `destructive` — or a `Chip` tone | `bg-chart-3/5` |
-| a chart in a card | `ChartFrame` | `Panel` plus an invented legend |
-| two surfaces side by side | `DataRow` | `grid-cols-3` or a full-width table |
-| a summary band | `MetricStrip` | a data surface — it may run four across |
-| a document (policy, licence list, about) | `PageContainer size="reading"` + `PageHeader` + `Prose` / `ProseSection` | a route-level `LegalPage` that restates padding and the title |
+| need                                                              | use                                                                                       | never                                                            |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| a card with a header                                              | `Panel`                                                                                   | a hand-rolled title + description div                            |
+| a table                                                           | `TableCard` around `Table`                                                                | your own bordered box, or a shaded header                        |
+| a table too wide for a phone                                      | `COLUMN.secondary` / `COLUMN.tertiary` on the column                                      | letting it scroll sideways                                       |
+| a table that needs room at 640px+                                 | `sm:min-w-[440px]`                                                                        | an unprefixed `min-w-[640px]`                                    |
+| a link that looks like a button                                   | `className={buttonVariants({ variant, size })}` on the `<Link>`                           | `Button render={<Link/>}`                                        |
+| signalling a state on a surface                                   | a status role — `primary`, `info`, `warning`, `notable`, `destructive` — or a `Chip` tone | `bg-chart-3/5`                                                   |
+| a chart in a card                                                 | `ChartFrame`                                                                              | `Panel` plus an invented legend                                  |
+| which months each station, site or recorder reported              | `AvailabilityGrid` in a `ChartFrame height="h-auto"`                                      | bars on a linear time axis (a Gantt)                             |
+| a strip of choices outside a card — country nav, parameter picker | `ChoiceStrip` + `ChoiceLink` / `ChoiceButton`                                             | `Button size="xs"` on one page and hand-rolled links on the next |
+| a view switch in a card header's action slot                      | `Button size="xs"`, `secondary` when on, `ghost` when off, with `aria-pressed`            | a `ChoiceStrip` inside the card                                  |
+| two surfaces side by side                                         | `DataRow`                                                                                 | `grid-cols-3` or a full-width table                              |
+| a summary band                                                    | `MetricStrip`                                                                             | a data surface — it may run four across                          |
+| a document (policy, licence list, about)                          | `PageContainer size="reading"` + `PageHeader` + `Prose` / `ProseSection`                  | a route-level `LegalPage` that restates padding and the title    |
 
 **The data-card header** is `Panel`'s shape, not a recipe to retype: the title
 carries its count in parentheses, the description is one line and truncates, and
@@ -240,7 +250,7 @@ dropped column, not the choice of which.
 **And a table is never pinned to a minimum width.** `min-w-[640px]` on a `<Table>`
 is the older answer to the same problem — force it wide, let the reader scroll —
 and it defeats hiding columns completely: `/inaturalist`'s country grid was still
-640px inside a 360px card *after* four of its eight columns were marked hidden,
+640px inside a 360px card _after_ four of its eight columns were marked hidden,
 because no amount of hiding takes a table below a floor it was given. Per-column
 `min-w-[140px]` is the same mistake in smaller pieces; five of them sum to a 600px
 table without any one looking unreasonable. A **prefixed** minimum is fine and is
@@ -265,6 +275,41 @@ one does. The platform's five document routes shared one such shell, so a change
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between
 sections (`gap-10`). A route that passes `py-*`, `pt-*`, `pb-*` or `space-y-*` to
 it is restating the contract; a nav strip is `density="band"`.
+
+## Availability grids
+
+A figure that answers _which of these reported, and when_ — stations, sites or
+recorders over months — is an `AvailabilityGrid`, after the data-availability chart
+on data.neonscience.org: one row per entity, one fixed-size cell per month, the
+months grouped by year under a dashed divider, the names pinned on the left. It
+replaced a Gantt of bars on a linear day axis, which failed on the OpenAQ Uganda
+page: two of its 57 stations started in 2017 and the rest in 2025, so a decade of
+axis squeezed the network's whole life into its last fifth, and past 24 rows the
+station names were hidden to make the bars fit.
+
+- **A month is always the same width.** The grid never squeezes time to fit the card;
+  it scrolls. It opens on the newest month — `dir="rtl"` on the scroller and
+  `dir="ltr"` on its content, so no script has to jump it after paint — and the year
+  headings say how far back it goes. This is the one data surface that may scroll
+  sideways: its columns are time in order, the newest are the ones a reader came for,
+  and dropping months would drop the lifecycle the figure exists to show. A table's
+  columns are not like that; they still drop and never scroll.
+- **It takes the row to itself.** It is the one data surface that is not two-up: its
+  columns are months, and in half a page most of them were behind the scroll. Put its
+  companion table in a `DataRow` below it.
+- **Blank is not grey.** A slot before an entity's first record is blank; a month
+  after it with nothing is the grid's empty level. The staircase of blanks is the
+  network being built, and a grey tail is a station going quiet.
+- **Levels are solid fills**, the same classes in the cells and in the key
+  (`AvailabilityLegend`). Two data levels and an empty one: a third shade of one
+  hue reads as more of the same, not as something else.
+- **Every name stays visible.** A long name truncates, with the full name in its
+  `title`; it is never dropped to make rows fit. Names that repeat carry their id.
+- **One tooltip for the whole grid**, driven by the pointer, and the cells are
+  memoised, so a pointer move re-renders the tooltip and nothing else.
+- **It is a figure.** `ChartFrame` gives it `role="img"` and its name, and the cells
+  are not focusable. Pair it with a table of the rows a reader needs as text — on
+  OpenAQ, the stations that went quiet.
 
 ## Audio
 
@@ -327,13 +372,13 @@ Audio is the subject, not the illustration, so it has one component: `AudioPlaye
    Every composition in `components/mri/charts.tsx` therefore forces `w-full min-w-0`.
    If you write a chart around `ChartContainer` directly, do the same.
 7. **`DataRow` splits at `xl`, and the reason is not aesthetic.** At `lg` a card is
-   *narrower* than it was at `md` — the surfaces were stacked below `lg` and go two-up
+   _narrower_ than it was at `md` — the surfaces were stacked below `lg` and go two-up
    at `lg` — so a column hidden on a phone reappeared exactly where the row halved and
    there was least room for it. Measured on the xeno-canto sound page: fits at 768px,
    +97px at 1024px, fits again at 1280px. Card width has to be monotonic in viewport
    width or a breakpoint cannot be reasoned about.
 8. **The root font size is part of the scale.** The platform set `html { font-size:
-   15px }` by hand before the migration, and because every size in this system is
+15px }` by hand before the migration, and because every size in this system is
    written in `rem` it silently rescaled all of it: the documented 10px rendered 9.375,
    `text-xs` rendered 11.25 instead of 12, and `text-[0.5625rem]` rendered 8.44px —
    below this document's own 9px floor. Leave the root alone. If a design needs to be

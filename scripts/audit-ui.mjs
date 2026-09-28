@@ -117,11 +117,20 @@ function loadConfig() {
   return {
     ...DEFAULTS,
     ...raw,
-    spacingAllowed: { ...DEFAULTS.spacingAllowed, ...(raw.spacingAllowed ?? {}) },
+    spacingAllowed: {
+      ...DEFAULTS.spacingAllowed,
+      ...(raw.spacingAllowed ?? {}),
+    },
     allowedCss: { ...DEFAULTS.allowedCss, ...(raw.allowedCss ?? {}) },
-    allowedColourFiles: { ...DEFAULTS.allowedColourFiles, ...(raw.allowedColourFiles ?? {}) },
+    allowedColourFiles: {
+      ...DEFAULTS.allowedColourFiles,
+      ...(raw.allowedColourFiles ?? {}),
+    },
     tableAllowed: { ...DEFAULTS.tableAllowed, ...(raw.tableAllowed ?? {}) },
-    pageShellAllowed: { ...DEFAULTS.pageShellAllowed, ...(raw.pageShellAllowed ?? {}) },
+    pageShellAllowed: {
+      ...DEFAULTS.pageShellAllowed,
+      ...(raw.pageShellAllowed ?? {}),
+    },
   };
 }
 
@@ -137,15 +146,7 @@ const BASELINE = join(ROOT, CONFIG.baseline);
 const SCAN_DIRS = CONFIG.scanDirs;
 const GENERATED = CONFIG.generated;
 
-const SKIP_DIRS = new Set([
-  "node_modules",
-  ".next",
-  ".open-next",
-  ".wrangler",
-  "dist",
-  "coverage",
-  ".git",
-]);
+const SKIP_DIRS = new Set(["node_modules", ".next", ".open-next", ".wrangler", "dist", "coverage", ".git"]);
 
 /* ------------------------------------------------------------------ rules */
 
@@ -155,7 +156,8 @@ const SPACING_SCALE = new Set(["0", "0.5", "1", "1.5", "2", "3", "4", "6", "10"]
 // rule covered `gap`, `p*` and `space-y` and left `m*` alone, so `mt-7` (28px)
 // and `mt-8` (32px) sat in the platform next to a scale whose largest step below
 // the page rhythm is 24px. `mx-auto` is untouched: the pattern requires a number.
-const SPACING_UTILITY = /(?<![\w-])(gap|p|px|py|pt|pr|pb|pl|m|mx|my|mt|mr|mb|ml|space-x|space-y)-(\d+(?:\.\d+)?)(?![\d.])/g;
+const SPACING_UTILITY =
+  /(?<![\w-])(gap|p|px|py|pt|pr|pb|pl|m|mx|my|mt|mr|mb|ml|space-x|space-y)-(\d+(?:\.\d+)?)(?![\d.])/g;
 const SPACING_ALLOWED = new Map(Object.entries(CONFIG.spacingAllowed));
 
 /** The one chip module owns every chip-shaped class string. */
@@ -184,7 +186,8 @@ const ARBITRARY_COLOUR =
 const INLINE_COLOUR_STYLE = /style=\{\{[^}]*?(#[0-9a-fA-F]{3,8}|rgba?\(|oklch\()[^}]*?\}\}/g;
 
 /** Icons come from Phosphor, through the SSR entry, or not at all. */
-const BANNED_IMPORTS = /^\s*(lucide-react|radix-ui|@radix-ui\/[^"']*|@base-ui\/react(?:\/[^"']*)?|react-icons(?:\/[^"']*)?|@heroicons\/[^"']*|@tabler\/[^"']*)$/;
+const BANNED_IMPORTS =
+  /^\s*(lucide-react|radix-ui|@radix-ui\/[^"']*|@base-ui\/react(?:\/[^"']*)?|react-icons(?:\/[^"']*)?|@heroicons\/[^"']*|@tabler\/[^"']*)$/;
 const IMPORT_SOURCE = /(?:from|require\()\s*["']([^"']+)["']/g;
 
 /* ----------------------------------------------------------------- plumbing */
@@ -263,7 +266,11 @@ function* literals(source) {
         value += source[cursor];
         cursor += 1;
       }
-      if (value) yield { literal: value, line: source.slice(0, index).split("\n").length };
+      if (value)
+        yield {
+          literal: value,
+          line: source.slice(0, index).split("\n").length,
+        };
       index = cursor + 1;
       continue;
     }
@@ -305,7 +312,10 @@ function stripComments(source) {
       const quote = char;
       let cursor = index + 1;
       while (cursor < length) {
-        if (source[cursor] === "\\") { cursor += 2; continue; }
+        if (source[cursor] === "\\") {
+          cursor += 2;
+          continue;
+        }
         if (source[cursor] === quote) break;
         cursor += 1;
       }
@@ -376,6 +386,31 @@ const RULES = {
     },
   },
 
+  /**
+   * A strip of choices is `ChoiceStrip`, not a recipe to paste.
+   *
+   * The country navs and parameter pickers were one class string copied seven times,
+   * and the OpenAQ overview's picker was `Button size="xs"` instead — 20px and 10px
+   * text beside the country page's 24px and 12px, for the same control. The signature
+   * is the current item's recipe: `rounded-md px-2 py-1` filled with `bg-primary`. The
+   * header's main navigation marks its current page with `bg-muted` and is a different
+   * component, so it is not matched.
+   */
+  choices: {
+    title: "hand-rolled choice-strip item",
+    hint: "use <ChoiceLink> / <ChoiceButton> inside <ChoiceStrip> from components/mri/choice-strip.tsx",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        const tokens = new Set(literal.split(/\s+/));
+        if (tokens.has("rounded-md") && tokens.has("px-2") && tokens.has("py-1") && tokens.has("bg-primary")) {
+          hits.push({ line, token: "choice-strip-shaped class string" });
+        }
+      }
+      return hits;
+    },
+  },
+
   tables: {
     title: "raw <table>",
     hint: "use the shared table composition in components/ui/table.tsx",
@@ -401,7 +436,10 @@ const RULES = {
         }
       }
       for (const match of source.matchAll(INLINE_COLOUR_STYLE)) {
-        hits.push({ line: lineOf(source, match.index), token: "inline colour style" });
+        hits.push({
+          line: lineOf(source, match.index),
+          token: "inline colour style",
+        });
       }
       return hits;
     },
@@ -488,7 +526,10 @@ const RULES = {
             continue;
           }
           if (/\brounded|\bborder\b/.test(classes[1])) {
-            hits.push({ line: i + 1, token: classes[1].split(" ").find((c) => /^rounded|^border/.test(c)) ?? "bordered box" });
+            hits.push({
+              line: i + 1,
+              token: classes[1].split(" ").find((c) => /^rounded|^border/.test(c)) ?? "bordered box",
+            });
           }
           break;
         }
@@ -560,8 +601,7 @@ const RULES = {
       // sm:table-cell` is one column being dropped, and a block-wide "contains hidden,
       // contains a variant" test would also pass a table where one column is hidden by
       // an unrelated utility and no column is dropped at all.
-      const dropsAColumn = (classes) =>
-        /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
+      const dropsAColumn = (classes) => /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
       const hits = [];
       for (const match of source.matchAll(/<TableHeader\b[\s\S]*?<\/TableHeader>/g)) {
         const block = match[0];
@@ -571,7 +611,10 @@ const RULES = {
           [...block.matchAll(/"([^"]*)"/g)].some((literal) => dropsAColumn(literal[1])) ||
           /COLUMN\.(?:secondary|tertiary)/.test(block);
         if (dropped) continue;
-        hits.push({ line: lineOf(source, match.index), token: `${columns} columns, none dropped` });
+        hits.push({
+          line: lineOf(source, match.index),
+          token: `${columns} columns, none dropped`,
+        });
       }
       return hits;
     },
@@ -615,8 +658,7 @@ const RULES = {
        */
       const WIDTH = /(?<![\w:-])(min-w-\[(\d+(?:\.\d+)?)(px|rem)\])/g;
       /** A cell that hides itself below a breakpoint cannot pin anything on a phone. */
-      const hidesBelow = (classes) =>
-        /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
+      const hidesBelow = (classes) => /\bhidden\b/.test(classes) && /\b(?:sm|md|lg|xl):table-cell\b/.test(classes);
       const px = (value, unit) => (unit === "rem" ? Number(value) * 16 : Number(value));
       const classOf = (tag) => {
         const match = tag.match(/className=(?:"([^"]*)"|\{cn\(\s*"([^"]*)")/);
@@ -684,11 +726,14 @@ const RULES = {
    */
   buttonLink: {
     title: "navigation link rendered through Button",
-    hint: "use className={buttonVariants({ variant, size })} on the <Link> instead; Base UI forces role=\"button\" on a non-<button> and the link stops being a link",
+    hint: 'use className={buttonVariants({ variant, size })} on the <Link> instead; Base UI forces role="button" on a non-<button> and the link stops being a link',
     scan(rel, source) {
       const hits = [];
       for (const match of source.matchAll(/<Button\b[\s\S]{0,400}?render=\{\s*<(Link|a)\b/g)) {
-        hits.push({ line: lineOf(source, match.index), token: `render={<${match[1]}` });
+        hits.push({
+          line: lineOf(source, match.index),
+          token: `render={<${match[1]}`,
+        });
       }
       return hits;
     },
@@ -718,7 +763,10 @@ const RULES = {
       const code = stripComments(source);
       const hits = [];
       for (const match of code.matchAll(/\b[A-Z][A-Z0-9_]*_NAV\b\s*(?:\.\s*(?:slice|splice|at)\s*\(|\[\s*-?\d)/g)) {
-        hits.push({ line: lineOf(code, match.index), token: match[0].replace(/\s+/g, "") });
+        hits.push({
+          line: lineOf(code, match.index),
+          token: match[0].replace(/\s+/g, ""),
+        });
       }
       return hits;
     },
@@ -790,9 +838,7 @@ const RULES = {
     scan(rel, source) {
       const hits = [];
       for (const { literal, line } of literals(source)) {
-        for (const match of literal.matchAll(
-          /(?<![\w-])(?:[a-z0-9]+:)*(?:-translate-[xy]|translate-[xy])-/g,
-        )) {
+        for (const match of literal.matchAll(/(?<![\w-])(?:[a-z0-9]+:)*(?:-translate-[xy]|translate-[xy])-/g)) {
           if (!/hover:/.test(match[0])) continue;
           hits.push({ line, token: match[0] });
         }
@@ -1042,7 +1088,11 @@ const RULES = {
         // `<Card />` opens nothing. Find the end of this tag to tell.
         const end = source.indexOf(">", m.index);
         const selfClosing = end !== -1 && source[end - 1] === "/";
-        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+        events.push({
+          index: m.index,
+          kind: selfClosing ? "self" : "open",
+          name: m[1],
+        });
       }
       for (const m of source.matchAll(closes)) {
         events.push({ index: m.index, kind: "close", name: m[1] });
@@ -1106,7 +1156,11 @@ const RULES = {
       for (const m of source.matchAll(opens)) {
         const end = source.indexOf(">", m.index);
         const selfClosing = end !== -1 && source[end - 1] === "/";
-        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+        events.push({
+          index: m.index,
+          kind: selfClosing ? "self" : "open",
+          name: m[1],
+        });
       }
       for (const m of source.matchAll(closes)) {
         events.push({ index: m.index, kind: "close", name: m[1] });
@@ -1193,7 +1247,11 @@ const RULES = {
       for (const m of source.matchAll(opens)) {
         const end = source.indexOf(">", m.index);
         const selfClosing = (end !== -1 && source[end - 1] === "/") || m[1] === "hr";
-        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+        events.push({
+          index: m.index,
+          kind: selfClosing ? "self" : "open",
+          name: m[1],
+        });
       }
       for (const m of source.matchAll(closes)) {
         events.push({ index: m.index, kind: "close", name: m[1] });
@@ -1247,7 +1305,10 @@ const RULES = {
       const inComponents = rel.startsWith("components/") && !rel.startsWith("components/mri/");
       for (const index of found) {
         if (inComponents) {
-          hits.push({ line: lineOf(source, index), token: "<h1> in a component" });
+          hits.push({
+            line: lineOf(source, index),
+            token: "<h1> in a component",
+          });
         } else if (found.length > 1 && index !== found[0]) {
           hits.push({ line: lineOf(source, index), token: "second <h1>" });
         }
@@ -1405,7 +1466,12 @@ function scanGeneratedPhosphor() {
         const spec = match[1];
         if (spec !== "@phosphor-icons/react") continue;
         if (isTypeOnlyImport(source, match.index)) continue;
-        hits.push({ rule: "phosphor", file: rel, line: lineOf(source, match.index), token: spec });
+        hits.push({
+          rule: "phosphor",
+          file: rel,
+          line: lineOf(source, match.index),
+          token: spec,
+        });
       }
     }
   }
@@ -1417,7 +1483,8 @@ const ALL_RULES = { ...RULES, css: CSS_RULE, phosphor: PHOSPHOR_RULE };
 
 const sortHits = (hits) =>
   hits.sort(
-    (a, b) => a.rule.localeCompare(b.rule) || a.file.localeCompare(b.file) || a.token.localeCompare(b.token) || a.line - b.line,
+    (a, b) =>
+      a.rule.localeCompare(b.rule) || a.file.localeCompare(b.file) || a.token.localeCompare(b.token) || a.line - b.line,
   );
 
 /** One ledger entry per distinct (rule, file, token); the count catches additions. */
@@ -1449,7 +1516,9 @@ if (args.has("--report")) {
   for (const [id, rule] of Object.entries(ALL_RULES)) {
     const list = byRule.get(id) ?? [];
     const files = new Set(list.map((h) => h.file)).size;
-    console.log(`  ${id.padEnd(8)} ${String(list.length).padStart(4)}  in ${String(files).padStart(3)} files   ${rule.title}`);
+    console.log(
+      `  ${id.padEnd(8)} ${String(list.length).padStart(4)}  in ${String(files).padStart(3)} files   ${rule.title}`,
+    );
   }
   console.log(`\nBaseline holds ${Object.values(loadBaseline()).reduce((a, b) => a + b, 0)} entries.`);
   process.exit(0);

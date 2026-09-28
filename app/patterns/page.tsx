@@ -18,6 +18,7 @@ import {
 import { Chip } from "@/components/mri/chips";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import {
+  ChartFrame,
   ErrorState,
   EmptyState,
   FilterSidebar,
@@ -33,6 +34,7 @@ import {
   TableSkeleton,
 } from "@/components/mri/patterns";
 import { BirdMediaCard, ObservationCard } from "@/components/mri/specimen-card";
+import { AvailabilityGridDemo, ChoiceStripDemo } from "@/components/site/pattern-demos";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,15 +47,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { birds, countryFlag, inat } from "@/lib/data";
 import { formatDate, formatNumber, formatRelativeDays, initials } from "@/lib/format";
 
@@ -121,7 +115,12 @@ export default function PatternsPage() {
         }
         actions={
           <>
-            <a href="https://platform.maiyoinstitute.org" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}>
+            <a
+              href="https://platform.maiyoinstitute.org"
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline" })}
+            >
               Open the live platform
               <ArrowSquareOutIcon data-icon="inline-end" />
             </a>
@@ -244,9 +243,7 @@ export default function PatternsPage() {
                     <span aria-hidden="true">{countryFlag(country.code)}</span>
                     <span className="truncate text-foreground">{country.name}</span>
                   </span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {formatNumber(country.speciesCount)}
-                  </span>
+                  <span className="text-muted-foreground tabular-nums">{formatNumber(country.speciesCount)}</span>
                 </li>
               ))}
             </ul>
@@ -269,7 +266,7 @@ export default function PatternsPage() {
                     {initials(name)}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-foreground">@{name}</span>
-                  <span className="text-[0.6875rem] tabular-nums text-muted-foreground">
+                  <span className="text-[0.6875rem] text-muted-foreground tabular-nums">
                     {formatNumber(320 - index * 47)}
                   </span>
                 </li>
@@ -284,13 +281,13 @@ export default function PatternsPage() {
           >
             <div className="grid gap-2 text-[0.6875rem] leading-relaxed text-muted-foreground">
               <p>
-                A country first is a research-grade, photo-backed observation whose species has no prior
-                verified record in that country.
+                A country first is a research-grade, photo-backed observation whose species has no prior verified record
+                in that country.
               </p>
               <p>
-                Records start as <strong className="font-medium text-foreground">Monitoring</strong> and
-                become <strong className="font-medium text-foreground">Stable</strong> after three or more
-                agreeing identifications.
+                Records start as <strong className="font-medium text-foreground">Monitoring</strong> and become{" "}
+                <strong className="font-medium text-foreground">Stable</strong> after three or more agreeing
+                identifications.
               </p>
             </div>
           </Panel>
@@ -316,9 +313,7 @@ export default function PatternsPage() {
             ].map((rule) => (
               <Panel key={rule.title} size="sm">
                 <div className="grid gap-1.5">
-                  <h3 className="font-heading text-xs/relaxed font-medium text-foreground">
-                    {rule.title}
-                  </h3>
+                  <h3 className="font-heading text-xs/relaxed font-medium text-foreground">{rule.title}</h3>
                   <p className="text-[0.6875rem] leading-relaxed text-muted-foreground">{rule.body}</p>
                 </div>
               </Panel>
@@ -339,7 +334,10 @@ export default function PatternsPage() {
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
               <div className="relative">
                 <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input placeholder="Search species, observer or id" className="h-8 pl-8 text-xs/relaxed lg:col-span-2" />
+                <Input
+                  placeholder="Search species, observer or id"
+                  className="h-8 pl-8 text-xs/relaxed lg:col-span-2"
+                />
               </div>
               <NativeSelect defaultValue="all" aria-label="Country" className="h-8 text-xs/relaxed">
                 <NativeSelectOption value="all">All countries</NativeSelectOption>
@@ -372,7 +370,7 @@ export default function PatternsPage() {
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-2">
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-[0.625rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                <span className="mr-1 text-[0.625rem] font-medium tracking-[0.12em] text-muted-foreground uppercase">
                   Quick filters
                 </span>
                 {/* Toggle chips are the same Chip as every other chip; only the
@@ -391,10 +389,8 @@ export default function PatternsPage() {
                 </Chip>
               </div>
               <p className="text-[0.6875rem] text-muted-foreground">
-                Showing <span className="font-medium tabular-nums text-foreground">12</span> of{" "}
-                <span className="font-medium tabular-nums text-foreground">
-                  {formatNumber(inat.eventCount)}
-                </span>{" "}
+                Showing <span className="font-medium text-foreground tabular-nums">12</span> of{" "}
+                <span className="font-medium text-foreground tabular-nums">{formatNumber(inat.eventCount)}</span>{" "}
                 records
               </p>
             </div>
@@ -428,17 +424,18 @@ export default function PatternsPage() {
                 <h3 className="truncate text-sm font-medium tracking-tight text-foreground">
                   Verified country firsts (12)
                 </h3>
-                <p className="truncate text-[0.6875rem] text-muted-foreground">
-                  Filtered by Kenya, plants, stable
-                </p>
+                <p className="truncate text-[0.6875rem] text-muted-foreground">Filtered by Kenya, plants, stable</p>
               </div>
               <div className="grid gap-2 p-3">
                 {inat.events.slice(0, 4).map((record) => (
-                  <div key={record.eventId} className="grid gap-0.5 border-b border-border/50 pb-2 last:border-0 last:pb-0">
+                  <div
+                    key={record.eventId}
+                    className="grid gap-0.5 border-b border-border/50 pb-2 last:border-0 last:pb-0"
+                  >
                     <span className="truncate text-xs/relaxed font-medium text-foreground">
                       {record.commonName ?? record.scientificName}
                     </span>
-                    <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
+                    <span className="truncate font-serif text-[0.6875rem] text-muted-foreground italic">
                       {record.scientificName}
                     </span>
                   </div>
@@ -470,10 +467,7 @@ export default function PatternsPage() {
                 },
                 {
                   legend: "Verification",
-                  options: [
-                    { label: "Stable only", checked: true },
-                    { label: "Has photo" },
-                  ],
+                  options: [{ label: "Stable only", checked: true }, { label: "Has photo" }],
                 },
               ]}
               footer="1,151 species in scope · 399 records rechecked this scan"
@@ -482,10 +476,39 @@ export default function PatternsPage() {
         </Specimen>
       </section>
 
-      {/* ------------------------------------------------------- 5. data table */}
+      {/* ---------------------------------------------------- 5. choice strip */}
+      <section id="choice-strip" className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
+          eyebrow="05 · Choice strip"
+          title="One treatment for navigation and parameters"
+          description="Links navigate, buttons change the current view, and both share one compact pick-one treatment outside a card."
+        />
+        <Specimen label="choice strip · link and button semantics" note="24px items · 12px text">
+          <ChoiceStripDemo />
+        </Specimen>
+      </section>
+
+      {/* ------------------------------------------------ 6. availability grid */}
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
-          eyebrow="05 · Records"
+          eyebrow="06 · Availability"
+          title="Fixed cells keep every month legible"
+          description="Pinned labels and equal-width months show when a station joined, reported partially, or went quiet without compressing recent history."
+        />
+        <ChartFrame
+          title="Station reporting availability (4)"
+          description="Monthly specimen data · January 2025 to September 2026"
+          ariaLabel="Monthly reporting availability for four specimen monitoring stations"
+          height="h-auto"
+        >
+          <AvailabilityGridDemo />
+        </ChartFrame>
+      </section>
+
+      {/* ------------------------------------------------------- 7. data table */}
+      <section className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
+          eyebrow="07 · Records"
           title="Table card with pagination"
           description="Semantic table elements, horizontal containment instead of truncation, monospace numerics, and a footer that states the range in words."
         />
@@ -496,74 +519,65 @@ export default function PatternsPage() {
             action={<Badge variant="outline">Latest {inat.publishedRunId}</Badge>}
             contentClassName="grid gap-0 p-0"
           >
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead className="w-8 text-center">#</TableHead>
-        <TableHead>Species</TableHead>
-        <TableHead className="hidden sm:table-cell">Country</TableHead>
-        <TableHead className="hidden md:table-cell">Observer</TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead className="text-right">IDs</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {inat.events.slice(0, 8).map((record, index) => (
-        <TableRow key={record.eventId}>
-          <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
-            {index + 1}
-          </TableCell>
-          <TableCell className="max-w-[220px]">
-            <span className="grid min-w-0">
-              <span className="truncate font-medium text-foreground">
-                {record.commonName ?? record.scientificName}
-              </span>
-              {record.commonName ? (
-                <span className="truncate font-serif text-[0.6875rem] italic text-muted-foreground">
-                  {record.scientificName}
-                </span>
-              ) : null}
-            </span>
-          </TableCell>
-          <TableCell className="hidden sm:table-cell">
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
-              <span className="font-mono text-[0.6875rem] text-muted-foreground">
-                {record.countryCode}
-              </span>
-            </span>
-          </TableCell>
-          <TableCell className="hidden max-w-[140px] truncate text-muted-foreground md:table-cell">
-            @{record.observer}
-          </TableCell>
-          <TableCell>
-            {record.status === "stable" ? (
-              <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
-                Stable
-              </StatusBadge>
-            ) : (
-              <span className="text-muted-foreground">—</span>
-            )}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {record.supportCount}
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-    <TableCaption>
-      Country counts describe catalog documentation, not wildlife abundance.
-    </TableCaption>
-  </Table>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8 text-center">#</TableHead>
+                  <TableHead>Species</TableHead>
+                  <TableHead className="hidden sm:table-cell">Country</TableHead>
+                  <TableHead className="hidden md:table-cell">Observer</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">IDs</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {inat.events.slice(0, 8).map((record, index) => (
+                  <TableRow key={record.eventId}>
+                    <TableCell className="text-center font-mono text-[0.6875rem] text-muted-foreground">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell className="max-w-[220px]">
+                      <span className="grid min-w-0">
+                        <span className="truncate font-medium text-foreground">
+                          {record.commonName ?? record.scientificName}
+                        </span>
+                        {record.commonName ? (
+                          <span className="truncate font-serif text-[0.6875rem] text-muted-foreground italic">
+                            {record.scientificName}
+                          </span>
+                        ) : null}
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                        <span aria-hidden="true">{countryFlag(record.countryCode)}</span>
+                        <span className="font-mono text-[0.6875rem] text-muted-foreground">{record.countryCode}</span>
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden max-w-[140px] truncate text-muted-foreground md:table-cell">
+                      @{record.observer}
+                    </TableCell>
+                    <TableCell>
+                      {record.status === "stable" ? (
+                        <StatusBadge tone="positive" icon={<SealCheckIcon weight="fill" />}>
+                          Stable
+                        </StatusBadge>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">{record.supportCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableCaption>Country counts describe catalog documentation, not wildlife abundance.</TableCaption>
+            </Table>
 
             <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 p-3 sm:flex-row">
               <p className="order-2 text-[0.6875rem] text-muted-foreground sm:order-1">
-                Showing{" "}
-                <span className="font-medium tabular-nums text-foreground">1</span>–
-                <span className="font-medium tabular-nums text-foreground">12</span> of{" "}
-                <span className="font-medium tabular-nums text-foreground">
-                  {formatNumber(inat.eventCount)}
-                </span>{" "}
+                Showing <span className="font-medium text-foreground tabular-nums">1</span>–
+                <span className="font-medium text-foreground tabular-nums">12</span> of{" "}
+                <span className="font-medium text-foreground tabular-nums">{formatNumber(inat.eventCount)}</span>{" "}
                 species
               </p>
               <Pagination className="order-1 mx-0 w-auto sm:order-2">
@@ -613,20 +627,25 @@ export default function PatternsPage() {
               contentClassName="grid gap-3"
             >
               <StatusPath steps={[{ label: "monitoring" }, { label: "stable", tone: "positive" }]} />
-              <StatusPath steps={[{ label: "stable", tone: "positive" }, { label: "withdrawn", tone: "negative" }]} />
+              <StatusPath
+                steps={[
+                  { label: "stable", tone: "positive" },
+                  { label: "withdrawn", tone: "negative" },
+                ]}
+              />
               <p className="text-[0.6875rem] text-muted-foreground">
-                The state a record is <em>in</em> gets a chip everywhere. The path it took gets one only
-                when a reviewer needs to know what changed.
+                The state a record is <em>in</em> gets a chip everywhere. The path it took gets one only when a reviewer
+                needs to know what changed.
               </p>
             </Panel>
           </div>
         </Specimen>
       </section>
 
-      {/* --------------------------------------------------------- 6. media */}
+      {/* --------------------------------------------------------- 8. media */}
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
-          eyebrow="06 · Media"
+          eyebrow="08 · Media"
           title="Specimen and media cards"
           description="One media contract for every provider: aspect-[4/3], caption on a bottom gradient, attribution always rendered, badges in the top corners."
         />
@@ -656,9 +675,18 @@ export default function PatternsPage() {
                 <dl className="grid gap-2 text-[0.6875rem]">
                   {[
                     { term: "Observed", value: observations[0].observedOn },
-                    { term: "Detected", value: formatDate(observations[0].detectedAt) },
-                    { term: "Quality", value: observations[0].qualityGrade ?? "—" },
-                    { term: "Licence", value: observations[0].photoLicense.toUpperCase() },
+                    {
+                      term: "Detected",
+                      value: formatDate(observations[0].detectedAt),
+                    },
+                    {
+                      term: "Quality",
+                      value: observations[0].qualityGrade ?? "—",
+                    },
+                    {
+                      term: "Licence",
+                      value: observations[0].photoLicense.toUpperCase(),
+                    },
                     {
                       term: "Global records",
                       value: observations[0].globalObservationCount?.toString() ?? "—",
@@ -666,25 +694,24 @@ export default function PatternsPage() {
                   ].map((row) => (
                     <div key={row.term} className="flex items-baseline justify-between gap-3">
                       <dt className="text-muted-foreground">{row.term}</dt>
-                      <dd className="truncate font-mono tabular-nums text-foreground">{row.value}</dd>
+                      <dd className="truncate font-mono text-foreground tabular-nums">{row.value}</dd>
                     </div>
                   ))}
                 </dl>
               </Panel>
               <div className="rounded-lg bg-notable/25 p-3 text-[0.6875rem] text-notable-foreground ring-1 ring-notable/50">
-                <strong className="font-medium">Why this record matters.</strong> It is the first verified
-                observation of this species in {observations[0].countryName}, so it extends the known
-                national range by one species.
+                <strong className="font-medium">Why this record matters.</strong> It is the first verified observation
+                of this species in {observations[0].countryName}, so it extends the known national range by one species.
               </div>
             </div>
           </div>
         </Specimen>
       </section>
 
-      {/* -------------------------------------------------------- 7. states */}
+      {/* -------------------------------------------------------- 9. states */}
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
-          eyebrow="07 · States"
+          eyebrow="09 · States"
           title="Loading, empty and error"
           description="Each state is a designed composition with the geometry of the view it replaces, so the page does not reflow when data arrives."
         />
@@ -720,7 +747,11 @@ export default function PatternsPage() {
           </Specimen>
         </div>
         <Specimen label="state · page skeleton" note="loading.tsx mirrors the real page frame">
-          <div className="grid gap-4 rounded-lg bg-card p-4 ring-1 ring-foreground/10" aria-busy="true" aria-label="Loading iNaturalist workspace">
+          <div
+            className="grid gap-4 rounded-lg bg-card p-4 ring-1 ring-foreground/10"
+            aria-busy="true"
+            aria-label="Loading iNaturalist workspace"
+          >
             <div className="grid gap-2 border-b border-border/60 pb-4">
               <span className="h-2.5 w-32 animate-pulse rounded bg-muted" aria-hidden="true" />
               <span className="h-6 w-72 animate-pulse rounded bg-muted" aria-hidden="true" />
@@ -732,10 +763,10 @@ export default function PatternsPage() {
         </Specimen>
       </section>
 
-      {/* ---------------------------------------------------- 8. provenance */}
+      {/* --------------------------------------------------- 10. provenance */}
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
-          eyebrow="08 · Provenance"
+          eyebrow="10 · Provenance"
           title="Source strip"
           description="Every data surface ends by naming its artifact, its snapshot and its fetch time. A reviewer should never have to guess how fresh a number is."
         />
@@ -748,13 +779,17 @@ export default function PatternsPage() {
                 {formatNumber(inat.eventCount)} events
               </SourceNote>
               <SourceNote>
-                East African bird list · {formatNumber(birds.totalSpecies)} species ·{" "}
-                {formatDate(inat.publishedAt)}
+                East African bird list · {formatNumber(birds.totalSpecies)} species · {formatDate(inat.publishedAt)}
               </SourceNote>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge variant="outline">Snapshot, not live</Badge>
-              <a href="https://www.inaturalist.org" target="_blank" rel="noreferrer" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+              <a
+                href="https://www.inaturalist.org"
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
+              >
                 Data courtesy of iNaturalist
                 <ArrowSquareOutIcon data-icon="inline-end" />
               </a>
@@ -763,34 +798,32 @@ export default function PatternsPage() {
         </Specimen>
       </section>
 
-      {/* ------------------------------------------------------- 9. density */}
+      {/* ------------------------------------------------------ 11. density */}
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
-          eyebrow="09 · Density"
+          eyebrow="11 · Density"
           title="The compact scale, in one table"
           description="The preset is already compact. These are the rules that keep a page dense without becoming cramped."
         />
         <Panel contentClassName="p-0">
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead className="w-48">Surface</TableHead>
-        <TableHead className="w-72">Utility</TableHead>
-        <TableHead>Applied to</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {DENSITY_RULES.map((row) => (
-        <TableRow key={row.surface}>
-          <TableCell className="font-medium text-foreground">{row.surface}</TableCell>
-          <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">
-            {row.rule}
-          </TableCell>
-          <TableCell className="whitespace-normal text-muted-foreground">{row.usage}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-48">Surface</TableHead>
+                <TableHead className="w-72">Utility</TableHead>
+                <TableHead>Applied to</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {DENSITY_RULES.map((row) => (
+                <TableRow key={row.surface}>
+                  <TableCell className="font-medium text-foreground">{row.surface}</TableCell>
+                  <TableCell className="font-mono text-[0.6875rem] text-muted-foreground">{row.rule}</TableCell>
+                  <TableCell className="whitespace-normal text-muted-foreground">{row.usage}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Panel>
       </section>
     </PageContainer>
