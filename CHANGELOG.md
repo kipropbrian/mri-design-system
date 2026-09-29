@@ -4,7 +4,7 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
-## v0.7.0 — unreleased (on `develop`)
+## v0.7.0 — 2026-09-29
 
 ### Added
 - **`ChoiceNav`** (`choice-strip`): navigation between sibling pages. A native select
