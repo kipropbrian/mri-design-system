@@ -50,6 +50,7 @@
  *     "allowedCss":       { "public/x/player.css": "why this stylesheet exists" },
  *     "allowedColourFiles": { "app/opengraph-image.tsx": "why colour is literal here" },
  *     "tableAllowed":     { "x/skeleton.tsx": "why this table is not a composition" },
+ *     "badgeAllowed":     { "app/components/page.tsx": "why this file shows the preset Badge" },
  *     "pageShellAllowed": { "components/shell/x.tsx": "why this file owns its own gutter" },
  *   }
  */
@@ -95,6 +96,7 @@ const DEFAULTS = {
 
   /** Files where a raw <table> is the right element, with the reason. */
   tableAllowed: {},
+  badgeAllowed: {},
 
   /** Files that are outside PageContainer by construction and own a gutter. */
   pageShellAllowed: {},
@@ -127,6 +129,7 @@ function loadConfig() {
       ...(raw.allowedColourFiles ?? {}),
     },
     tableAllowed: { ...DEFAULTS.tableAllowed, ...(raw.tableAllowed ?? {}) },
+    badgeAllowed: { ...DEFAULTS.badgeAllowed, ...(raw.badgeAllowed ?? {}) },
     pageShellAllowed: {
       ...DEFAULTS.pageShellAllowed,
       ...(raw.pageShellAllowed ?? {}),
@@ -162,6 +165,8 @@ const SPACING_ALLOWED = new Map(Object.entries(CONFIG.spacingAllowed));
 
 /** The one chip module owns every chip-shaped class string. */
 const CHIP_MODULE = "chips.tsx";
+/** The one module allowed to import Recharts: every chart is composed from it. */
+const CHART_MODULE = "charts.tsx";
 const CHIP_SIGNATURE = (literal) =>
   /rounded-full/.test(literal) &&
   /\btext-(xs|\[1[01]px\]|\[10px\])/.test(literal) &&
@@ -174,6 +179,7 @@ const TABLE_COMPOSITION = "components/ui/table.tsx";
 const ALLOWED_CSS = new Map(Object.entries(CONFIG.allowedCss));
 const ALLOWED_COLOUR_FILES = new Map(Object.entries(CONFIG.allowedColourFiles));
 const TABLE_ALLOWED = new Map(Object.entries(CONFIG.tableAllowed));
+const BADGE_ALLOWED = new Map(Object.entries(CONFIG.badgeAllowed));
 const PAGE_SHELL_ALLOWED = new Map(Object.entries(CONFIG.pageShellAllowed));
 
 /** The named Tailwind palette, which has no business in an MRI interface. */
@@ -840,6 +846,79 @@ const RULES = {
       for (const { literal, line } of literals(source)) {
         for (const match of literal.matchAll(/(?<![\w-])(?:[a-z0-9]+:)*(?:-translate-[xy]|translate-[xy])-/g)) {
           if (!/hover:/.test(match[0])) continue;
+          hits.push({ line, token: match[0] });
+        }
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * The preset `Badge` is not a chip.
+   *
+   * `chips` catches a chip *written by hand* — a class string shaped like one. It cannot
+   * see the other way to get it wrong, which is importing the preset `Badge` and
+   * restyling it: 31 of them survived a pass that took hand-rolled chips to zero,
+   * because each one is a component call rather than a class string. `Badge` is the one
+   * primitive that cannot carry a chip's job (trap 1: its `dark:` variant beats any
+   * background you pass), so outside the generated layer it is simply not imported.
+   */
+  badge: {
+    title: "preset Badge instead of Chip",
+    hint: "use <Chip> from components/mri/chips.tsx — the preset Badge cannot be recoloured in dark mode (trap 1)",
+    scan(rel, source) {
+      if (BADGE_ALLOWED.has(rel)) return [];
+      const hits = [];
+      for (const match of source.matchAll(IMPORT_SOURCE)) {
+        if (match[1] !== "@/components/ui/badge") continue;
+        if (isTypeOnlyImport(source, match.index)) continue;
+        hits.push({ line: lineOf(source, match.index), token: match[1] });
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * A route does not import Recharts.
+   *
+   * "Never hand-roll a chart" was a sentence. Nine platform files imported `recharts`
+   * directly — one of them written the day after the rule book said not to — and each
+   * chose its own axis ticks, grid, tooltip and palette. A chart is composed from
+   * `components/mri/charts.tsx`; if the composition you need is not there, it is added
+   * there once, where every project gets it.
+   */
+  charts: {
+    title: "hand-rolled chart",
+    hint: "compose from components/mri/charts.tsx, or add the composition there once; routes never import recharts",
+    scan(rel, source) {
+      if (basename(rel) === CHART_MODULE) return [];
+      const hits = [];
+      for (const match of source.matchAll(IMPORT_SOURCE)) {
+        const spec = match[1];
+        if (spec !== "recharts" && !spec.startsWith("recharts/")) continue;
+        if (isTypeOnlyImport(source, match.index)) continue;
+        hits.push({ line: lineOf(source, match.index), token: spec });
+      }
+      return hits;
+    },
+  },
+
+  /**
+   * Name what animates.
+   *
+   * `transition-all` animates every property that changes, including width, padding
+   * and position, which forces layout on every frame and makes a hover resize look like
+   * a glitch. The motion section of the rule book has said `transition-colors` since it
+   * was written; this makes it true. A progress bar that grows says
+   * `transition-[width]`, a fade says `transition-opacity`.
+   */
+  transitionAll: {
+    title: "transition-all",
+    hint: "name the property: transition-colors, transition-opacity, transition-transform or transition-[width]",
+    scan(rel, source) {
+      const hits = [];
+      for (const { literal, line } of literals(source)) {
+        for (const match of literal.matchAll(/(?<![\w-])(?:[a-z0-9-]+:)*transition-all(?![\w-])/g)) {
           hits.push({ line, token: match[0] });
         }
       }

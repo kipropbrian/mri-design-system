@@ -21,7 +21,6 @@ import {
   TableSkeleton,
 } from "@/components/mri/patterns";
 import { QuizPreview, type QuizQuestion } from "@/components/site/quiz-preview";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Pagination,
@@ -42,6 +41,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { birds } from "@/lib/data";
+import { Chip } from "@/components/mri/chips";
 import { formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -95,11 +95,11 @@ export default function QuizPage() {
               <ShieldCheckIcon className="size-3" weight="fill" />
               1,153 species with audio
             </StatusBadge>
-            <Badge variant="outline" className="gap-1">
+            <Chip className="gap-1">
               <FireIcon className="size-3 text-notable" />
               <span className="tabular-nums">12 day streak</span>
-            </Badge>
-            <Badge variant="outline">One session per day</Badge>
+            </Chip>
+            <Chip>One session per day</Chip>
           </>
         }
         actions={
@@ -144,7 +144,7 @@ export default function QuizPage() {
           eyebrow="Interactive"
           title="Question, reveal and session states"
           description="A complete five-call session experience in a stable frame with zero layout shift. Toggle between start, question, reveal, and summary states."
-          action={<Badge variant="secondary">Interactive</Badge>}
+          action={<Chip>Interactive</Chip>}
         />
         <QuizPreview question={question} />
       </section>

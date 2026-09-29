@@ -12,10 +12,10 @@ import {
 import { CATEGORICAL, CHART_COLORS } from "@/lib/chart-colors";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/mri/patterns";
 import { birds, inat, regionByCode } from "@/lib/data";
+import { Chip } from "@/components/mri/chips";
 import { formatCompact, formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -93,8 +93,8 @@ export default function ChartsPage() {
         status={
           <>
             <StatusBadge tone="warning">Monochrome ramp · design constraint</StatusBadge>
-            <Badge variant="outline">Recharts 3</Badge>
-            <Badge variant="outline">Real platform data</Badge>
+            <Chip>Recharts 3</Chip>
+            <Chip>Real platform data</Chip>
           </>
         }
       />
@@ -135,7 +135,7 @@ export default function ChartsPage() {
         <ChartFrame
           title="Weekly scan activity (10 runs)"
           description="Records rechecked against new records per iNaturalist audit run"
-          action={<Badge variant="outline">Latest {inat.publishedRunId}</Badge>}
+          action={<Chip>Latest {inat.publishedRunId}</Chip>}
           ariaLabel="Area chart of new and rechecked records per weekly scan"
           legend={
             <>

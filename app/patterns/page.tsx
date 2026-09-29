@@ -35,7 +35,6 @@ import {
 } from "@/components/mri/patterns";
 import { BirdMediaCard, ObservationCard } from "@/components/mri/specimen-card";
 import { AvailabilityGridDemo, ChoiceStripDemo } from "@/components/site/pattern-demos";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
@@ -109,8 +108,8 @@ export default function PatternsPage() {
               <ShieldCheckIcon className="size-3" weight="fill" />
               Current to {formatDate(inat.publishedAt)}
             </StatusBadge>
-            <Badge variant="outline">{inat.countries.length} countries</Badge>
-            <Badge variant="outline">{formatNumber(inat.eventCount)} records</Badge>
+            <Chip>{inat.countries.length} countries</Chip>
+            <Chip>{formatNumber(inat.eventCount)} records</Chip>
           </>
         }
         actions={
@@ -234,7 +233,7 @@ export default function PatternsPage() {
           <Panel
             title={`National catalog distribution (${topCountries.length})`}
             description={`Top ${topCountries.length} of ${inat.countries.length} monitored countries`}
-            action={<Badge variant="secondary">Top 10</Badge>}
+            action={<Chip>Top 10</Chip>}
           >
             <ul className="grid gap-1.5">
               {topCountries.map((country) => (
@@ -277,7 +276,7 @@ export default function PatternsPage() {
           <Panel
             title="What is a country first?"
             description="Three short paragraphs, no card chrome inside"
-            action={<Badge variant="outline">Method</Badge>}
+            action={<Chip>Method</Chip>}
           >
             <div className="grid gap-2 text-[0.6875rem] leading-relaxed text-muted-foreground">
               <p>
@@ -402,7 +401,7 @@ export default function PatternsPage() {
             <Button variant="outline" size="sm" className="flex-1 justify-between">
               Filters
               <span className="flex items-center gap-1.5">
-                <Badge variant="secondary">3</Badge>
+                <Chip>3</Chip>
                 <CaretDownIcon className="size-3" />
               </span>
             </Button>
@@ -516,7 +515,7 @@ export default function PatternsPage() {
           <Panel
             title={`Verified country firsts (${formatNumber(inat.eventCount)})`}
             description="Newest detections across monitored countries"
-            action={<Badge variant="outline">Latest {inat.publishedRunId}</Badge>}
+            action={<Chip>Latest {inat.publishedRunId}</Chip>}
             contentClassName="grid gap-0 p-0"
           >
             <Table>
@@ -783,7 +782,7 @@ export default function PatternsPage() {
               </SourceNote>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
-              <Badge variant="outline">Snapshot, not live</Badge>
+              <Chip>Snapshot, not live</Chip>
               <a
                 href="https://www.inaturalist.org"
                 target="_blank"

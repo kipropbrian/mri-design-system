@@ -24,7 +24,6 @@ import {
   StatusBadge,
 } from "@/components/mri/patterns";
 import { ObservationCard } from "@/components/mri/specimen-card";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Pagination,
@@ -45,6 +44,7 @@ import {
 } from "@/components/ui/table";
 import { countryFlag, inat } from "@/lib/data";
 import { formatDate, formatNumber, formatPercent, formatRelativeDays, initials } from "@/lib/format";
+import { Chip } from "@/components/mri/chips";
 
 export const metadata: Metadata = {
   title: "iNaturalist watch",
@@ -88,8 +88,8 @@ export default function InaturalistPage() {
               <ShieldCheckIcon className="size-3" weight="fill" />
               Current to {formatDate(inat.publishedAt)}
             </StatusBadge>
-            <Badge variant="outline">{inat.countries.length} countries · {formatNumber(inat.eventCount)} records</Badge>
-            <Badge variant="outline">Snapshot {inat.publishedRunId}</Badge>
+            <Chip>{inat.countries.length} countries · {formatNumber(inat.eventCount)} records</Chip>
+            <Chip>Snapshot {inat.publishedRunId}</Chip>
           </>
         }
         actions={
@@ -137,7 +137,7 @@ export default function InaturalistPage() {
           <ChartFrame
             title={`Weekly scan activity (${inat.runCount} runs)`}
             description="Records rechecked against new records per audit run"
-            action={<Badge variant="outline">Latest {inat.publishedRunId}</Badge>}
+            action={<Chip>Latest {inat.publishedRunId}</Chip>}
             ariaLabel="Area chart of new and rechecked records per audit run"
             legend={
               <>
@@ -183,9 +183,9 @@ export default function InaturalistPage() {
                     {country.name}
                   </span>
                 </span>
-                <Badge variant="outline" className="font-mono">
+                <Chip className="font-mono">
                   {country.code}
-                </Badge>
+                </Chip>
               </div>
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-lg font-medium tabular-nums text-foreground">
@@ -210,7 +210,7 @@ export default function InaturalistPage() {
           eyebrow="Records"
           title="Latest verified country firsts"
           description="Media-first cards: the photograph is the evidence, so it leads. Attribution and licence travel with every image."
-          action={<Badge variant="outline">Showing {inat.events.length} of {formatNumber(inat.eventCount)}</Badge>}
+          action={<Chip>Showing {inat.events.length} of {formatNumber(inat.eventCount)}</Chip>}
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {inat.events.map((record) => (
@@ -228,7 +228,7 @@ export default function InaturalistPage() {
         <Panel
           title={`All country firsts (${formatNumber(inat.eventCount)})`}
           description="Newest detections, all monitored countries"
-          action={<Badge variant="secondary">Page 1 of 43</Badge>}
+          action={<Chip>Page 1 of 43</Chip>}
           contentClassName="grid gap-0 p-0"
         >
   <Table>

@@ -6,7 +6,6 @@ import { ArrowUpRightIcon, ListIcon } from "@phosphor-icons/react/dist/ssr";
 import { BrandLink } from "@/components/site/brand";
 import { FontPicker } from "@/components/site/font-picker";
 import { ThemeToggle } from "@/components/site/theme-toggle";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -17,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Chip } from "@/components/mri/chips";
 import { NAV_ITEMS, REFERENCE_NAV, TEMPLATE_NAV, currentItem, isActive } from "@/components/site/nav";
 
 function DesktopLinks({ pathname }: { pathname: string }) {
@@ -92,9 +92,9 @@ export function SiteHeader() {
         <div className="flex min-w-0 items-center gap-3">
           <BrandLink />
           {active ? (
-            <Badge variant="outline" className="hidden xl:inline-flex">
+            <Chip className="hidden xl:inline-flex">
               {active.label}
-            </Badge>
+            </Chip>
           ) : null}
         </div>
 

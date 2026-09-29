@@ -15,5 +15,10 @@
   },
   "pageShellAllowed": {
     "components/site/site-footer.tsx": "The shell chrome. The header and footer are the frame that PageContainer sits inside, not content within it, so they own their gutter and their width by construction. The same is true of the platform's components/shell/ footer, which is named in that project's config."
+  },
+  "badgeAllowed": {
+    "app/components/page.tsx": "The primitive gallery. It shows every installed shadcn primitive, the preset Badge included, so a reviewer can see what Chip replaced and why.",
+    "components/site/component-demos.tsx": "The gallery's interactive demos, as app/components/page.tsx.",
+    "app/rules/page.tsx": "The rule book shows a deliberately broken specimen \u2014 an outline Badge on a pale photograph \u2014 to demonstrate trap 1. It has to render the thing it forbids."
   }
 }

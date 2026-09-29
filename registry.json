@@ -60,6 +60,11 @@
       "type": "registry:item",
       "title": "Checkbox, Phosphor import corrected",
       "description": "The preset checkbox with its icon import moved to /dist/ssr. Depending on the bare preset name instead overwrites a consumer's corrected file with the createContext hazard, which is exactly what happened to the platform twice.",
+      "dependencies": [
+        "@base-ui/react@^1.8.0",
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
       "files": [
         {
           "path": "components/ui/checkbox.tsx",
@@ -69,10 +74,30 @@
       ]
     },
     {
+      "name": "native-select",
+      "type": "registry:item",
+      "title": "Native select, Phosphor import corrected",
+      "description": "The preset native select with its icon import moved to /dist/ssr. Depend on this rather than the bare preset name, which would overwrite a consumer's corrected file with the createContext hazard.",
+      "dependencies": [
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
+      "files": [
+        {
+          "path": "components/ui/native-select.tsx",
+          "type": "registry:file",
+          "target": "~/components/ui/native-select.tsx"
+        }
+      ]
+    },
+    {
       "name": "chip",
       "type": "registry:item",
       "title": "Chip",
       "description": "The single chip component: two surfaces (flow 20px, overlay 22px), seven tones, mandatory scrims on photographs. A span, not the preset Badge, because Badge cannot be recoloured.",
+      "dependencies": [
+        "cn@^0.3.0"
+      ],
       "files": [
         {
           "path": "components/mri/chips.tsx",
@@ -86,7 +111,12 @@
       "type": "registry:item",
       "title": "Chip audit",
       "description": "Measures every rendered chip and reports any outside the two allowed sizes. Drop it on a review route.",
-      "registryDependencies": ["kipropbrian/mri-design-system/chip"],
+      "dependencies": [
+        "@phosphor-icons/react@^2.1.10"
+      ],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/chip"
+      ],
       "files": [
         {
           "path": "components/mri/chip-audit.tsx",
@@ -99,13 +129,24 @@
       "name": "choice-strip",
       "type": "registry:item",
       "title": "Choice strip",
-      "description": "The one pick-one strip for country navigation and parameter selection: ChoiceStrip with semantic ChoiceLink and ChoiceButton items, 24px tall with a primary-filled current choice.",
+      "description": "The one pick-one strip for country navigation and parameter selection: ChoiceStrip with semantic ChoiceLink and ChoiceButton items, 24px tall with a primary-filled current choice, plus ChoiceNav \u2014 sibling-page navigation that is a native select on a phone and a wrapping band from sm up.",
+      "dependencies": [
+        "cn@^0.3.0"
+      ],
       "files": [
         {
           "path": "components/mri/choice-strip.tsx",
           "type": "registry:file",
           "target": "~/components/mri/choice-strip.tsx"
+        },
+        {
+          "path": "components/mri/choice-select.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/choice-select.tsx"
         }
+      ],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/native-select"
       ]
     },
     {
@@ -113,6 +154,9 @@
       "type": "registry:item",
       "title": "Availability grid",
       "description": "A fixed-cell monthly availability grid for stations, sites and recorders, with pinned labels, newest-month-first scrolling, shared pointer tooltip and a matching AvailabilityLegend.",
+      "dependencies": [
+        "cn@^0.3.0"
+      ],
       "files": [
         {
           "path": "components/mri/availability-grid.tsx",
@@ -148,11 +192,31 @@
       ]
     },
     {
+      "name": "parity-check",
+      "type": "registry:item",
+      "title": "Parity check",
+      "description": "Fails when an installed design-system file differs from the version pinned in mri.json. Compares each item the project actually installed, byte for byte, against the pinned tag or commit. Wire it into npm run verify beside ui-audit.",
+      "files": [
+        {
+          "path": "scripts/check-mri-parity.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-mri-parity.mjs"
+        }
+      ]
+    },
+    {
       "name": "charts",
       "type": "registry:item",
       "title": "Chart compositions",
       "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL \u2014 the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
-      "registryDependencies": ["kipropbrian/mri-design-system/theme", "chart"],
+      "dependencies": [
+        "cn@^0.3.0",
+        "recharts@^3.10.1"
+      ],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/theme",
+        "chart"
+      ],
       "files": [
         {
           "path": "components/mri/charts.tsx",
@@ -171,6 +235,14 @@
       "type": "registry:item",
       "title": "Sheet, Phosphor import corrected",
       "description": "The preset sheet with its icon import moved to /dist/ssr. Install this *after* anything that pulls the preset sheet - `sidebar` does - or the bare entry overwrites it and the close button breaks Server Components.",
+      "dependencies": [
+        "@base-ui/react@^1.8.0",
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/sheet.tsx",
@@ -184,6 +256,12 @@
       "type": "registry:item",
       "title": "Sidebar, Phosphor import corrected",
       "description": "The preset sidebar and its use-mobile hook, with the icon import moved to /dist/ssr. Depends on this repository's sheet rather than the preset's, because the preset's ships the bare Phosphor entry that breaks Server Components - the same defect that hit checkbox twice.",
+      "dependencies": [
+        "@base-ui/react@^1.8.0",
+        "@phosphor-icons/react@^2.1.10",
+        "class-variance-authority@^0.7.1",
+        "cn@^0.3.0"
+      ],
       "registryDependencies": [
         "kipropbrian/mri-design-system/sheet",
         "button",
@@ -210,7 +288,14 @@
       "type": "registry:item",
       "title": "Audio player",
       "description": "The audio transport: circle play/pause, waveform, replay with its key hint, scrub track and tabular time. Caller-owned playback state, so one <audio> element can outlive a re-render. Takes surface=overlay to sit on a photograph. Pairs with the format item's formatDuration.",
-      "registryDependencies": ["kipropbrian/mri-design-system/format", "button"],
+      "dependencies": [
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
+      "registryDependencies": [
+        "kipropbrian/mri-design-system/format",
+        "button"
+      ],
       "files": [
         {
           "path": "components/mri/audio-player.tsx",
@@ -224,6 +309,9 @@
       "type": "registry:item",
       "title": "Page layout primitives",
       "description": "PageContainer, PageHeader, SectionHeader, Eyebrow, the specimen labels used to document a pattern, and Prose / ProseSection / ProseNote for a document. No dependencies: it is layout and text only. Prose is the one place body copy is larger than text-xs, because a document is read rather than scanned.",
+      "dependencies": [
+        "cn@^0.3.0"
+      ],
       "files": [
         {
           "path": "components/mri/layout.tsx",
@@ -237,6 +325,10 @@
       "type": "registry:item",
       "title": "Page patterns",
       "description": "Panel \u2014 the data card, with the title-carries-its-count header enforced rather than described \u2014 plus TableCard, DataRow (two data surfaces per row, splitting at xl so card width is monotonic in viewport width), MetricCard, MetricStrip, StatusBadge, FilterSidebar, StatusPath, RecordChange, the data states and the skeletons. The compositions a route composes from.",
+      "dependencies": [
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
       "registryDependencies": [
         "kipropbrian/mri-design-system/chip",
         "kipropbrian/mri-design-system/checkbox",
@@ -257,6 +349,10 @@
       "type": "registry:item",
       "title": "Specimen and media cards",
       "description": "ObservationCard and BirdMediaCard, plus IucnChip. The reference implementation of the overlay rules: two scrimmed chips at most, media facts on the image and record facts in the body.",
+      "dependencies": [
+        "@phosphor-icons/react@^2.1.10",
+        "cn@^0.3.0"
+      ],
       "registryDependencies": [
         "kipropbrian/mri-design-system/chip",
         "kipropbrian/mri-design-system/taxonomy",

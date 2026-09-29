@@ -14,7 +14,6 @@ import {
 import { MriLockup } from "@/components/site/brand";
 import { Eyebrow, PageContainer, SectionHeader } from "@/components/mri/layout";
 import { MetricCard, MetricStrip, Panel, StatusBadge } from "@/components/mri/patterns";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -27,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { birds, inat } from "@/lib/data";
 import { cn } from "cn";
+import { Chip } from "@/components/mri/chips";
 import { formatCompact, formatNumber } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -156,11 +156,11 @@ export default function OverviewPage() {
               <CheckCircleIcon className="size-3" weight="fill" />
               Preset {PRESET_CODE}
             </StatusBadge>
-            <Badge variant="outline">style mira</Badge>
-            <Badge variant="outline">Base UI primitives</Badge>
-            <Badge variant="outline">Tailwind v4</Badge>
-            <Badge variant="outline">Next.js 16</Badge>
-            <Badge variant="outline">Light + dark</Badge>
+            <Chip>style mira</Chip>
+            <Chip>Base UI primitives</Chip>
+            <Chip>Tailwind v4</Chip>
+            <Chip>Next.js 16</Chip>
+            <Chip>Light + dark</Chip>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

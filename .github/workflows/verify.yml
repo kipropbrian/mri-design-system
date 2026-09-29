@@ -1,0 +1,21 @@
+name: verify
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # typecheck, lint, the UI audit and its unit tests
+      - run: npm run verify
+      # registry.json must build, or every consumer's `shadcn add` fails
+      - run: npx shadcn@latest build --output /tmp/registry

@@ -36,23 +36,52 @@ seven files from one address.
 Pin a release so a project cannot drift:
 
 ```sh
-npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.1.0'
+npx shadcn@latest add 'kipropbrian/mri-design-system/patterns#v0.7.0'
 ```
+
+Every item declares its npm `dependencies`, so an `add` installs `cn`,
+`@phosphor-icons/react`, `@base-ui/react` or `recharts` as the item needs them.
+
+### Adopting it in a new MRI project
+
+The components are the easy half. What keeps a project looking like the others is
+the base layer and the gates, so install all of it:
+
+1. `npx shadcn@latest add kipropbrian/mri-design-system/theme` and import
+   `./mri-theme.css` from `app/globals.css`, after `tailwindcss`. It carries the
+   semantic roles, the `-ink` tier, the mono and serif stacks, and the heading and
+   selection treatment.
+2. Add the items you compose from: `layout`, `patterns`, `chip`, `choice-strip`,
+   `charts`, `format`.
+3. Add the gates: `ui-audit`, `parity-check` and `agent-rules`, and reference
+   `docs/mri-ui-rules.md` from the project's `AGENTS.md`.
+4. Pin the version in `mri.json` —
+   `{ "designSystem": { "repo": "kipropbrian/mri-design-system", "ref": "v0.7.0" } }`
+   — and wire `node scripts/audit-ui.mjs` and `node scripts/check-mri-parity.mjs`
+   into `npm run verify`, and `verify` into CI. The platform's
+   `.github/workflows/verify.yml` is the reference.
+5. Never edit an installed file in place. Change it here, tag a release, move the
+   pin. `check-mri-parity` fails the build otherwise.
 
 | Item                | What it carries                                                                                                                         |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme`             | `app/mri-theme.css` — the semantic roles and the `-ink` tier                                                                            |
+| `theme`             | `app/mri-theme.css` — the semantic roles, the `-ink` tier, the mono and serif stacks, heading tracking                                  |
 | `agent-rules`       | `docs/mri-ui-rules.md` — the imperative rules, for agents                                                                               |
 | `format`            | `lib/format.ts` — counts, integers, compact notation, dates, initials                                                                   |
 | `taxonomy`          | `lib/taxonomy.ts` — IUCN tones and labels, record types, `countryFlag`                                                                  |
 | `checkbox`          | `components/ui/checkbox.tsx`, Phosphor import corrected                                                                                 |
+| `native-select`     | `components/ui/native-select.tsx`, Phosphor import corrected                                                                            |
+| `sheet` · `sidebar` | the preset sheet and sidebar, Phosphor imports corrected                                                                                |
 | `chip`              | the one chip: two surfaces, seven tones, overlay scrims                                                                                 |
-| `choice-strip`      | `ChoiceStrip`, `ChoiceLink`, `ChoiceButton` — the one pick-one strip for navigation and parameters                                      |
+| `choice-strip`      | `ChoiceStrip`, `ChoiceLink`, `ChoiceButton`, and `ChoiceNav` — sibling-page navigation, a native select on a phone                      |
 | `availability-grid` | fixed-width monthly availability cells, pinned row labels, shared tooltip and legend                                                    |
-| `layout`            | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen`                                                                              |
+| `layout`            | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen`, `Prose`                                                                     |
 | `patterns`          | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
+| `charts`            | the chart compositions and the olive and categorical ramps — the only place a project imports `recharts`                               |
+| `audio-player`      | `AudioPlayer` — transport chrome for a caller-owned `<audio>`                                                                           |
 | `specimen-card`     | `ObservationCard`, `BirdMediaCard`, `IucnChip`                                                                                          |
-| `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-four-rule CI gate                                                                                   |
+| `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-seven-rule CI gate                                                                                  |
+| `parity-check`      | `scripts/check-mri-parity.mjs` — fails when an installed file differs from the pinned version                                           |
 | `spacing-audit`     | deprecated alias for `ui-audit`; installs the same file                                                                                 |
 | `chip-audit`        | `components/mri/chip-audit.tsx` — measures the rendered DOM                                                                             |
 
@@ -88,9 +117,9 @@ the fault is the style id, not the item name and not this registry.
 | Route                | What it reviews                                                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------------- |
 | `/`                  | Scope, the decoded preset, adoption commands, house rules                                            |
-| `/rules`             | **The three enforced rules**: space scale, chip system, image overlays                               |
+| `/rules`             | The founding rules — space scale, chip system, image overlays — each audited live                   |
 | `/foundations`       | Colour roles, chart ramp, type scale, fonts, radii, icons, MRI mark                                  |
-| `/components`        | All 37 installed shadcn primitives with real content                                                 |
+| `/components`        | Every installed shadcn primitive with real content                                                   |
 | `/charts`            | ChartContainer wiring, five chart types, empty/loading states                                        |
 | `/patterns`          | Page header, metric strip, data-card header, filter bar, table, media cards, data states, provenance |
 | `/pages/platform`    | Landing page composition (weekly watches + field tools)                                              |
@@ -142,7 +171,7 @@ surface, never by page:
 - **flow** — 20px tall, 10px text — every chip in the page flow
 - **overlay** — 22px tall, 11px text — chips on a photograph
 
-Six tones (`neutral`, `primary`, `positive`, `warning`, `info`, `negative`). The
+Seven tones (`neutral`, `primary`, `positive`, `warning`, `info`, `notable`, `negative`). The
 platform previously had **28 hand-rolled chip strings** across five text sizes
 and four radii; this app had a filter chip at 24.5px/11px next to everything else
 at 20px/10px. Both are gone. `/rules` measures the rendered DOM and reports any

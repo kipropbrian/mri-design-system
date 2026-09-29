@@ -492,3 +492,61 @@ test("fails on a navigation tree arranged by position, allows a computed layout"
     assert.equal(code, 0, out);
   });
 });
+
+test("fails on the preset Badge outside the generated layer, allows Chip", () => {
+  const badge = fixture({
+    "page.tsx": `import { Badge } from "@/components/ui/badge";\nexport const A = () => <Badge variant="outline">LC</Badge>;\n`,
+  });
+  withCleanup(badge, () => {
+    const { code, out } = run(badge);
+    assert.equal(code, 1);
+    assert.match(out, /preset Badge instead of Chip/);
+  });
+
+  const chip = fixture({
+    "page.tsx": `import { Chip } from "@/components/mri/chips";\nexport const A = () => <Chip>LC</Chip>;\n`,
+  });
+  withCleanup(chip, () => {
+    const { code, out } = run(chip);
+    assert.equal(code, 0, out);
+  });
+});
+
+test("fails on a route importing recharts, allows the chart module", () => {
+  const route = fixture({
+    "chart.tsx": `import { LineChart } from "recharts";\nexport const A = () => <LineChart />;\n`,
+  });
+  withCleanup(route, () => {
+    const { code, out } = run(route);
+    assert.equal(code, 1);
+    assert.match(out, /hand-rolled chart/);
+  });
+
+  // The composition module is the one place Recharts is imported.
+  const chartModule = fixture({
+    "charts.tsx": `import { LineChart } from "recharts";\nexport const A = () => <LineChart />;\n`,
+  });
+  withCleanup(chartModule, () => {
+    const { code, out } = run(chartModule);
+    assert.equal(code, 0, out);
+  });
+});
+
+test("fails on transition-all, allows a named transition", () => {
+  const all = fixture({
+    "page.tsx": `export const A = () => <div className="rounded-md hover:bg-muted transition-all" />;\n`,
+  });
+  withCleanup(all, () => {
+    const { code, out } = run(all);
+    assert.equal(code, 1);
+    assert.match(out, /transition-all/);
+  });
+
+  const named = fixture({
+    "page.tsx": `export const A = () => <div className="rounded-md hover:bg-muted transition-colors transition-[width]" />;\n`,
+  });
+  withCleanup(named, () => {
+    const { code, out } = run(named);
+    assert.equal(code, 0, out);
+  });
+});

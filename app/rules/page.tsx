@@ -162,8 +162,8 @@ export default function RulesPage() {
             <StatusBadge tone="positive" icon={<CheckIcon weight="bold" />}>
               Applied across all 10 routes
             </StatusBadge>
-            <Badge variant="outline">1 chip component</Badge>
-            <Badge variant="outline">8 space steps</Badge>
+            <Chip>1 chip component</Chip>
+            <Chip>8 space steps</Chip>
           </>
         }
       />
@@ -212,7 +212,7 @@ export default function RulesPage() {
           <Panel
             title="Enforced, not documented"
             description="npm run audit:ui greps every class string and fails on anything outside the eight steps"
-            action={<Badge variant="outline">CI gate</Badge>}
+            action={<Chip>CI gate</Chip>}
           >
             <div className="grid gap-3">
               <pre className="overflow-x-auto rounded-lg bg-muted/40 p-3 font-mono text-[0.6875rem] leading-relaxed text-foreground">
@@ -394,7 +394,7 @@ export default function RulesPage() {
         <Panel
           title="Live audit of this page"
           description="Measured from the rendered DOM, not asserted"
-          action={<Badge variant="outline">data-chip</Badge>}
+          action={<Chip>data-chip</Chip>}
         >
           <ChipAudit />
         </Panel>
@@ -415,7 +415,7 @@ export default function RulesPage() {
             </p>
             <p className="text-[0.6875rem] leading-relaxed text-muted-foreground">
               Passing <code className="font-mono">bg-black/70</code> to{" "}
-              <code className="font-mono">{'<Badge variant="outline">'}</code> therefore does nothing in dark
+              <code className="font-mono">{'<Chip>'}</code> therefore does nothing in dark
               mode. Neutralising it with <code className="font-mono">dark:bg-transparent</code> is worse —
               that also wins on specificity and erases the background in both modes. Chip owns its class
               string instead; the preset Badge is untouched and still demonstrated on{" "}
