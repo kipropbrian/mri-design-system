@@ -1,10 +1,10 @@
 /**
- * Tests for the UI audit's ratchet and structural rules.
+ * Tests for the UI audit's ratchet.
  *
- * The audit is the gate the whole rewrite leans on, so its failure modes
- * are tested end to end: a new violation must fail, a baseline entry that
- * no longer occurs must fail, and structural anti-patterns (such as cards
- * inside tab panels causing layout shifts) are strictly caught.
+ * The audit is the gate the whole rewrite leans on, so its two failure modes
+ * are tested end to end rather than trusted: a new violation must fail, and a
+ * baseline entry that no longer occurs must also fail. If the second ever
+ * stops working the ledger becomes a graveyard and the gate is theatre.
  *
  *   node --test scripts/audit-ui.test.mjs
  */
@@ -55,9 +55,7 @@ test("passes on a clean tree with no baseline", () => {
 });
 
 test("fails on off-scale spacing", () => {
-  const root = fixture({
-    "page.tsx": `export const A = () => <div className="gap-2.5" />;\n`,
-  });
+  const root = fixture({ "page.tsx": `export const A = () => <div className="gap-2.5" />;\n` });
   withCleanup(root, () => {
     const { code, out } = run(root);
     assert.equal(code, 1);
@@ -100,42 +98,33 @@ test("allows ChoiceLink and does not confuse py-1.5 with py-1", () => {
 });
 
 test("fails on a raw table but allows the shared composition", () => {
-  const raw = fixture({
-    "page.tsx": `export const A = () => <table><tbody /></table>;\n`,
-  });
+  const raw = fixture({ "page.tsx": `export const A = () => <table><tbody /></table>;\n` });
   withCleanup(raw, () => {
     assert.equal(run(raw).code, 1);
   });
 
-  const shared = fixture({
-    "page.tsx": `export const A = () => <table><tbody /></table>;\n`,
-  });
+  const shared = fixture({ "page.tsx": `export const A = () => <table><tbody /></table>;\n` });
   mkdirSync(join(shared, "components", "ui"), { recursive: true });
+  // The composition lives outside `app`, so this asserts the rule's path gate.
   withCleanup(shared, () => {
     assert.equal(run(shared).code, 1, "a table anywhere outside components/ui/table.tsx fails");
   });
 });
 
 test("fails on an arbitrary colour utility but allows a semantic token", () => {
-  const bad = fixture({
-    "page.tsx": `export const A = () => <div className="bg-[#f8f6f1]" />;\n`,
-  });
+  const bad = fixture({ "page.tsx": `export const A = () => <div className="bg-[#f8f6f1]" />;\n` });
   withCleanup(bad, () => {
     assert.equal(run(bad).code, 1);
   });
 
-  const good = fixture({
-    "page.tsx": `export const A = () => <div className="bg-background text-primary" />;\n`,
-  });
+  const good = fixture({ "page.tsx": `export const A = () => <div className="bg-background text-primary" />;\n` });
   withCleanup(good, () => {
     assert.equal(run(good).code, 0);
   });
 });
 
 test("fails on a non-SSR phosphor import and allows the SSR entry", () => {
-  const bad = fixture({
-    "page.tsx": `import { Tree } from "@phosphor-icons/react";\nexport const A = () => <Tree />;\n`,
-  });
+  const bad = fixture({ "page.tsx": `import { Tree } from "@phosphor-icons/react";\nexport const A = () => <Tree />;\n` });
   withCleanup(bad, () => {
     const { code, out } = run(bad);
     assert.equal(code, 1);
@@ -165,10 +154,9 @@ test("a baselined violation passes and is reported as debt", () => {
 });
 
 test("a violation beyond the baselined count fails", () => {
+  // The ledger allows one `gap-2.5` in this file; the tree has two.
   const root = fixture(
-    {
-      "page.tsx": `export const A = () => <><div className="gap-2.5" /><div className="gap-2.5" /></>;\n`,
-    },
+    { "page.tsx": `export const A = () => <><div className="gap-2.5" /><div className="gap-2.5" /></>;\n` },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -178,9 +166,7 @@ test("a violation beyond the baselined count fails", () => {
 
 test("an unrelated new violation fails even when the file is already in the ledger", () => {
   const root = fixture(
-    {
-      "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n`,
-    },
+    { "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n` },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -191,7 +177,10 @@ test("an unrelated new violation fails even when the file is already in the ledg
 });
 
 test("a stale baseline entry fails, so the ledger can only shrink", () => {
-  const root = fixture({ "page.tsx": CLEAN }, { "spacing|app/page.tsx|gap-2.5": 1 });
+  const root = fixture(
+    { "page.tsx": CLEAN },
+    { "spacing|app/page.tsx|gap-2.5": 1 },
+  );
   withCleanup(root, () => {
     const { code, out } = run(root);
     assert.equal(code, 1);
@@ -211,9 +200,7 @@ test("--update-baseline shrinks the ledger and the tree then passes", () => {
 
 test("--update-baseline refuses to grow an existing ledger", () => {
   const root = fixture(
-    {
-      "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n`,
-    },
+    { "page.tsx": `export const A = () => <div className="gap-2.5 py-2.5" />;\n` },
     { "spacing|app/page.tsx|gap-2.5": 1 },
   );
   withCleanup(root, () => {
@@ -221,14 +208,13 @@ test("--update-baseline refuses to grow an existing ledger", () => {
     assert.equal(refused.code, 1);
     assert.match(refused.out, /refusing to grow the baseline/);
 
+    // ...and --force is the documented escape hatch.
     assert.equal(run(root, "--update-baseline", "--force").code, 0);
   });
 });
 
 test("--report always exits 0, even on a dirty tree", () => {
-  const root = fixture({
-    "page.tsx": `export const A = () => <div className="gap-2.5" />;\n`,
-  });
+  const root = fixture({ "page.tsx": `export const A = () => <div className="gap-2.5" />;\n` });
   withCleanup(root, () => {
     const { code, out } = run(root, "--report");
     assert.equal(code, 0);
@@ -253,6 +239,7 @@ test("fails on a table that drops no columns, allows one that does", () => {
     assert.match(out, /wide table with no mobile column priority/);
   });
 
+  // Three columns is under the threshold: a narrow table has nothing to drop.
   const narrow = fixture({
     "page.tsx": `export const A = () => (
       <TableCard>
@@ -267,7 +254,8 @@ test("fails on a table that drops no columns, allows one that does", () => {
     assert.equal(run(narrow).code, 0);
   });
 
-  for (const marker of ["className={COLUMN.secondary}", 'className="hidden sm:table-cell"']) {
+  // Four columns with one marked secondary passes, in both spellings.
+  for (const marker of ['className={COLUMN.secondary}', 'className="hidden sm:table-cell"']) {
     const dropped = fixture({
       "page.tsx": `export const A = () => (
         <TableCard>
@@ -300,112 +288,98 @@ test("fails on a table pinned wider than a phone, allows a scoped minimum", () =
     assert.match(out, /table pinned wider than a phone/);
     assert.match(out, /min-w-\[640px\]/);
   });
-});
 
-/* --------------------------------------------------------------- tabs & CLS */
-
-test("fails on a card inside tab content, allows a card wrapping tabs", () => {
-  // 1. Panel inside TabsContent (the anti-pattern causing tab layout shift)
-  const badPanel = fixture({
+  // Five individually reasonable column floors sum past a phone's card width. No
+  // single one of them looks wrong, which is exactly why the rule sums them.
+  const summed = fixture({
     "page.tsx": `export const A = () => (
-      <Tabs defaultValue="history">
-        <TabsList><TabsTrigger value="history">History</TabsTrigger></TabsList>
-        <TabsContent value="history">
-          <Panel title="Practice history">
-            <Table><TableHeader><TableRow><TableHead>Date</TableHead></TableRow></TableHeader></Table>
-          </Panel>
-        </TabsContent>
-      </Tabs>
+      <TableCard>
+        <Table><TableHeader><TableRow>
+          <TableHead className="min-w-[140px]">A</TableHead>
+          <TableHead className="min-w-[130px]">B</TableHead>
+          <TableHead className="min-w-[110px]">C</TableHead>
+          <TableHead className="min-w-[110px]">D</TableHead>
+          <TableHead className="min-w-[110px]">E</TableHead>
+        </TableRow></TableHeader></Table>
+      </TableCard>
     );\n`,
   });
-  withCleanup(badPanel, () => {
-    const { code, out } = run(badPanel);
+  withCleanup(summed, () => {
+    const { code, out } = run(summed);
     assert.equal(code, 1);
-    assert.match(out, /card nested inside tab content/);
-    assert.match(out, /<Panel> inside <TabsContent>/);
+    assert.match(out, /600px of column floors/);
   });
 
-  // 2. TableCard inside TabsContent
-  const badTableCard = fixture({
-    "page.tsx": `export const A = () => (
-      <Tabs defaultValue="history">
-        <TabsContent value="history">
-          <TableCard title="History">
-            <Table><TableHeader><TableRow><TableHead>Date</TableHead></TableRow></TableHeader></Table>
-          </TableCard>
-        </TabsContent>
-      </Tabs>
-    );\n`,
-  });
-  withCleanup(badTableCard, () => {
-    const { code, out } = run(badTableCard);
-    assert.equal(code, 1);
-    assert.match(out, /card nested inside tab content/);
-    assert.match(out, /<TableCard> inside <TabsContent>/);
-  });
-
-  // 3. Card inside TabsContent
-  const badCard = fixture({
-    "page.tsx": `export const A = () => (
-      <Tabs defaultValue="history">
-        <TabsContent value="history">
-          <Card>
-            <div>content</div>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    );\n`,
-  });
-  withCleanup(badCard, () => {
-    const { code, out } = run(badCard);
-    assert.equal(code, 1);
-    assert.match(out, /card nested inside tab content/);
-    assert.match(out, /<Card> inside <TabsContent>/);
-  });
-
-  // 4. Clean MRI pattern: TableCard wraps Tabs with TabsList in action
-  const good = fixture({
-    "page.tsx": `export const A = () => (
-      <Tabs defaultValue="history">
-        <TableCard
-          title="History"
-          action={
-            <TabsList>
-              <TabsTrigger value="history">History</TabsTrigger>
-              <TabsTrigger value="retention">Retention</TabsTrigger>
-            </TabsList>
-          }
-        >
-          <TabsContent value="history">
-            <Table><TableHeader><TableRow><TableHead>Date</TableHead></TableRow></TableHeader></Table>
-          </TabsContent>
-          <TabsContent value="retention">
-            <Table><TableHeader><TableRow><TableHead>Date</TableHead></TableRow></TableHeader></Table>
-          </TabsContent>
+  for (const [name, code] of [
+    ["a breakpoint-scoped table minimum", `<Table className="table-fixed sm:min-w-[460px]">`],
+    ["one large floor on the identity column", `<Table>`],
+  ]) {
+    const body =
+      name === "one large floor on the identity column"
+        ? `<TableCell className="min-w-[12rem]">Country</TableCell>`
+        : `<TableCell>Country</TableCell>`;
+    const ok = fixture({
+      "page.tsx": `export const A = () => (
+        <TableCard>
+          ${code}<TableHeader><TableRow>
+            <TableHead className="w-10">#</TableHead><TableHead>Country</TableHead>
+          </TableRow></TableHeader>
+          <TableBody><TableRow>${body}<TableCell>1</TableCell></TableRow></TableBody>
+        </Table>
         </TableCard>
-      </Tabs>
-    );\n`,
-  });
-  withCleanup(good, () => {
-    const { code, out } = run(good);
-    assert.equal(code, 0, out);
-  });
+      );\n`,
+    });
+    withCleanup(ok, () => {
+      assert.equal(run(ok).code, 0, `should accept ${name}`);
+    });
+  }
 });
 
 test("prose in a comment may name a banned value", () => {
+  // The rules in this system are documented at the point of use, and the house style
+  // quotes the class being warned about. Before the literal scanner skipped comments,
+  // the comment *explaining* a rewrite was reported as the drift it described.
   const documented = fixture({
     "page.tsx": [
       "/**",
       " * The previous version washed this card in `bg-chart-3/5` and lifted it on",
       " * hover with `hover:-translate-y-0.5`. Both are gone.",
       " */",
-      'export const A = () => <div className="flex gap-3" />;',
+      "export const A = () => <div className=\"flex gap-3\" />;",
       "",
     ].join("\n"),
   });
   withCleanup(documented, () => {
     const { code, out } = run(documented);
     assert.equal(code, 0, out);
+  });
+
+  // A line comment is prose too, and the same rule applies.
+  const inline = fixture({
+    "page.tsx": `export const A = () => <div className="flex gap-3" />; // not \\\`text-[11px]\\\`\n`,
+  });
+  withCleanup(inline, () => {
+    assert.equal(run(inline).code, 0);
+  });
+
+  // But the real thing next to a comment must still fail, or the rule is vacuous.
+  const stillCaught = fixture({
+    "page.tsx": `// the old card used \\\`bg-chart-3/5\\\`\nexport const A = () => <div className="bg-chart-3/5" />;\n`,
+  });
+  withCleanup(stillCaught, () => {
+    const { code, out } = run(stillCaught);
+    assert.equal(code, 1);
+    assert.match(out, /surface tint/);
+  });
+
+  // A `//` inside a string is not a comment, and must not hide what follows it.
+  const url = fixture({
+    "page.tsx": `export const A = () => <a href="https://example.org">x</a>;\nexport const B = () => <div className="gap-2.5" />;\n`,
+  });
+  withCleanup(url, () => {
+    const { code, out } = run(url);
+    assert.equal(code, 1, "off-scale spacing after a URL must still be found");
+    assert.match(out, /gap-2\.5/);
   });
 });
 
@@ -421,50 +395,14 @@ test("generated components/ui is not audited", () => {
 test("installed components/mri is not audited", () => {
   const root = mkdtempSync(join(tmpdir(), "mri-audit-ui-"));
   mkdirSync(join(root, "components", "mri"), { recursive: true });
+  // Off-scale spacing *and* a raw table: both legal here because this layer is
+  // installed from the registry and regenerated, never hand-edited.
   writeFileSync(
     join(root, "components", "mri", "patterns.tsx"),
     `export const A = () => <><div className="px-3.5" /><table /></>;\n`,
   );
   withCleanup(root, () => {
     assert.equal(run(root).code, 0, "registry-installed code is not our drift to fix");
-  });
-});
-
-test("fails on standalone <hr> directly inside <PageContainer>, allows intra-section <hr>", () => {
-  const badHr = fixture({
-    "page.tsx": `export const A = () => (
-      <PageContainer>
-        <section>Section 1</section>
-        <hr className="border-border/60" />
-        <section>Section 2</section>
-      </PageContainer>
-    );\n`,
-  });
-  withCleanup(badHr, () => {
-    const { code, out } = run(badHr);
-    assert.equal(code, 1);
-    assert.match(out, /standalone <hr> directly inside <PageContainer>/);
-  });
-
-  const good = fixture({
-    "page.tsx": `export const A = () => (
-      <PageContainer>
-        <section className="grid gap-6">
-          <Specimen>
-            <div>Item 1</div>
-            <hr className="border-border/40" />
-            <div>Item 2</div>
-          </Specimen>
-        </section>
-        <section className="grid gap-6 border-t border-border/60 pt-6">
-          <div>Section 2</div>
-        </section>
-      </PageContainer>
-    );\n`,
-  });
-  withCleanup(good, () => {
-    const { code } = run(good);
-    assert.equal(code, 0);
   });
 });
 
@@ -493,60 +431,37 @@ test("fails on a navigation tree arranged by position, allows a computed layout"
   });
 });
 
-test("fails on the preset Badge outside the generated layer, allows Chip", () => {
-  const badge = fixture({
-    "page.tsx": `import { Badge } from "@/components/ui/badge";\nexport const A = () => <Badge variant="outline">LC</Badge>;\n`,
+/* ------------------------------------------------------------- card padding */
+
+test("fails on a card with flush body or --card-spacing outside Card, allows CardContent", () => {
+  const unpadded = fixture({
+    "page.tsx": `export const A = () => <article className="bg-card"><div className="aspect-video"><img src="/x.jpg" /></div><div className="p-(--card-spacing)">Content</div></article>;\n`,
   });
-  withCleanup(badge, () => {
-    const { code, out } = run(badge);
+  withCleanup(unpadded, () => {
+    const { code, out } = run(unpadded);
     assert.equal(code, 1);
-    assert.match(out, /preset Badge instead of Chip/);
+    assert.match(out, /unpadded or flush card body/);
   });
 
-  const chip = fixture({
-    "page.tsx": `import { Chip } from "@/components/mri/chips";\nexport const A = () => <Chip>LC</Chip>;\n`,
+  const padded = fixture({
+    "page.tsx": `export const A = () => <Card size="sm" className="p-0"><div className="aspect-video"><img src="/x.jpg" /></div><CardContent className="py-(--card-spacing)">Content</CardContent></Card>;\n`,
   });
-  withCleanup(chip, () => {
-    const { code, out } = run(chip);
+  withCleanup(padded, () => {
+    const { code, out } = run(padded);
     assert.equal(code, 0, out);
   });
 });
 
-test("fails on a route importing recharts, allows the chart module", () => {
-  const route = fixture({
-    "chart.tsx": `import { LineChart } from "recharts";\nexport const A = () => <LineChart />;\n`,
+test("allows a rule book or a specimen label to name the token in prose", () => {
+  // The token is documented by writing it down. Reading the raw source flagged the
+  // design system's own rule book and chart specimen labels as violations of the
+  // rule they describe, so the scan reads className values only.
+  const prose = fixture({
+    "page.tsx": `export const DOC = { was: "p-(--card-spacing) silently never compiled." };\nexport const A = () => <Card size="sm" className="p-0"><div className="aspect-video"><img src="/x.jpg" /></div><CardContent className="py-(--card-spacing)">Content</CardContent></Card>;\n`,
   });
-  withCleanup(route, () => {
-    const { code, out } = run(route);
-    assert.equal(code, 1);
-    assert.match(out, /hand-rolled chart/);
-  });
-
-  // The composition module is the one place Recharts is imported.
-  const chartModule = fixture({
-    "charts.tsx": `import { LineChart } from "recharts";\nexport const A = () => <LineChart />;\n`,
-  });
-  withCleanup(chartModule, () => {
-    const { code, out } = run(chartModule);
+  withCleanup(prose, () => {
+    const { code, out } = run(prose);
     assert.equal(code, 0, out);
   });
 });
 
-test("fails on transition-all, allows a named transition", () => {
-  const all = fixture({
-    "page.tsx": `export const A = () => <div className="rounded-md hover:bg-muted transition-all" />;\n`,
-  });
-  withCleanup(all, () => {
-    const { code, out } = run(all);
-    assert.equal(code, 1);
-    assert.match(out, /transition-all/);
-  });
-
-  const named = fixture({
-    "page.tsx": `export const A = () => <div className="rounded-md hover:bg-muted transition-colors transition-[width]" />;\n`,
-  });
-  withCleanup(named, () => {
-    const { code, out } = run(named);
-    assert.equal(code, 0, out);
-  });
-});

@@ -1477,6 +1477,92 @@ const RULES = {
       return hits;
     },
   },
+
+  /**
+   * Card bodies keep --card-spacing padding on all four sides.
+   *
+   * "Nothing is flush. Every content edge keeps at least --card-spacing. The only
+   * exception is a photograph bleeding to a card's top, left and right edges.
+   * A card body is exactly --card-spacing on all four sides."
+   *
+   * Two failure modes are caught mechanically:
+   *
+   * 1. `--card-spacing` is scoped locally to `<Card>` (components/ui/card.tsx).
+   *    Writing `p-(--card-spacing)` on a bare `<article>` or `<div>` outside `<Card>`
+   *    evaluates to undefined / 0px padding in the browser, making the content flush.
+   *
+   * 2. A card that bleeds media to its edges (`p-0` on `<Card>` or a card container)
+   *    must re-apply padding on its body — via `<CardContent>` or `p-3` / `p-4`.
+   */
+  cardPadding: {
+    title: "unpadded or flush card body",
+    hint: "card body must keep --card-spacing padding on all sides — wrap body in <CardContent> or use Card with p-3",
+    scan(rel, rawSource) {
+      if (isGenerated(rel)) return [];
+      const source = stripComments(rawSource);
+      const hits = [];
+
+      // 1. `--card-spacing` used outside of `<Card>`, `<CardContent>`, `<Panel>`, or `<TableCard>`.
+      const CARD_CONTAINERS = ["Card", "CardContent", "Panel", "TableCard", "ChartFrame"];
+      const opens = new RegExp(`<(${CARD_CONTAINERS.join("|")})\\b`, "g");
+      const closes = new RegExp(`</(${CARD_CONTAINERS.join("|")})>`, "g");
+      const events = [];
+      for (const m of source.matchAll(opens)) {
+        const end = source.indexOf(">", m.index);
+        const selfClosing = end !== -1 && source[end - 1] === "/";
+        events.push({ index: m.index, kind: selfClosing ? "self" : "open", name: m[1] });
+      }
+      for (const m of source.matchAll(closes)) {
+        events.push({ index: m.index, kind: "close", name: m[1] });
+      }
+      events.sort((a, b) => a.index - b.index);
+
+      // Only a *className* counts. The token also occurs in prose and in specimen
+      // labels — this repository's own rule book writes `p-(--card-spacing)` in a
+      // sentence, and a specimen label names it — so a bare source scan reports the
+      // documentation as a violation of the rule it is documenting.
+      const CLASS_ATTR =
+        /className\s*=\s*(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\}|\{\s*cn\(\s*(?:"([^"]*)"|`([^`]*)`))/g;
+      const CARD_SPACING_UTIL = /(?<![\w:-])(?:[a-z0-9]+:)*(?:p[xytbse]?|gap)-\(--card-spacing\)/;
+      for (const match of source.matchAll(CLASS_ATTR)) {
+        const classes = match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? "";
+        if (!CARD_SPACING_UTIL.test(classes)) continue;
+        const index = match.index;
+        let depth = 0;
+        for (const ev of events) {
+          if (ev.index > index) break;
+          if (ev.kind === "open") depth++;
+          else if (ev.kind === "close" && depth > 0) depth--;
+        }
+        if (depth === 0) {
+          hits.push({
+            line: lineOf(source, index),
+            token: "card spacing token used outside <Card> or <Panel>",
+          });
+        }
+      }
+
+      // 2. Card with bleed image / p-0 whose body child has no padding.
+      for (const match of source.matchAll(/<(Card|article)\b[^>]*?(?:p-0|bg-card)[^>]*>([\s\S]*?)<\/\1>/g)) {
+        const cardContent = match[2];
+        const openTag = match[0].slice(0, match[0].indexOf(">") + 1);
+        if (/p-0\b/.test(openTag) || /bg-card\b/.test(openTag)) {
+          if (/aspect-\[|aspect-video|aspect-square|<img\b|<Image\b/.test(cardContent)) {
+            const hasCardContent = /<CardContent\b/.test(cardContent);
+            const hasPaddedBody = /(?<![\w:-])p(?:x|y)?-(?:3|4|\[--card-spacing\]|\(--card-spacing\))/.test(cardContent);
+            if (!hasCardContent && !hasPaddedBody) {
+              hits.push({
+                line: lineOf(source, match.index),
+                token: "card with bleed image has unpadded/flush body",
+              });
+            }
+          }
+        }
+      }
+
+      return hits;
+    },
+  },
 };
 
 const CSS_RULE = {

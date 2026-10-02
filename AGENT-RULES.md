@@ -10,7 +10,7 @@ The full rule book, with the reasoning and live demonstrations, is the wiki page
 
 ## What is enforced
 
-Twenty-seven rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
+Twenty-eight rules, all in `scripts/audit-ui.mjs`. **Every one is mechanical** — it reads
 class strings, stylesheets and tag structure, and a violation fails the build. Nothing
 here is a matter of taste that a reviewer has to catch, which is the point: a rule that
 lives only in a document is a rule that gets followed until the first deadline.
@@ -41,6 +41,7 @@ lives only in a document is a rule that gets followed until the first deadline.
 |                    | `motion`        | hover translation on a surface                                                     |
 |                    | `transitionAll` | `transition-all` — name the property that animates                                 |
 | **structure**      | `cardInCard`    | a card nested inside a card                                                        |
+|                    | `cardPadding`   | an unpadded or flush card body (missing `<CardContent>` or `--card-spacing`)        |
 |                    | `singleH1`      | an `h1` rendered by a component, or two in one file                                |
 |                    | `navPosition`   | a `*_NAV` tree sliced or indexed by position                                       |
 | **icons**          | `icons`         | an icon import that is not the RSC-safe Phosphor entry                             |
