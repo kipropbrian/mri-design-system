@@ -53,13 +53,53 @@ export const CATEGORICAL = [
 export const CATEGORICAL_MAX = CATEGORICAL.length;
 
 /**
- * A recharts config where each series owns one identity step, in the order given.
+ * The order identity colours are handed out in.
  *
- * The order is the caller's, and it must be **stable across every figure on a
- * page**: a country that is red in one chart and teal in the next is worse than two
- * countries sharing a colour, because a reader carries the first chart's key into
- * the second. Sort by the domain — the fixed list of monitored countries — never by
- * the values in hand.
+ * `CATEGORICAL` itself is a **hue wheel**: step 1 to 9 run red → orange → olive →
+ * green → teal → blue → indigo → purple → pink. That is the right order for a
+ * swatch strip and the wrong order for three series, because the first three steps
+ * are the three warmest hues in the set — a three-series chart drawn from them reads
+ * as one colour again, which is the failure this ramp exists to prevent.
+ *
+ * This order takes every third step first (blue, red, green) and then fills in, so
+ * **any prefix of it is the most separated set available at that length**. Allocate
+ * with `seriesColors(n)`, never with `CATEGORICAL[i]`, whenever the series come from
+ * the reader's domain rather than from the data.
+ *
+ * The one rule that outranks this order: it must be the **same on every figure on a
+ * page**. A country that is blue in one chart and red in the next is worse than two
+ * countries sharing a colour, because the reader carries the first chart's key into
+ * the second.
+ */
+export const CATEGORICAL_ORDER = [5, 0, 3, 1, 6, 2, 4, 7, 8] as const;
+
+/**
+ * The first `count` identity colours, most-separated-first.
+ *
+ * Throws past nine. Wrapping would silently give two identities the same colour, and
+ * a chart with ten identities wants aggregating rather than a tenth hue.
+ */
+export function seriesColors(count: number): string[] {
+  if (count > CATEGORICAL_MAX) {
+    throw new Error(
+      `seriesColors: ${count} identities exceeds the ${CATEGORICAL_MAX}-step categorical ` +
+        `ramp, and wrapping would give two series the same colour. Aggregate the tail into ` +
+        `one "Other" series, or move the series onto the olive magnitude ramp.`,
+    );
+  }
+  return CATEGORICAL_ORDER.slice(0, count).map((step) => CATEGORICAL[step]);
+}
+
+/**
+ * A recharts config where each series owns one identity step, allocated by
+ * `seriesColors` — so a two-series chart is blue and red, not the two warmest hues
+ * in the set.
+ *
+ * The *order of the series array* is the caller's, and it must be **stable across
+ * every figure on a page**: a country that is blue in one chart and red in the next
+ * is worse than two countries sharing a colour, because a reader carries the first
+ * chart's key into the second. Sort by the domain — the fixed list of monitored
+ * countries — never by the values in hand.
  *
  * More than nine identities throws. Wrapping would silently give two series the
  * same colour, which is the failure this ramp exists to prevent, and a chart with
@@ -75,7 +115,8 @@ export function categoricalConfig(
         `olive ramp with three or fewer series, or aggregate the tail into one "Other" series.`,
     );
   }
+  const colors = seriesColors(series.length);
   return Object.fromEntries(
-    series.map((item, index) => [item.key, { label: item.label, color: CATEGORICAL[index] }]),
+    series.map((item, index) => [item.key, { label: item.label, color: colors[index] }]),
   );
 }

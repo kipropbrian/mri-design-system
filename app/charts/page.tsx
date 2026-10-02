@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowUpRightIcon, ChartLineUpIcon } from "@phosphor-icons/react/dist/ssr";
 import {
+  CategoryBar,
   CountryBar,
   GroupedBar,
   InatScanArea,
@@ -9,7 +10,7 @@ import {
   Sparkline,
   StatusDonut,
 } from "@/components/mri/charts";
-import { CATEGORICAL, CHART_COLORS } from "@/lib/chart-colors";
+import { CATEGORICAL, CHART_COLORS, seriesColors } from "@/lib/chart-colors";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
 import { Button } from "@/components/ui/button";
@@ -334,7 +335,23 @@ export default function ChartsPage() {
             ))}
           </div>
         </Specimen>
-        <div className="grid gap-3 md:grid-cols-3">
+        <Specimen
+          label="categorical bar · three identities"
+          note="seriesColors(3) — blue, red, green: the most separated prefix, not the first three swatches"
+        >
+          <CategoryBar
+            data={[
+              { key: "BirdNET v3", value: 65.5 },
+              { key: "BirdNET v2.4", value: 59.5 },
+              { key: "Perch v2", value: 56.7 },
+            ]}
+            colors={seriesColors(3)}
+            seriesLabel="Top-1 agreement"
+            max={100}
+            className="h-56 w-full"
+          />
+        </Specimen>
+        <div className="grid gap-3 md:grid-cols-2">
           {[
             {
               title: "Measured, not chosen by eye",
@@ -346,7 +363,11 @@ export default function ChartsPage() {
             },
             {
               title: "Order is stable, or the ramp lies",
-              body: "A country that is red in one figure and teal in the next is worse than two countries sharing a colour, because the reader carries the first chart's key into the second. Sort by the domain, never by the values in hand.",
+              body: "A country that is blue in one figure and red in the next is worse than two countries sharing a colour, because the reader carries the first chart's key into the second. Sort by the domain, never by the values in hand.",
+            },
+            {
+              title: "Allocate with seriesColors, not with the swatch order",
+              body: "CATEGORICAL is a hue wheel, so its first three steps are the three warmest hues — red, orange and olive — and a three-series chart drawn from them reads as one colour again. seriesColors(3) returns blue, red and green instead, and any prefix of it is the most separated set at that length.",
             },
           ].map((rule) => (
             <div key={rule.title} className="grid gap-1.5 rounded-lg bg-card p-3 ring-1 ring-foreground/10">

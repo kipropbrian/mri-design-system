@@ -31,8 +31,13 @@ import { cn } from "cn";
  * into that: at most three series per chart, ordered darkest-first, with a
  * manual legend and direct value labels instead of colour-only encoding.
  *
- * Series read `var(--color-<key>)`, which `ChartContainer` injects from
- * `config[key].color` — the documented shadcn chart contract.
+ * Series take their fill from `config[key].color` **directly** rather than from the
+ * `var(--color-<key>)` that `ChartContainer` injects. The injected form is the shadcn
+ * contract, but a custom property name is a CSS identifier and cannot contain a dot:
+ * a series keyed `birdnet-v2.4` asks the browser for `--color-birdnet-v2.4`, which is
+ * invalid, so the reference is dropped and the bar renders with SVG's default black
+ * fill — silently, with a correct legend beside it. Passing the colour through keeps
+ * the tooltip contract (`config[key].color`) and works for any key.
  *
  * ## Why every container also gets `w-full`
  *
@@ -199,7 +204,7 @@ export function CountryBar({
           cursor={{ fill: "var(--muted)" }}
           content={<ChartTooltipContent />}
         />
-        <Bar dataKey={dataKey} fill={`var(--color-${dataKey})`} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+        <Bar dataKey={dataKey} fill={color} radius={[3, 3, 0, 0]} isAnimationActive={false} />
       </BarChart>
     </ChartContainer>
   );
@@ -238,7 +243,7 @@ export function GroupedBar({
           <Bar
             key={item.key}
             dataKey={item.key}
-            fill={`var(--color-${item.key})`}
+            fill={item.color}
             radius={[2, 2, 0, 0]}
             isAnimationActive={false}
           />
@@ -256,14 +261,28 @@ export interface DonutPoint {
   value: number;
 }
 
-export function StatusDonut({ data, className }: { data: DonutPoint[]; className?: string }) {
+/**
+ * The fallback is the olive magnitude ramp, because a donut's slices are often
+ * ordered steps of one measure — strong, medium, weak. When they are *identities*
+ * instead (three models, three outcomes), pass `colors` from `seriesColors`; a
+ * single hue there claims the slices differ only in amount.
+ */
+const DONUT_FALLBACK = [OLIVE.strong, OLIVE.mid, OLIVE.soft, OLIVE.pale, "var(--border)"] as const;
+
+export function StatusDonut({
+  data,
+  className,
+  colors = DONUT_FALLBACK,
+}: {
+  data: DonutPoint[];
+  className?: string;
+  colors?: readonly string[];
+}) {
+  const tones = colors.length ? colors : DONUT_FALLBACK;
   const config = Object.fromEntries(
     data.map((row, index) => [
       row.key,
-      {
-        label: row.label,
-        color: [OLIVE.strong, OLIVE.mid, OLIVE.soft, OLIVE.pale, "var(--border)"][index % 5],
-      },
+      { label: row.label, color: tones[index % tones.length] },
     ]),
   ) satisfies ChartConfig;
 
@@ -282,10 +301,7 @@ export function StatusDonut({ data, className }: { data: DonutPoint[]; className
           isAnimationActive={false}
         >
           {data.map((row, index) => (
-            <Cell
-              key={row.key}
-              fill={[OLIVE.strong, OLIVE.mid, OLIVE.soft, OLIVE.pale, "var(--border)"][index % 5]}
-            />
+            <Cell key={row.key} fill={tones[index % tones.length]} />
           ))}
         </Pie>
       </PieChart>
@@ -293,21 +309,93 @@ export function StatusDonut({ data, className }: { data: DonutPoint[]; className
   );
 }
 
+/* ---------------------------------------------------------- categorical bars */
+
+export interface CategoryPoint {
+  key: string;
+  value: number;
+  [field: string]: string | number;
+}
+
+/**
+ * One bar per category, on identity colours rather than on a magnitude ramp.
+ *
+ * The distinction is the whole reason this exists. `InatTaxaBar` shades a single hue
+ * because its bars are the same measure at different sizes, and the eye should read
+ * "more" and "less". Here the bars are **different things** — three models, three
+ * cohorts, three outcomes — so one hue would claim they differ only in amount.
+ *
+ * `max` pins the axis when every bar is a percentage of a fixed whole, which is the
+ * common case; without it recharts scales to the largest bar and two charts of the
+ * same measure stop being comparable.
+ */
+export function CategoryBar({
+  data,
+  className,
+  colors,
+  dataKey = "value",
+  labelKey = "key",
+  seriesLabel,
+  max,
+}: {
+  data: CategoryPoint[];
+  className?: string;
+  colors: readonly string[];
+  dataKey?: string;
+  labelKey?: string;
+  seriesLabel: string;
+  max?: number;
+}) {
+  const tones = colors.length ? colors : [OLIVE.strong];
+  const config = { [dataKey]: { label: seriesLabel, color: tones[0] } } satisfies ChartConfig;
+
+  return (
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
+      <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+        <CartesianGrid {...GRID} />
+        <XAxis dataKey={labelKey} {...axisProps()} />
+        <YAxis
+          width={40}
+          domain={max === undefined ? undefined : [0, max]}
+          tickFormatter={compact}
+          {...axisProps()}
+        />
+        <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<ChartTooltipContent />} />
+        <Bar dataKey={dataKey} radius={[3, 3, 0, 0]} isAnimationActive={false}>
+          {data.map((row, index) => (
+            <Cell key={String(row[labelKey])} fill={tones[index % tones.length]} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ChartContainer>
+  );
+}
+
 /* ------------------------------------------------------------------ line */
 
 export interface YearPoint {
-  year: number;
-  [key: string]: number;
+  year: string | number;
+  [key: string]: string | number;
 }
 
 export function MultiLine({
   data,
   series,
   className,
+  xKey = "year",
+  curve = "monotone",
 }: {
   data: YearPoint[];
   series: { key: string; label: string; color: string }[];
   className?: string;
+  /** The x field. Defaults to `year`; a categorical axis passes its own key. */
+  xKey?: string;
+  /**
+   * `monotone` smooths between points, which flatters a trend by drawing values
+   * that were never measured. A measured relationship — a rate against a threshold
+   * — wants `linear`.
+   */
+  curve?: "monotone" | "linear";
 }) {
   const config = Object.fromEntries(
     series.map((item) => [item.key, { label: item.label, color: item.color }]),
@@ -317,13 +405,13 @@ export function MultiLine({
     <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid {...GRID} />
-        <XAxis dataKey="year" {...axisProps()} />
+        <XAxis dataKey={xKey} {...axisProps()} />
         <YAxis width={40} tickFormatter={compact} {...axisProps()} />
         <ChartTooltip cursor={{ stroke: "var(--border)", strokeWidth: 1 }} content={<ChartTooltipContent indicator="line" />} />
         {series.map((item) => (
           <Line
             key={item.key}
-            type="monotone"
+            type={curve}
             dataKey={item.key}
             stroke={item.color}
             strokeWidth={2}
