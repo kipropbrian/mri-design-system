@@ -4,6 +4,73 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.9.0 — 2026-10-04
+
+### Added
+- **`RadialMeter`** (`charts`): one share of a whole as a ring with the figure inside
+  it. Plain SVG, so it is server-rendered at its final size. The track is the series'
+  own hue at low opacity, and the arc is shortened by its round caps so the painted
+  length is the value (left alone, 75% paints as roughly 78%).
+- **`UnitGrid`** (`charts`): one cell per thing counted, for a collection small enough
+  to show whole and for a subset of it shown beside the whole. Levels are class names
+  in the `AvailabilityGrid` shape, so `AvailabilityLegend` accepts them as they are.
+  **Give every level its own hue**: three shades of the olive ramp read as one colour
+  on screen and were sent back for it. One pointer-driven tooltip for the whole grid;
+  `onSelect` is a mouse shortcut, since the cells are not focusable.
+- **`Dumbbell`** (`charts`): the same thing measured twice, one row per thing, on the
+  whole 0–`max` scale. A filled dot and an open ring sized so the dot sits inside the
+  ring when they coincide — "no difference" is a finding two bars never show cleanly.
+- **`SplitBar`** (`charts`): one total divided into its parts, as a single bar with its
+  key underneath. The form for "how does this group split" when the group itself keeps
+  changing, under a filter say. Plain markup, so it is server-rendered and resizes
+  without measuring; a part of 1 in 500 keeps a minimum width, and the count and share
+  are written in the key. It was written in the platform first and is brought upstream
+  here so the two copies of `charts.tsx` are one file again.
+- **`MultiArea`** (`charts`): two or three series as filled outlines over one ordered
+  axis, for the *shape* of a quantity (how scores are spread from low to high). Not
+  stacked, so each outline is its own value; the fill is the series' hue at low opacity
+  so overlapping shapes stay legible. `labelKey` heads the tooltip when the axis tick
+  is an abbreviation of it.
+- **`MultiRadar`** (`charts`): two or three series compared across five to fourteen
+  unordered categories, as overlaid outlines. The scale is pinned (`domain`, `[0, 100]`
+  by default) because a radar scaled to its data turns a small gap into a collapse. The
+  fill is almost transparent: three translucent hues laid over each other average to
+  grey, so the outline carries the series. Spoke labels are drawn outside the plot and
+  are not wrapped, so they want one word each. No demo on `/charts` yet; `SplitBar` and
+  `MultiArea` have none either.
+- **`MultiLine` `dots`, `domain`, `ticks`, `unit` and `labelSeries`** (`charts`): marked
+  points for a handful of ordered categories, a pinned value axis with its own tick
+  values, a unit on ticks, labels and tooltip, and direct labels on the one series the
+  figure is about.
+
+### Fixed
+- **`MultiLine` `data`** (`charts`) is typed as rows keyed by `xKey`, like `MultiArea`.
+  It was `YearPoint[]`, which requires a `year` field, so a categorical axis added in
+  v0.8.0 could not be typed without one. `YearPoint` still exports and still fits.
+
+### Changed — chart colour guidance
+- **The olive-ramp guidance is retired.** The rule book, `lib/chart-colors.ts`,
+  `charts.tsx`, the `dataColours` audit hint and the `/charts`, `/foundations` and home
+  pages all taught the same thing: draw up to three series from `--chart-1 … --chart-5`,
+  darkest first. Charts drawn that way read as one colour at several strengths and were
+  sent back twice. The instruction is now **one hue per series, slice or level** —
+  `seriesColors(n)`, or the status roles when levels run from good to bad — and
+  **never shades of one colour**, ordered scale or not.
+- **`CHART_COLORS` is deprecated.** It is an alias of `OLIVE` whose name reads as "the
+  chart palette". It still exports, so nothing breaks.
+- **`InatScanArea` and `InatTaxaBar`** (`charts`) no longer draw in olive shades: the
+  area's two series are teal and indigo, and the taxa bars are one colour instead of
+  fading by rank. Neither is used by the platform.
+- `AvailabilityGrid`'s guidance now asks for two data levels in two hues. The component
+  is unchanged; it takes whatever classes it is given.
+- Not changed: the `--chart-1 … --chart-5` tokens, `OLIVE`, the single-colour defaults
+  (`CountryBar`, `CategoryBar`, `RadialMeter`, `Dumbbell`) and `StatusDonut`'s olive
+  fallback, so no existing chart changes under a consumer.
+
+These came from the platform's model-comparison report, where three tall bar charts
+were replaced by rings, a unit grid, two dotted lines and a dumbbell in a third of the
+space. Specimens are on `/charts` under "Shares and pairs".
+
 ## v0.8.0 — 2026-10-02
 
 ### Added
