@@ -77,7 +77,7 @@ the base layer and the gates, so install all of it:
 | `availability-grid` | fixed-width monthly availability cells, pinned row labels, shared tooltip and legend                                                    |
 | `layout`            | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen`, `Prose`                                                                     |
 | `patterns`          | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
-| `charts`            | the chart compositions and the olive and categorical ramps — the only place a project imports `recharts`                               |
+| `charts`            | the chart compositions and the chart palette (`seriesColors`, `CATEGORICAL`) — the only place a project imports `recharts`             |
 | `audio-player`      | `AudioPlayer` — transport chrome for a caller-owned `<audio>`                                                                           |
 | `specimen-card`     | `ObservationCard`, `BirdMediaCard`, `IucnChip`                                                                                          |
 | `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-seven-rule CI gate                                                                                  |
@@ -276,7 +276,7 @@ components/mri/          the MRI layer: shared registry items and its own charts
   patterns.tsx           Panel, MetricCard, StatusBadge, FilterSidebar,
                          StatusPath, RecordChange, data states, skeletons
   specimen-card.tsx      Observation and bird-media cards
-  charts.tsx             Recharts compositions on the olive ramp
+  charts.tsx             Chart compositions, one hue per series
 components/site/         this review site's own chrome — not published
   site-header.tsx        header, theme toggle, font picker, reference nav
   site-footer.tsx  nav.ts  brand.tsx  theme-toggle.tsx  font-picker.tsx
@@ -380,10 +380,12 @@ retouched.
 
 ## Review points worth a decision
 
-- **The chart ramp is monochrome.** `chartColor: olive` makes `--chart-1 … 5` a
-  single light-to-dark olive ramp, not five hues. This template caps charts at
-  three series and always ships a labelled legend. If MRI wants categorical
-  colour, change `chartColor` in the preset — one line, not per-chart overrides.
+- **The preset's chart ramp is one colour.** `chartColor: olive` makes
+  `--chart-1 … 5` a single olive-grey at five strengths, not five hues, and two of
+  them side by side read as the same colour. Charts therefore take their colour from
+  the categorical ramp (`seriesColors`) or a status role — one hue per series, slice
+  or level — and never from shades of this ramp. An earlier version of this template
+  capped charts at three olive series, darkest first; that guidance is retired.
 - **`background`, `card` and `popover` are all pure white.** Panels are separated
   by `ring-1 ring-foreground/10` rather than fill contrast. It reads clean, but
   layered surfaces are subtle; `/foundations` shows the full token set.

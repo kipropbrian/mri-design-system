@@ -12,7 +12,7 @@ import {
   GroupedBar,
   StatusDonut,
 } from "@/components/mri/charts";
-import { CHART_COLORS } from "@/lib/chart-colors";
+import { seriesColors } from "@/lib/chart-colors";
 import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,
@@ -44,6 +44,9 @@ export const metadata: Metadata = {
     "Regional media dashboard: media volume by family, coverage by country, featured additions and the IUCN profile of the checklist.",
 };
 
+/** Two series, two hues — never two shades of one. */
+const PAIR = seriesColors(2);
+
 export default function EbirdPage() {
   const mediaByCountry = birds.byCountry.map((country) => ({
     key: country.code,
@@ -61,6 +64,7 @@ export default function EbirdPage() {
   const iucnDonut = birds.byIucn
     .filter((row) => row.species > 0)
     .map((row) => ({ key: row.status, label: row.status, value: row.species }));
+  const iucnColors = seriesColors(iucnDonut.length);
 
   const threatened = birds.byIucn
     .filter((row) => ["CR", "EN", "VU"].includes(row.status))
@@ -130,8 +134,8 @@ export default function EbirdPage() {
             ariaLabel="Grouped bar chart of documented species and species with audio per country"
             legend={
               <>
-                <LegendSwatch color={CHART_COLORS.strong} label="Documented species" />
-                <LegendSwatch color={CHART_COLORS.mid} label="Species with audio" />
+                <LegendSwatch color={PAIR[0]} label="Documented species" />
+                <LegendSwatch color={PAIR[1]} label="Species with audio" />
               </>
             }
             footnote="A country can be well documented and still under-recorded for sound."
@@ -139,8 +143,8 @@ export default function EbirdPage() {
             <GroupedBar
               data={mediaByCountry}
               series={[
-                { key: "species", label: "Species", color: CHART_COLORS.strong },
-                { key: "withAudio", label: "With audio", color: CHART_COLORS.mid },
+                { key: "species", label: "Species", color: PAIR[0] },
+                { key: "withAudio", label: "With audio", color: PAIR[1] },
               ]}
               className="h-64 w-full"
             />
@@ -152,8 +156,8 @@ export default function EbirdPage() {
             ariaLabel="Grouped bar chart of audio and photo assets per bird family"
             legend={
               <>
-                <LegendSwatch color={CHART_COLORS.strong} label="Photos" />
-                <LegendSwatch color={CHART_COLORS.mid} label="Audio" />
+                <LegendSwatch color={PAIR[0]} label="Photos" />
+                <LegendSwatch color={PAIR[1]} label="Audio" />
               </>
             }
             footnote="Ranked by audio because audio coverage is the scarcer signal."
@@ -161,8 +165,8 @@ export default function EbirdPage() {
             <GroupedBar
               data={mediaFamilies}
               series={[
-                { key: "photos", label: "Photos", color: CHART_COLORS.strong },
-                { key: "audio", label: "Audio", color: CHART_COLORS.mid },
+                { key: "photos", label: "Photos", color: PAIR[0] },
+                { key: "audio", label: "Audio", color: PAIR[1] },
               ]}
               className="h-64 w-full"
             />
@@ -246,20 +250,12 @@ export default function EbirdPage() {
               legend={
                 <>
                   {iucnDonut.map((row, index) => (
-                    <LegendSwatch
-                      key={row.key}
-                      color={
-                        [CHART_COLORS.strong, CHART_COLORS.mid, CHART_COLORS.soft, CHART_COLORS.pale][
-                          index % 4
-                        ]
-                      }
-                      label={row.label}
-                    />
+                    <LegendSwatch key={row.key} color={iucnColors[index]} label={row.label} />
                   ))}
                 </>
               }
             >
-              <StatusDonut data={iucnDonut} className="h-52 w-full" />
+              <StatusDonut data={iucnDonut} colors={iucnColors} className="h-52 w-full" />
             </ChartFrame>
 
             <Panel title="Threatened species" description="Red List categories in the regional checklist" contentClassName="grid gap-1.5">

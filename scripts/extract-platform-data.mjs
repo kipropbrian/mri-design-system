@@ -119,8 +119,8 @@ const inatYears = [...yearCounts.entries()]
   .map(([year, count]) => ({ year: Number(year), count }))
   .sort((a, b) => a.year - b.year);
 
-/** Per-country observation-year series, capped at three countries to match the
- *  template's three-series chart rule (the olive ramp is monochrome). */
+/** Per-country observation-year series, capped at three countries so the specimen
+ *  stays readable beside its key. */
 const topCountryCodes = [...inatCountries]
   .sort((a, b) => b.speciesCount - a.speciesCount)
   .slice(0, 3)

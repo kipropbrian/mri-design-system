@@ -75,8 +75,20 @@ An exemption nobody wants is visible in the diff that added it.
   `Button` is for things that are actions, not places to go.
 - **Never import an icon library other than `@phosphor-icons/react/dist/ssr`.**
 - **Never use an off-scale spacing value.** The scale is below.
-- **Never hand-roll a chart.** Use the shared chart container with the semantic
-  chart tokens.
+- **Never hand-roll a chart.** Compose it from `components/mri/charts.tsx`, with
+  colour from `seriesColors()` or a status role.
+- **Never tell things apart with shades of one colour.** Series, slices, bars and
+  levels a reader has to distinguish each get their own hue: `seriesColors(n)` from
+  `lib/chart-colors.ts` for identities, and the status roles — `primary`, `notable`,
+  `destructive` — when the levels run from good to bad. This system used to teach the
+  opposite: up to three series on the olive ramp (`--chart-1 … --chart-5`, `OLIVE`,
+  `CHART_COLORS`), darkest first. Every chart drawn that way read as one colour at
+  several strengths and was sent back. Two steps of a ramp are far apart in lightness
+  on paper and the same colour on screen, and an ordered scale is not an exception.
+  A single series takes one colour. For three series use teal, purple and orange
+  (`CATEGORICAL[4]`, `[7]`, `[1]`), the set checked for colour-blind readers with
+  every pair compared; `lib/chart-colors.ts` lists the other checked sets. Charts
+  that still shade one hue predate this rule and are not a pattern to copy.
 - **Never place text on a photograph without a scrim.** No outline or tinted chip
   on an image.
 - **Never write a colour literal** (`#hex`, `rgb()`, `oklch()`) in a class name or
@@ -327,9 +339,9 @@ station names were hidden to make the bars fit.
 - **Blank is not grey.** A slot before an entity's first record is blank; a month
   after it with nothing is the grid's empty level. The staircase of blanks is the
   network being built, and a grey tail is a station going quiet.
-- **Levels are solid fills**, the same classes in the cells and in the key
-  (`AvailabilityLegend`). Two data levels and an empty one: a third shade of one
-  hue reads as more of the same, not as something else.
+- **Levels are solid fills in different hues**, the same classes in the cells and in
+  the key (`AvailabilityLegend`). Two data levels and an empty one, and the two data
+  levels are two colours, not two shades of one.
 - **Every name stays visible.** A long name truncates, with the full name in its
   `title`; it is never dropped to make rows fit. Names that repeat carry their id.
 - **One tooltip for the whole grid**, driven by the pointer, and the cells are
@@ -384,7 +396,7 @@ Audio is the subject, not the illustration, so it has one component: `AudioPlaye
 5. **A value imported from a `"use client"` module is not that value.** In a server
    component the bundler replaces the module with client references, so you get a
    proxy object. Reading a property off it happens to work, which is why
-   `CHART_COLORS.strong` in a server page has always looked fine — `.map` over an
+   `OLIVE.strong` in a server page has always looked fine — `.map` over an
    array does not, and fails at prerender with `CATEGORICAL.map is not a function`,
    naming neither the import nor the cause. Constants belong in a module with no
    directive; `lib/chart-colors.ts` exists for exactly this reason.

@@ -11,7 +11,7 @@ import {
   CountryBar,
   GroupedBar,
 } from "@/components/mri/charts";
-import { CHART_COLORS } from "@/lib/chart-colors";
+import { seriesColors } from "@/lib/chart-colors";
 import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,
@@ -41,6 +41,9 @@ export const metadata: Metadata = {
   description:
     "Bioacoustic snapshot: recordings by country, taxa coverage, the most-recorded species and weekly snapshot navigation.",
 };
+
+/** Two series, two hues — never two shades of one. */
+const PAIR = seriesColors(2);
 
 export default function XenoCantoPage() {
   const xenoByCountry = birds.xeno.byCountry.map((country) => ({
@@ -176,8 +179,8 @@ export default function XenoCantoPage() {
             height="h-60"
             legend={
               <>
-                <LegendSwatch color={CHART_COLORS.strong} label="Recordings" />
-                <LegendSwatch color={CHART_COLORS.mid} label="Species covered" />
+                <LegendSwatch color={PAIR[0]} label="Recordings" />
+                <LegendSwatch color={PAIR[1]} label="Species covered" />
               </>
             }
             footnote="Kenya and Tanzania carry most volume; species coverage is much flatter."
@@ -185,8 +188,8 @@ export default function XenoCantoPage() {
             <GroupedBar
               data={xenoByCountry}
               series={[
-                { key: "recordings", label: "Recordings", color: CHART_COLORS.strong },
-                { key: "species", label: "Species", color: CHART_COLORS.mid },
+                { key: "recordings", label: "Recordings", color: PAIR[0] },
+                { key: "species", label: "Species", color: PAIR[1] },
               ]}
               className="h-60 w-full"
             />

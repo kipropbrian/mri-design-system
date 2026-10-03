@@ -208,7 +208,7 @@
       "name": "charts",
       "type": "registry:item",
       "title": "Chart compositions",
-      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, StatusDonut, MultiLine and Sparkline, plus the olive CHART_COLORS ramp and CATEGORICAL \u2014 the nine-step identity ramp for charts that plot entities rather than magnitudes. Pairs with the theme item, which carries the ramp's tokens.",
+      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, CategoryBar, StatusDonut, MultiLine, MultiArea, MultiRadar, RadialMeter, UnitGrid, Dumbbell, SplitBar and Sparkline, plus seriesColors and CATEGORICAL \u2014 the nine-hue chart palette: one hue per series, slice or level, never shades of one colour. OLIVE stays for a single neutral series. Pairs with the theme item, which carries the ramp's tokens.",
       "dependencies": [
         "cn@^0.3.0",
         "recharts@^3.10.1"

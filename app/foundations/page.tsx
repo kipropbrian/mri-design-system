@@ -118,11 +118,11 @@ const SEMANTIC_TOKENS: TokenRow[] = [
 ];
 
 const CHART_TOKENS: TokenRow[] = [
-  { name: "--chart-1", value: "oklch(0.88 0.011 106.6)", light: "var(--chart-1)", usage: "Lightest step — area fills, backgrounds" },
-  { name: "--chart-2", value: "oklch(0.58 0.031 107.3)", light: "var(--chart-2)", usage: "Third series, warning accents" },
-  { name: "--chart-3", value: "oklch(0.466 0.025 107.3)", light: "var(--chart-3)", usage: "Second series, comparison bars" },
-  { name: "--chart-4", value: "oklch(0.394 0.023 107.4)", light: "var(--chart-4)", usage: "Primary series, strongest emphasis" },
-  { name: "--chart-5", value: "oklch(0.286 0.016 107.4)", light: "var(--chart-5)", usage: "Darkest step — outlines, labels" },
+  { name: "--chart-1", value: "oklch(0.88 0.011 106.6)", light: "var(--chart-1)", usage: "Lightest step — empty cells, faint fills" },
+  { name: "--chart-2", value: "oklch(0.58 0.031 107.3)", light: "var(--chart-2)", usage: "A quiet mid step" },
+  { name: "--chart-3", value: "oklch(0.466 0.025 107.3)", light: "var(--chart-3)", usage: "A mid-dark step" },
+  { name: "--chart-4", value: "oklch(0.394 0.023 107.4)", light: "var(--chart-4)", usage: "The neutral for a single series" },
+  { name: "--chart-5", value: "oklch(0.286 0.016 107.4)", light: "var(--chart-5)", usage: "Darkest step" },
 ];
 
 const TYPE_SCALE = [
@@ -413,7 +413,7 @@ export default function FoundationsPage() {
 
         <Panel
           title="Chart ramp"
-          description="chartColor: olive produces a monochrome ramp, not five hues — this is the single most important consequence of the preset"
+          description="chartColor: olive produces one olive-grey at five strengths, not five hues — so these steps never tell series apart"
           action={<Chip>review point</Chip>}
         >
           <div className="grid gap-4">
@@ -433,11 +433,11 @@ export default function FoundationsPage() {
               ))}
             </div>
             <div className="rounded-lg bg-muted/40 p-3 text-[0.6875rem] leading-relaxed text-muted-foreground">
-              <strong className="text-foreground">What this means for charts.</strong> Five series cannot be
-              told apart by colour alone, so every chart in this template caps at three series, orders them
-              darkest-first, and always ships a labelled legend. If MRI wants categorical colour, the
-              change is one preset value (<code className="font-mono">chartColor</code>), not per-chart
-              overrides.
+              <strong className="text-foreground">What this means for charts.</strong> Two of these steps
+              side by side are the same colour on screen, so they are never used to tell series, slices or
+              levels apart. Those take the categorical ramp through{" "}
+              <code className="font-mono">seriesColors</code>, or a status role when they run from good to
+              bad, and always ship a labelled legend. This ramp is left for a single neutral series.
             </div>
           </div>
         </Panel>

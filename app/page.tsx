@@ -43,7 +43,7 @@ const PRESET_VALUES: { key: string; value: string; note: string }[] = [
   { key: "style", value: "mira", note: "Component style and spacing rhythm" },
   { key: "theme", value: "green", note: "Primary colour family" },
   { key: "baseColor", value: "olive", note: "Neutral surfaces and borders" },
-  { key: "chartColor", value: "olive", note: "Monochrome chart ramp (chart-1 … chart-5)" },
+  { key: "chartColor", value: "olive", note: "One olive-grey at five strengths (chart-1 … chart-5); never used to tell series apart" },
   { key: "radius", value: "default", note: "0.625rem base with a proportional scale" },
   { key: "font", value: "inter", note: "Mapped to --font-sans" },
   { key: "fontHeading", value: "inherit", note: "Headings reuse the sans stack" },
@@ -81,7 +81,7 @@ const SECTIONS = [
     icon: ChartLineUpIcon,
     title: "Charts",
     description:
-      "Area, bar, grouped bar, line and donut built on ChartContainer and Recharts, using the olive chart ramp.",
+      "Area, bar, grouped bar, line, donut, meter, unit grid and dumbbell built on ChartContainer and Recharts, with one hue per series.",
     meta: "Recharts 3 · 5 chart types",
   },
   {
@@ -108,8 +108,8 @@ const PRINCIPLES = [
     body: "Numbers drive the layout: right-aligned, tabular, monospace counts, and tables tuned for above-the-fold data rather than generous whitespace.",
   },
   {
-    title: "Colour is the last resort",
-    body: "The preset’s chart ramp is monochrome olive, so charts cap at three series and pair every shade with a label. Status colour comes from badge variants.",
+    title: "Colour tells things apart",
+    body: "Every series, slice and level a reader must distinguish gets its own hue, from the categorical ramp or a status role, and every colour is paired with a label. Shades of one colour never separate anything.",
   },
   {
     title: "One media contract",
@@ -362,9 +362,9 @@ npx shadcn@latest apply ${PRESET_CODE} --only font`}
             icon={<PaintBrushIcon className="size-3" />}
           />
           <MetricCard
-            label="Chart steps"
-            value="5"
-            detail="Monochrome olive ramp"
+            label="Chart hues"
+            value="9"
+            detail="Categorical ramp, one per series"
             icon={<ChartLineUpIcon className="size-3" />}
           />
           <MetricCard

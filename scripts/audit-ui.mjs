@@ -1076,11 +1076,12 @@ const RULES = {
    * correct scoping decision for a token-conformance pass and the wrong one for a
    * design migration: it left seventy-one literals, the largest single block of
    * styling on the platform that no token governed, looking compliant. Charts get
-   * their colours from `CHART_COLORS` and `CATEGORICAL` in `lib/chart-colors.ts`.
+   * their colours from `seriesColors()` in `lib/chart-colors.ts`, or from a status
+   * role — one hue per series, never shades of one.
    */
   dataColours: {
     title: "colour literal outside a class name",
-    hint: "chart colour comes from CHART_COLORS / CATEGORICAL in lib/chart-colors.ts, or from a --chart-* token",
+    hint: "chart colour comes from seriesColors() in lib/chart-colors.ts, or a status role (--primary, --notable, --destructive); one hue per series or level, never shades of one colour",
     scan(rel, source) {
       if (ALLOWED_COLOUR_FILES.has(rel)) return [];
       const hits = [];

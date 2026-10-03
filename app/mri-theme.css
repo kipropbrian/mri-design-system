@@ -30,11 +30,11 @@
 
    ## The categorical chart ramp
 
-   The preset's `--chart-1 … --chart-5` are one monochrome **olive** ramp, which is
-   right for ordered series and useless for identity: nine countries drawn from it
-   are nine shades of the same colour. `--chart-cat-1 … --chart-cat-9` is the
-   categorical ramp for that job, and it is a documented token set rather than the
-   seventy-one loose hex values that grew in its absence.
+   The preset's `--chart-1 … --chart-5` are one monochrome **olive** ramp: five
+   strengths of a single colour. On screen two of them are the same colour, so they
+   cannot tell series, slices or levels apart, ordered or not.
+   `--chart-cat-1 … --chart-cat-9` is the chart palette, and it is a documented token
+   set rather than the seventy-one loose hex values that grew in its absence.
 
    Measured, not asserted. Lightness is held in a narrow band — 0.58–0.64 light and
    0.74–0.80 dark — so no series reads as more important than another, and the
@@ -45,7 +45,7 @@
 
    That last number is why the ramp does not license colour-only encoding. Use it
    with the labels `charts.tsx` already draws; if a chart has no room for labels,
-   it has too many series for this ramp and wants the olive ramp at three or fewer.
+   it has too many series: fold the tail into "Other" or split it into small multiples.
    ========================================================================== */
 
 @theme inline {

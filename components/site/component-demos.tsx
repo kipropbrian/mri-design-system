@@ -274,7 +274,7 @@ export function TabDemos() {
       </TabsContent>
       <TabsContent value="country">
         <p className="rounded-md bg-muted/40 p-3 text-xs/relaxed text-muted-foreground">
-          One series per monitored country, capped at three series to stay readable.
+          One series per monitored country, each in its own colour.
         </p>
       </TabsContent>
     </Tabs>

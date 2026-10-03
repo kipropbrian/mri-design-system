@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import { ArrowUpRightIcon, ChartLineUpIcon } from "@phosphor-icons/react/dist/ssr";
+import { AvailabilityLegend } from "@/components/mri/availability-grid";
 import {
   CategoryBar,
   CountryBar,
+  Dumbbell,
   GroupedBar,
   InatScanArea,
   InatTaxaBar,
   MultiLine,
+  RadialMeter,
   Sparkline,
   StatusDonut,
+  UnitGrid,
 } from "@/components/mri/charts";
-import { CATEGORICAL, CHART_COLORS, seriesColors } from "@/lib/chart-colors";
+import { CATEGORICAL, seriesColors } from "@/lib/chart-colors";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
 import { Button } from "@/components/ui/button";
@@ -22,18 +26,43 @@ import { formatCompact, formatNumber } from "@/lib/format";
 export const metadata: Metadata = {
   title: "Charts",
   description:
-    "Area, bar, grouped bar, line, donut and sparkline built on ChartContainer and the olive chart ramp.",
+    "Area, bar, grouped bar, line, donut, meter, unit grid, dumbbell and sparkline built on ChartContainer, with one hue per series.",
 };
 
-const CHART_CONTRACT = `const config = {
-  newRecords: { label: "New records", color: "var(--chart-4)" },
-} satisfies ChartConfig
+/**
+ * One hue per level. Three shades of the olive ramp were the first attempt and read as
+ * a single colour; teal, indigo and ochre are the validated three-way split of the
+ * categorical ramp for neighbours (the blocks only ever touch in this order).
+ */
+const PRESENCE_LEVELS = [
+  { key: "wide", label: "Six to eight countries", className: "bg-chart-cat-5" },
+  { key: "some", label: "Two to five", className: "bg-chart-cat-7" },
+  { key: "narrow", label: "One country or none", className: "bg-chart-cat-3" },
+];
+
+/** The platform's model comparison, measured on 589 Research Grade recordings. */
+const MODEL_MATCH = [
+  { key: "birdnet-v3", label: "BirdNET v3", value: 75, withPhoto: 84, soundOnly: 83 },
+  { key: "perch-v2", label: "Perch v2", value: 67, withPhoto: 76, soundOnly: 79 },
+  { key: "birdnet-v2.4", label: "BirdNET v2.4", value: 65, withPhoto: 73, soundOnly: 73 },
+];
+/** Teal, purple, orange: the best three-way split of the ramp with every pair checked. */
+const TRIO = [CATEGORICAL[4], CATEGORICAL[7], CATEGORICAL[1]];
+
+const CHART_CONTRACT = `const config = categoricalConfig([
+  { key: "newRecords", label: "New records" },
+  { key: "rechecked", label: "Rechecked" },
+])
 
 <ChartContainer config={config} className="h-64 w-full">
   <AreaChart data={data}>
-    <Area dataKey="newRecords" stroke="var(--color-newRecords)" fill="url(#grad)" />
+    <Area dataKey="newRecords" stroke={config.newRecords.color} fill="url(#new)" />
+    <Area dataKey="rechecked" stroke={config.rechecked.color} fill="url(#rechecked)" />
   </AreaChart>
 </ChartContainer>`;
+
+/** `InatScanArea`'s own two series, so the key beside it cannot drift from the plot. */
+const SCAN_KEY = { newRecords: CATEGORICAL[4], rechecked: CATEGORICAL[6] };
 
 function scanLabel(value: string) {
   return new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
@@ -66,20 +95,44 @@ export default function ChartsPage() {
     });
 
   const recentYears = inat.yearByCountry.series.filter((row) => row.year >= 2000);
+  const lineColors =
+    inat.yearByCountry.countries.length === 3
+      ? TRIO
+      : seriesColors(inat.yearByCountry.countries.length);
   const lineSeries = inat.yearByCountry.countries.map((country, index) => ({
     key: country.code,
     label: country.name,
-    color: [CHART_COLORS.strong, CHART_COLORS.mid, CHART_COLORS.soft, CHART_COLORS.pale][index % 4],
+    color: lineColors[index],
   }));
+  const taxonColors =
+    inat.taxaByCountry.taxa.length === 3 ? TRIO : seriesColors(inat.taxaByCountry.taxa.length);
 
   const iucnDonut = birds.byIucn
     .filter((row) => row.species > 0)
     .map((row) => ({ key: row.status, label: row.status, value: row.species }));
+  const iucnColors = seriesColors(iucnDonut.length);
 
   const taxaBars = inat.taxa.slice(0, 7).map((row) => ({
     taxon: row.taxon,
     count: row.count,
     share: row.share,
+  }));
+
+  const presence = birds.presenceDistribution.flatMap((row) =>
+    Array.from({ length: row.species }, (_, index) => ({
+      key: `${row.countries}-${index}`,
+      level: row.countries >= 6 ? "wide" : row.countries >= 2 ? "some" : "narrow",
+      label: `Found in ${row.countries} of ${birds.countries.length} countries`,
+    })),
+  );
+  // Grouped by level, so the block reads as a proportion rather than as confetti.
+  const presenceCells = PRESENCE_LEVELS.flatMap((level) =>
+    presence.filter((cell) => cell.level === level.key),
+  );
+  const modelSeries = MODEL_MATCH.map((model, index) => ({
+    key: model.key,
+    label: model.label,
+    color: TRIO[index],
   }));
 
   const unscored = birds.featured[0];
@@ -89,11 +142,11 @@ export default function ChartsPage() {
     <PageContainer size="wide">
       <PageHeader
         eyebrow="Charts"
-        title="Data displays on the olive ramp"
-        description="Every chart is a shadcn ChartContainer over Recharts, wired to the semantic chart tokens. The preset ships a monochrome ramp, so these panels are designed around three series maximum, direct labelling and a manual legend."
+        title="Data displays, one hue per series"
+        description="Every chart is a shadcn ChartContainer over Recharts. Colour tells things apart: each series, slice and level gets its own hue from the categorical ramp or a status role, with a manual legend and direct labels. Shades of one colour are never used to separate anything."
         status={
           <>
-            <StatusBadge tone="warning">Monochrome ramp · design constraint</StatusBadge>
+            <StatusBadge tone="positive">One hue per series</StatusBadge>
             <Chip>Recharts 3</Chip>
             <Chip>Real platform data</Chip>
           </>
@@ -105,7 +158,7 @@ export default function ChartsPage() {
         <SectionHeader
           eyebrow="Contract"
           title="How a chart is wired"
-          description="Series colours are declared once in the ChartConfig; ChartContainer injects them as --color-<key> for the series to reference."
+          description="Series colours are allocated once, by seriesColors or categoricalConfig, and each series reads its own from the config."
         />
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
           <pre className="overflow-x-auto rounded-lg bg-muted/40 p-3 font-mono text-[0.6875rem] leading-relaxed text-foreground ring-1 ring-foreground/10">
@@ -114,13 +167,13 @@ export default function ChartsPage() {
           <div className="grid content-start gap-3">
             <SpecimenLabel
               index="1"
-              title="Never hard-code a series colour"
-              description="Read var(--color-key). A preset change then recolours every chart at once."
+              title="Allocate, never hand-pick"
+              description="seriesColors(n) hands out the most separated hues first. A colour chosen by eye is how two series end up looking alike."
             />
             <SpecimenLabel
               index="2"
-              title="Darkest series first"
-              description="chart-4 is the strongest step, chart-1 the lightest. Order series by importance, not by dataset order."
+              title="One hue per series, never shades"
+              description="Two steps of one ramp are the same colour on screen. Anything a reader must tell apart gets its own hue, ordered scale or not."
             />
             <SpecimenLabel
               index="3"
@@ -140,8 +193,8 @@ export default function ChartsPage() {
           ariaLabel="Area chart of new and rechecked records per weekly scan"
           legend={
             <>
-              <LegendSwatch color={CHART_COLORS.strong} label="New records" />
-              <LegendSwatch color={CHART_COLORS.mid} label="Records rechecked" />
+              <LegendSwatch color={SCAN_KEY.newRecords} label="New records" />
+              <LegendSwatch color={SCAN_KEY.rechecked} label="Records rechecked" />
             </>
           }
           footnote={`Source · ${inat.source}`}
@@ -175,7 +228,13 @@ export default function ChartsPage() {
             ariaLabel="Bar chart of documented bird species per country"
             height="h-56"
           >
-            <CountryBar data={byCountry} dataKey="value" seriesLabel="Species" className="h-56 w-full" />
+            <CountryBar
+              data={byCountry}
+              dataKey="value"
+              seriesLabel="Species"
+              color={TRIO[0]}
+              className="h-56 w-full"
+            />
           </ChartFrame>
 
           <ChartFrame
@@ -188,7 +247,7 @@ export default function ChartsPage() {
                 {inat.taxaByCountry.taxa.map((taxon, index) => (
                   <LegendSwatch
                     key={taxon}
-                    color={[CHART_COLORS.strong, CHART_COLORS.mid, CHART_COLORS.soft][index % 3]}
+                    color={taxonColors[index]}
                     label={taxon[0].toUpperCase() + taxon.slice(1)}
                   />
                 ))}
@@ -200,7 +259,7 @@ export default function ChartsPage() {
               series={inat.taxaByCountry.taxa.map((taxon, index) => ({
                 key: taxon,
                 label: taxon,
-                color: [CHART_COLORS.strong, CHART_COLORS.mid, CHART_COLORS.soft][index % 3],
+                color: taxonColors[index],
               }))}
               className="h-56 w-full"
             />
@@ -228,18 +287,12 @@ export default function ChartsPage() {
             legend={
               <>
                 {iucnDonut.map((row, index) => (
-                  <LegendSwatch
-                    key={row.key}
-                    color={
-                      [CHART_COLORS.strong, CHART_COLORS.mid, CHART_COLORS.soft, CHART_COLORS.pale][index % 4]
-                    }
-                    label={row.label}
-                  />
+                  <LegendSwatch key={row.key} color={iucnColors[index]} label={row.label} />
                 ))}
               </>
             }
           >
-            <StatusDonut data={iucnDonut} className="h-56 w-full" />
+            <StatusDonut data={iucnDonut} colors={iucnColors} className="h-56 w-full" />
           </ChartFrame>
 
           <div className="grid content-start gap-3">
@@ -279,8 +332,8 @@ export default function ChartsPage() {
 
             <SpecimenLabel
               index="2"
-              title="Primary versus secondary series"
-              description="Use --primary only for a single-series chart; switch to the ramp as soon as there are two"
+              title="One series, then two"
+              description="A single series takes one colour. The moment there are two, each takes its own hue from seriesColors"
             />
             <div className="grid grid-cols-2 gap-3">
               <ChartFrame title="Single series" height="h-28" ariaLabel="Single-series bar chart">
@@ -299,8 +352,8 @@ export default function ChartsPage() {
                     return { key: row.code, species: row.value, withAudio: source?.withAudio ?? 0 };
                   })}
                   series={[
-                    { key: "species", label: "Species", color: CHART_COLORS.strong },
-                    { key: "withAudio", label: "With audio", color: CHART_COLORS.mid },
+                    { key: "species", label: "Species", color: seriesColors(2)[0] },
+                    { key: "withAudio", label: "With audio", color: seriesColors(2)[1] },
                   ]}
                   className="h-28 w-full"
                 />
@@ -312,9 +365,113 @@ export default function ChartsPage() {
 
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
+          eyebrow="Shares and pairs"
+          title="Meters, unit grids and dumbbells"
+          description="Three figures for the cases a bar chart handles badly: a share of a whole, a collection small enough to show item by item, and the same thing measured twice. None of them has an axis that can be cut to make a small gap look large."
+        />
+        <div className="grid gap-3 lg:grid-cols-2">
+          <ChartFrame
+            title="How often each model matched"
+            description="A share is a ring, with the figure inside it"
+            ariaLabel="Share of recordings matched: BirdNET v3 75%, Perch v2 67%, BirdNET v2.4 65%"
+            height="h-auto"
+            footnote="RadialMeter is plain SVG, so it is in the server-rendered HTML at its final size. The track is the series’ own hue, and the arc is shortened by its round caps so the painted length is the value."
+          >
+            <div className="flex items-start gap-2">
+              {MODEL_MATCH.map((model, index) => (
+                <div
+                  key={model.key}
+                  className="grid min-w-0 flex-1 justify-items-center gap-1.5 text-center"
+                >
+                  <RadialMeter value={model.value} color={TRIO[index]} className="w-full max-w-24">
+                    <span className="text-base font-medium text-foreground">{model.value}%</span>
+                  </RadialMeter>
+                  <p className="text-xs font-medium text-foreground">{model.label}</p>
+                </div>
+              ))}
+            </div>
+          </ChartFrame>
+
+          <ChartFrame
+            title="A photo makes no difference"
+            description="The same thing measured twice, on one scale"
+            ariaLabel="Share of recordings matched with and without a photo, for three models"
+            height="h-auto"
+            legend={
+              <>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="size-2 shrink-0 rounded-full bg-foreground" />
+                  With a photo
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="size-3 shrink-0 rounded-full border-2 border-foreground" />
+                  Sound only
+                </span>
+              </>
+            }
+            footnote="Dumbbell keeps the whole 0–100 scale. Two marks on top of each other is the finding, and a cropped axis would turn a three-point difference into a gap."
+          >
+            <Dumbbell
+              unit="%"
+              rows={MODEL_MATCH.map((model, index) => ({
+                key: model.key,
+                label: model.label,
+                color: TRIO[index],
+                from: model.withPhoto,
+                to: model.soundOnly,
+                detail: `${model.withPhoto}% with · ${model.soundOnly}% without`,
+              }))}
+            />
+          </ChartFrame>
+        </div>
+
+        <ChartFrame
+          title="How widely each species is found"
+          description={`Each square is one of the ${formatNumber(birds.totalSpecies)} species on the regional checklist`}
+          ariaLabel="Unit grid of checklist species by the number of countries each is found in"
+          height="h-auto"
+          legend={<AvailabilityLegend levels={PRESENCE_LEVELS} />}
+          footnote="UnitGrid draws one cell per thing counted, ordered by level so the block reads as a proportion, with one hue per level. One tooltip serves the whole grid, and the cells are not focusable: it is a figure."
+        >
+          <UnitGrid cells={presenceCells} levels={PRESENCE_LEVELS} />
+        </ChartFrame>
+
+        <ChartFrame
+          title="Birds recorded often are much easier"
+          description="A handful of ordered categories: mark the points, label one series"
+          ariaLabel="Line chart of match rate by how often a bird was recorded, for three models"
+          height="h-56"
+          legend={
+            <>
+              {modelSeries.map((series) => (
+                <LegendSwatch key={series.key} color={series.color} label={series.label} />
+              ))}
+            </>
+          }
+          footnote="MultiLine with dots, a pinned 0–100 domain, a unit, and labelSeries on the series the figure is about. A number on every point of every line collides where lines meet."
+        >
+          <MultiLine
+            data={[
+              { year: "Once", "birdnet-v3": 56, "perch-v2": 44, "birdnet-v2.4": 43 },
+              { year: "2 to 4 times", "birdnet-v3": 73, "perch-v2": 65, "birdnet-v2.4": 60 },
+              { year: "5 times or more", "birdnet-v3": 86, "perch-v2": 80, "birdnet-v2.4": 80 },
+            ]}
+            series={modelSeries}
+            curve="linear"
+            dots
+            domain={[0, 100]}
+            unit="%"
+            labelSeries="birdnet-v3"
+            className="h-56 w-full"
+          />
+        </ChartFrame>
+      </section>
+
+      <section className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
           eyebrow="Identity"
           title="The categorical ramp"
-          description="The olive ramp above encodes magnitude, so it cannot encode identity: nine countries drawn from it are nine shades of one colour. These nine steps are for charts that plot entities, and they exist as tokens because their absence produced seventy-one loose hex values across the platform's charts."
+          description="These nine hues are the chart palette. The preset's own five chart steps are one olive-grey at five strengths, which is one colour on screen, so nothing a reader has to tell apart is drawn from them. The nine exist as tokens because their absence produced seventy-one loose hex values across the platform's charts."
         />
         <Specimen
           label="categorical identity · nine steps"
@@ -337,7 +494,7 @@ export default function ChartsPage() {
         </Specimen>
         <Specimen
           label="categorical bar · three identities"
-          note="seriesColors(3) — blue, red, green: the most separated prefix, not the first three swatches"
+          note="teal, purple, orange — the three-way split that passes with every pair checked, not the first three swatches"
         >
           <CategoryBar
             data={[
@@ -345,7 +502,7 @@ export default function ChartsPage() {
               { key: "BirdNET v2.4", value: 59.5 },
               { key: "Perch v2", value: 56.7 },
             ]}
-            colors={seriesColors(3)}
+            colors={TRIO}
             seriesLabel="Top-1 agreement"
             max={100}
             className="h-56 w-full"
@@ -367,7 +524,7 @@ export default function ChartsPage() {
             },
             {
               title: "Allocate with seriesColors, not with the swatch order",
-              body: "CATEGORICAL is a hue wheel, so its first three steps are the three warmest hues — red, orange and olive — and a three-series chart drawn from them reads as one colour again. seriesColors(3) returns blue, red and green instead, and any prefix of it is the most separated set at that length.",
+              body: "CATEGORICAL is a hue wheel, so its first three steps are the three warmest hues — red, orange and olive — and a three-series chart drawn from them reads as one colour again. seriesColors(n) spreads the hues out instead. For three series that sit side by side use teal, purple and orange, the set that passes with every pair checked: seriesColors(3) is blue, red and green, and a colour-blind reader cannot separate its red from its green.",
             },
           ].map((rule) => (
             <div key={rule.title} className="grid gap-1.5 rounded-lg bg-card p-3 ring-1 ring-foreground/10">
@@ -429,8 +586,8 @@ export default function ChartsPage() {
         <div className="grid gap-3 md:grid-cols-3">
           {[
             {
-              title: "Cap at three series",
-              body: "Beyond three, the olive ramp stops being legible. Split into small multiples instead of adding a fourth shade.",
+              title: "One hue per series",
+              body: "Series, slices and levels each get their own hue from seriesColors, or a status role when they run from good to bad. Never shades of one colour: on screen they are the same colour.",
             },
             {
               title: "Name the measure, not the chart",

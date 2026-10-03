@@ -12,7 +12,7 @@ import {
   InatScanArea,
   InatTaxaBar,
 } from "@/components/mri/charts";
-import { CHART_COLORS } from "@/lib/chart-colors";
+import { CATEGORICAL } from "@/lib/chart-colors";
 import { Eyebrow, PageContainer, PageHeader, SectionHeader, Specimen } from "@/components/mri/layout";
 import {
   ChartFrame,
@@ -141,8 +141,8 @@ export default function InaturalistPage() {
             ariaLabel="Area chart of new and rechecked records per audit run"
             legend={
               <>
-                <LegendSwatch color={CHART_COLORS.strong} label="New records" />
-                <LegendSwatch color={CHART_COLORS.mid} label="Records rechecked" />
+                <LegendSwatch color={CATEGORICAL[4]} label="New records" />
+                <LegendSwatch color={CATEGORICAL[6]} label="Records rechecked" />
               </>
             }
             footnote={`Every run re-checks all open records, so the recheck series grows as coverage widens.`}
