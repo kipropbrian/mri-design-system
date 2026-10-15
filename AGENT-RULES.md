@@ -367,6 +367,10 @@ Audio is the subject, not the illustration, so it has one component: `AudioPlaye
   `—:——`, not `0:00`.
 - **Space toggles play, R replays.** Advertise both with `kbd`; bind neither here —
   the shortcut belongs to the screen that owns focus.
+- **In a narrow card, `compact`.** The Replay label and its `kbd` appear from the
+  `sm` breakpoint, which measures the screen, not the card: a sound card in a
+  three-column grid is narrow on a wide screen and the label crowds the time out.
+  `compact` makes replay an icon button at every width, named for screen readers.
 - **A spectrogram is not a player.** The upload reviewer's canvas annotator keeps
   its iframe document, but it consumes this system's tokens rather than its own
   palette, and it has no second set of transport controls.

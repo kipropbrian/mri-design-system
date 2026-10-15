@@ -53,6 +53,8 @@ export interface AudioPlayerProps {
   surface?: "card" | "overlay";
   /** Real waveform peaks, 0–1. Omit for the decorative bar pattern. */
   peaks?: readonly number[];
+  /** Icon-only replay, for narrow cards where the screen-width breakpoint does not apply. */
+  compact?: boolean;
   className?: string;
 }
 
@@ -78,6 +80,7 @@ export function AudioPlayer({
   disabled = false,
   surface = "card",
   peaks,
+  compact = false,
   className,
 }: AudioPlayerProps) {
   const progressId = useId();
@@ -161,11 +164,12 @@ export function AudioPlayer({
           onClick={onReplay}
           disabled={disabled}
           title="Replay from the beginning (R)"
-          className="h-9 gap-1.5 px-3 text-xs"
+          aria-label={compact ? `Replay ${name} from the beginning` : undefined}
+          className={cn("h-9 gap-1.5 text-xs", compact ? "w-9 px-0" : "px-3")}
         >
           <ArrowCounterClockwise className="size-3.5" aria-hidden="true" />
-          <span className="hidden sm:inline">Replay</span>
-          <kbd className="hidden rounded bg-muted px-1 font-mono text-[0.625rem] text-muted-foreground sm:inline">
+          <span className={compact ? "sr-only" : "hidden sm:inline"}>Replay</span>
+          <kbd className={cn("hidden rounded bg-muted px-1 font-mono text-[0.625rem] text-muted-foreground", !compact && "sm:inline")}>
             R
           </kbd>
         </Button>
