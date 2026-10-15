@@ -4,6 +4,17 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.9.1 — 2026-10-15
+
+### Added
+- **`AudioPlayer` `compact`** (`audio-player`): icon-only replay, for narrow cards where
+  the screen-width breakpoint does not apply. The Replay label becomes screen-reader
+  text, the button is named `Replay “<label>” from the beginning` and becomes a square
+  `size-9` icon button, and the `R` key hint stays hidden at every width. Off by default, so no
+  existing player changes. It came from the platform's East Africa Firsts sound cards,
+  which sit three to a row on a wide screen.
+- `AGENT-RULES.md` says when to use it.
+
 ## v0.9.0 — 2026-10-04
 
 ### Added
