@@ -80,12 +80,15 @@ export function formatDateTime(value: string | null | undefined): string {
   })}`;
 }
 
-/** `2026-09-13` -> `Sep 2026` */
+// Preserve the server's en-GB labels without browser-specific Intl spellings.
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"] as const;
+
+/** `2026-09-13` -> `Sept 2026`, in the publication's UTC calendar. */
 export function formatMonth(value: string | null | undefined): string {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+  return `${MONTH_NAMES[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
 export function formatRelativeDays(
