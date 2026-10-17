@@ -4,6 +4,15 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.9.3 — 2026-10-17
+
+### Fixed
+- **`formatMonth` is the same on every server, browser and time zone** (`format`): it
+  reads the UTC month and a fixed en-GB label table instead of `toLocaleDateString`.
+  WebKit wrote "Sep" where Node writes "Sept", and west of UTC a `YYYY-MM` value fell
+  into the previous month, so the platform's OpenAQ readings table failed hydration
+  (React #418). Labels are unchanged from the server's, including "Sept".
+
 ## v0.9.2 — 2026-10-17
 
 ### Added
