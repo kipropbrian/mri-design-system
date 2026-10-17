@@ -149,7 +149,7 @@ const BASELINE = join(ROOT, CONFIG.baseline);
 const SCAN_DIRS = CONFIG.scanDirs;
 const GENERATED = CONFIG.generated;
 
-const SKIP_DIRS = new Set(["node_modules", ".next", ".open-next", ".wrangler", "dist", "coverage", ".git"]);
+const SKIP_DIRS = new Set(["node_modules", ".claude", ".next", ".open-next", ".wrangler", "dist", "coverage", ".git"]);
 
 /* ------------------------------------------------------------------ rules */
 

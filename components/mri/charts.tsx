@@ -557,6 +557,8 @@ export function MultiArea({
   series,
   className,
   xKey = "key",
+  xTicks,
+  xTickFormatter,
   labelKey,
   curve = "monotone",
   unit = "",
@@ -565,9 +567,13 @@ export function MultiArea({
   series: { key: string; label: string; color: string }[];
   className?: string;
   xKey?: string;
+  /** Explicit x-axis tick values when not every point should be ticked. */
+  xTicks?: string[];
+  /** Formats x-axis tick values when they differ from the raw `xKey` strings. */
+  xTickFormatter?: (value: string) => string;
   /** The field that heads the tooltip, when it should say more than the axis tick. */
   labelKey?: string;
-  curve?: "monotone" | "linear";
+  curve?: "monotone" | "linear" | "stepAfter";
   /** Appended to axis ticks, e.g. `"%"`. */
   unit?: string;
 }) {
@@ -579,7 +585,14 @@ export function MultiArea({
     <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
       <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }} accessibilityLayer>
         <CartesianGrid {...GRID} />
-        <XAxis dataKey={xKey} interval="preserveStartEnd" {...axisProps()} />
+        <XAxis
+          dataKey={xKey}
+          ticks={xTicks}
+          tickFormatter={xTickFormatter}
+          interval="preserveStartEnd"
+          minTickGap={xTicks ? 12 : undefined}
+          {...axisProps()}
+        />
         <YAxis
           width={38}
           allowDecimals={false}
