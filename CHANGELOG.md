@@ -4,6 +4,19 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.9.2 — 2026-10-17
+
+### Added
+- **`MultiArea` `curve="stepAfter"`, `xTicks` and `xTickFormatter`** (`charts`): a
+  stepped area for counts that hold until the next period, explicit x-axis tick values
+  when not every point should be ticked, and a formatter for those ticks. All optional,
+  so no existing chart changes. It came from the platform's OpenAQ monthly stations
+  chart, which no longer imports `recharts` directly.
+
+### Fixed
+- **`audit-ui` skips `.claude/`** (`spacing-audit`): agent worktrees live there, and the
+  audit was reporting a worktree's stylesheets as new drift in the project around it.
+
 ## v0.9.1 — 2026-10-15
 
 ### Added
