@@ -129,5 +129,4 @@ export const FOOTER_GROUPS: { title: string; items: NavItem[] }[] = [
 export const EXTERNAL_LINKS = [
   { label: "MRI platform", href: "https://platform.maiyoinstitute.org" },
   { label: "maiyoinstitute.org", href: "https://maiyoinstitute.org" },
-  { label: "Documentation registry", href: "https://experiments.maiyoinstitute.org/wiki/concepts/mri-documentation-registry/" },
 ];
