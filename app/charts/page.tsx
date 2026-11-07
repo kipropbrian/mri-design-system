@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ArrowUpRightIcon, ChartLineUpIcon } from "@phosphor-icons/react/dist/ssr";
 import { AvailabilityLegend } from "@/components/mri/availability-grid";
 import {
+  BarLine,
   CategoryBar,
   CountryBar,
   Dumbbell,
@@ -48,6 +49,12 @@ const MODEL_MATCH = [
 ];
 /** Teal, purple, orange: the best three-way split of the ramp with every pair checked. */
 const TRIO = [CATEGORICAL[4], CATEGORICAL[7], CATEGORICAL[1]];
+/** Illustrative counts for the bars-and-line specimen: records each year and their running total. */
+const BAR_LINE = [120, 340, 260, 810, 2400, 1900, 3100, 950, 420].map((value, index, all) => ({
+  key: String(2016 + index),
+  value,
+  total: all.slice(0, index + 1).reduce((sum, item) => sum + item, 0),
+}));
 
 const CHART_CONTRACT = `const config = categoricalConfig([
   { key: "newRecords", label: "New records" },
@@ -507,6 +514,23 @@ export default function ChartsPage() {
             max={100}
             className="h-56 w-full"
           />
+        </Specimen>
+        <Specimen
+          label="bars and line · two axes"
+          note="records each year on the left axis, the running total on the right; each axis takes its series' colour"
+        >
+          <div className="grid gap-2">
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[0.6875rem] text-muted-foreground">
+              <LegendSwatch color={TRIO[0]} label="Records that year" />
+              <LegendSwatch color={TRIO[2]} label="Running total" />
+            </div>
+            <BarLine
+              data={BAR_LINE}
+              bar={{ key: "value", label: "Records that year", color: TRIO[0] }}
+              line={{ key: "total", label: "Running total", color: TRIO[2] }}
+              className="h-56 w-full"
+            />
+          </div>
         </Specimen>
         <div className="grid gap-3 md:grid-cols-2">
           {[

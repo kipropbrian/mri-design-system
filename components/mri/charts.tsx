@@ -16,6 +16,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  ComposedChart,
   LabelList,
   Line,
   LineChart,
@@ -395,6 +396,63 @@ export function CategoryBar({
           ))}
         </Bar>
       </BarChart>
+    </ChartContainer>
+  );
+}
+
+/* ----------------------------------------------------------- bars and line */
+
+/**
+ * Bars for each period with a line across them, each on its own axis: the bars on the
+ * left, the line on the right. The usual pair is a count per year and its running
+ * total, where the total soon dwarfs any one year and a shared axis would flatten the
+ * bars into the floor.
+ *
+ * Two axes are easy to misread, so the two series always take different hues, the
+ * caller names both in a `LegendSwatch` legend, and each axis is tinted with its
+ * series' colour so a reader can tell which scale belongs to which mark.
+ */
+export function BarLine({
+  data,
+  bar,
+  line,
+  xKey = "key",
+  xTicks,
+  className,
+}: {
+  data: Record<string, string | number>[];
+  bar: { key: string; label: string; color: string };
+  line: { key: string; label: string; color: string };
+  xKey?: string;
+  /** Explicit x-axis tick values, when not every period should be ticked. */
+  xTicks?: (string | number)[];
+  className?: string;
+}) {
+  const config = {
+    [bar.key]: { label: bar.label, color: bar.color },
+    [line.key]: { label: line.label, color: line.color },
+  } satisfies ChartConfig;
+  const tinted = (color: string) => ({ ...axisProps(), tick: { ...AXIS_TICK, fill: color } });
+
+  return (
+    <ChartContainer config={config} className={cn("w-full min-w-0", className)}>
+      <ComposedChart data={data} margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
+        <CartesianGrid {...GRID} />
+        <XAxis dataKey={xKey} ticks={xTicks} {...axisProps()} />
+        <YAxis yAxisId="bar" width={40} tickFormatter={compact} {...tinted(bar.color)} />
+        <YAxis yAxisId="line" orientation="right" width={40} tickFormatter={compact} {...tinted(line.color)} />
+        <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<ChartTooltipContent />} />
+        <Bar yAxisId="bar" dataKey={bar.key} fill={bar.color} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+        <Line
+          yAxisId="line"
+          dataKey={line.key}
+          type="linear"
+          stroke={line.color}
+          strokeWidth={2}
+          dot={false}
+          isAnimationActive={false}
+        />
+      </ComposedChart>
     </ChartContainer>
   );
 }

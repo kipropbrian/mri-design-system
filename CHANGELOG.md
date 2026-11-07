@@ -4,6 +4,15 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.9.4 — 2026-11-07
+
+### Added
+- **`BarLine`** (`charts`): bars for each period with a line on a second axis, the
+  bars on the left and the line on the right, each axis tinted with its series'
+  colour. For a count per year beside its running total, where one shared axis
+  flattens the bars. It came from the platform's DNA section, whose yearly records
+  and running total were two separate charts.
+
 ## v0.9.3 — 2026-10-17
 
 ### Fixed
