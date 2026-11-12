@@ -3,19 +3,60 @@ import { ArrowUpRightIcon, ChartLineUpIcon } from "@phosphor-icons/react/dist/ss
 import { AvailabilityLegend } from "@/components/mri/availability-grid";
 import {
   BarLine,
+  BubbleField,
   CategoryBar,
   CountryBar,
   Dumbbell,
+  FlowSankey,
   GroupedBar,
+  GroupTreemap,
   InatScanArea,
   InatTaxaBar,
   MultiLine,
+  RadialBars,
   RadialMeter,
   Sparkline,
+  StackedBar,
   StatusDonut,
+  StreamArea,
   UnitGrid,
 } from "@/components/mri/charts";
-import { CATEGORICAL, seriesColors } from "@/lib/chart-colors";
+import { BubbleMatrix, DotMap, FlowMap, PackedCircles, SparkArea } from "@/components/mri/figures";
+import { CATEGORICAL, SERIES_NEUTRAL, SERIES_TRIO, seriesColors } from "@/lib/chart-colors";
+import {
+  BUBBLE_OVERALL,
+  BUBBLE_POINTS,
+  BUBBLE_TAGGED,
+  BUBBLE_TICKS,
+  COUNTRY_METHOD_ROWS,
+  DOT_MAP,
+  FLOW_LINKS,
+  FLOW_MAP,
+  FLOW_NODES,
+  FLOW_TOP_PUBLISHERS,
+  FLOW_TOTAL,
+  GROUP_KEY,
+  MATRIX_PEAKS,
+  MATRIX_ROWS,
+  MATRIX_TICKS,
+  MATRIX_YEARS,
+  METHOD_COLOR,
+  METHOD_SERIES,
+  METHODS,
+  NAMED_SHARE,
+  PACKED,
+  PACKED_COUNT,
+  PACKED_LEAD,
+  PACKED_SIZE,
+  PACKED_TOP_THREE,
+  PACKED_TOTAL,
+  SPARK,
+  STREAM_DATA,
+  STREAM_PEAK,
+  TREE_BY_GROUP,
+  TREE_GROUPS,
+  TREE_TOTAL,
+} from "@/lib/figure-fixtures";
 import { PageContainer, PageHeader, SectionHeader, Specimen, SpecimenLabel } from "@/components/mri/layout";
 import { ChartFrame, LegendSwatch, MetricCard, StatusBadge } from "@/components/mri/patterns";
 import { Button } from "@/components/ui/button";
@@ -27,7 +68,7 @@ import { formatCompact, formatNumber } from "@/lib/format";
 export const metadata: Metadata = {
   title: "Charts",
   description:
-    "Area, bar, grouped bar, line, donut, meter, unit grid, dumbbell and sparkline built on ChartContainer, with one hue per series.",
+    "Area, bar, line, donut, meter, unit grid and dumbbell, plus flow, treemap, stacked bar, radial bars, bubble field, streamgraph, bubble matrix, dot map, flow map and packed circles, with one hue per series.",
 };
 
 /**
@@ -47,8 +88,6 @@ const MODEL_MATCH = [
   { key: "perch-v2", label: "Perch v2", value: 67, withPhoto: 76, soundOnly: 79 },
   { key: "birdnet-v2.4", label: "BirdNET v2.4", value: 65, withPhoto: 73, soundOnly: 73 },
 ];
-/** Teal, purple, orange: the best three-way split of the ramp with every pair checked. */
-const TRIO = [CATEGORICAL[4], CATEGORICAL[7], CATEGORICAL[1]];
 /** Illustrative counts for the bars-and-line specimen: records each year and their running total. */
 const BAR_LINE = [120, 340, 260, 810, 2400, 1900, 3100, 950, 420].map((value, index, all) => ({
   key: String(2016 + index),
@@ -104,7 +143,7 @@ export default function ChartsPage() {
   const recentYears = inat.yearByCountry.series.filter((row) => row.year >= 2000);
   const lineColors =
     inat.yearByCountry.countries.length === 3
-      ? TRIO
+      ? SERIES_TRIO
       : seriesColors(inat.yearByCountry.countries.length);
   const lineSeries = inat.yearByCountry.countries.map((country, index) => ({
     key: country.code,
@@ -112,7 +151,7 @@ export default function ChartsPage() {
     color: lineColors[index],
   }));
   const taxonColors =
-    inat.taxaByCountry.taxa.length === 3 ? TRIO : seriesColors(inat.taxaByCountry.taxa.length);
+    inat.taxaByCountry.taxa.length === 3 ? SERIES_TRIO : seriesColors(inat.taxaByCountry.taxa.length);
 
   const iucnDonut = birds.byIucn
     .filter((row) => row.species > 0)
@@ -139,7 +178,7 @@ export default function ChartsPage() {
   const modelSeries = MODEL_MATCH.map((model, index) => ({
     key: model.key,
     label: model.label,
-    color: TRIO[index],
+    color: SERIES_TRIO[index],
   }));
 
   const unscored = birds.featured[0];
@@ -239,7 +278,7 @@ export default function ChartsPage() {
               data={byCountry}
               dataKey="value"
               seriesLabel="Species"
-              color={TRIO[0]}
+              color={SERIES_TRIO[0]}
               className="h-56 w-full"
             />
           </ChartFrame>
@@ -390,7 +429,7 @@ export default function ChartsPage() {
                   key={model.key}
                   className="grid min-w-0 flex-1 justify-items-center gap-1.5 text-center"
                 >
-                  <RadialMeter value={model.value} color={TRIO[index]} className="w-full max-w-24">
+                  <RadialMeter value={model.value} color={SERIES_TRIO[index]} className="w-full max-w-24">
                     <span className="text-base font-medium text-foreground">{model.value}%</span>
                   </RadialMeter>
                   <p className="text-xs font-medium text-foreground">{model.label}</p>
@@ -423,7 +462,7 @@ export default function ChartsPage() {
               rows={MODEL_MATCH.map((model, index) => ({
                 key: model.key,
                 label: model.label,
-                color: TRIO[index],
+                color: SERIES_TRIO[index],
                 from: model.withPhoto,
                 to: model.soundOnly,
                 detail: `${model.withPhoto}% with · ${model.soundOnly}% without`,
@@ -476,6 +515,277 @@ export default function ChartsPage() {
 
       <section className="grid gap-6 border-t border-border/60 pt-6">
         <SectionHeader
+          eyebrow="Parts and flows"
+          title="Flows, treemaps, stacked bars and rings"
+          description="These forms answer where a total goes and what it is made of. A flow shows the paths, a treemap the parts, stacked bars the same parts in every row, and rings the shares of one whole. All numbers are illustrative."
+        />
+        <ChartFrame
+          title="DNA records by country of collection, method and publisher country"
+          description="FlowSankey: where a total goes, in three stages"
+          ariaLabel={`Flow of ${formatNumber(FLOW_TOTAL)} DNA records from five countries to four methods to five publisher countries. ${FLOW_TOP_PUBLISHERS.map((row) => `${row.label} ${formatNumber(row.records)}`).join(", ")}.`}
+          height="h-96 sm:h-[28rem]"
+          legend={
+            <>
+              {METHOD_SERIES.map((method) => (
+                <LegendSwatch key={method.key} color={method.color} label={method.label} />
+              ))}
+              <LegendSwatch color={SERIES_NEUTRAL} label="Country of collection" />
+            </>
+          }
+          footnote="Read from left to right. A band’s width is its number of records. A band from a country is grey. A band from a method takes the colour of the method. The middle names are the methods. The right names are the countries of the publishers."
+        >
+          <FlowSankey nodes={FLOW_NODES} links={FLOW_LINKS} className="h-full" />
+        </ChartFrame>
+
+        <ChartFrame
+          title="DNA records by organism group and family"
+          description="GroupTreemap: what a whole is made of, in two levels"
+          ariaLabel={`DNA records by organism group: ${TREE_BY_GROUP.map((group) => `${group.label} ${formatNumber(group.records)}`).join(", ")}. ${formatNumber(TREE_TOTAL)} records in all.`}
+          height="h-96 sm:h-[28rem]"
+          legend={
+            <>
+              {GROUP_KEY.map((group) => (
+                <LegendSwatch key={group.key} color={group.color} label={group.label} />
+              ))}
+            </>
+          }
+          footnote="A tile’s area is its number of records. One colour marks one group. Grey tiles are the smaller groups and the records with no group. Hover a tile that is too small for its name."
+        >
+          <GroupTreemap groups={TREE_GROUPS} className="h-full" />
+        </ChartFrame>
+
+        <div className="grid gap-3 lg:grid-cols-2">
+          <ChartFrame
+            title="Share of each country’s records, by method"
+            description="StackedBar with expand: the same parts in every row"
+            ariaLabel={`Stacked bars of DNA records by method for ${COUNTRY_METHOD_ROWS.map((row) => row.key).join(", ")}. Every bar shows shares of 100 percent.`}
+            height="h-64"
+            legend={
+              <>
+                {METHOD_SERIES.map((method) => (
+                  <LegendSwatch key={method.key} color={method.color} label={method.label} />
+                ))}
+              </>
+            }
+            footnote="Every bar has the same length. A part’s width is its share of the country’s records. Hover a part to see its count."
+          >
+            <StackedBar
+              data={COUNTRY_METHOD_ROWS}
+              series={METHOD_SERIES}
+              layout="vertical"
+              expand
+              className="h-full"
+            />
+          </ChartFrame>
+
+          <ChartFrame
+            title="Share of each method’s records that name a species"
+            description="RadialBars: several shares of one whole"
+            ariaLabel={`Share of records that name a species: ${NAMED_SHARE.map((row) => `${row.label} ${row.text}`).join(", ")}.`}
+            height="h-auto"
+            footnote="Each ring is one method and runs a full turn for 100 percent. The outer ring is the first row of the key."
+          >
+            <div className="grid items-center gap-4 sm:grid-cols-2">
+              <RadialBars rows={NAMED_SHARE} className="mx-auto max-w-56" />
+              <ul className="grid gap-2 text-xs">
+                {NAMED_SHARE.map((row) => (
+                  <li key={row.key} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="size-2.5 translate-y-0.5 rounded-full"
+                      style={{ background: row.color }}
+                    />
+                    <span className="text-foreground">{row.label}</span>
+                    <span className="tabular-nums text-muted-foreground">{row.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ChartFrame>
+        </div>
+      </section>
+
+      <section className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
+          eyebrow="Two measures and time"
+          title="Bubbles, streams, matrices and tiles"
+          description="These forms answer which things are large and which are covered, when the whole grew, and when each country peaked. Each puts a second measure or a year axis on one figure."
+        />
+        <ChartFrame
+          title="Known species and share with a DNA record, by class"
+          description="BubbleField: two measures and a count as size"
+          ariaLabel={`Classes by known species and share with a DNA record. ${BUBBLE_TAGGED.map((point) => `${point.label} ${point.y} percent of ${formatNumber(point.x)}`).join(", ")}. All classes together ${BUBBLE_OVERALL} percent.`}
+          height="h-80 sm:h-[26rem]"
+          legend={
+            <>
+              {GROUP_KEY.filter((group) => group.key !== "other").map((group) => (
+                <LegendSwatch key={group.key} color={group.color} label={group.label} />
+              ))}
+            </>
+          }
+          footnote="Each bubble is a class. A bubble further right has more known species. A bubble higher up has a larger share with a DNA record. A bubble’s area is the number of species with a DNA record. The bottom scale is a log scale. The dashed line is the share for all classes together."
+        >
+          <BubbleField
+            points={BUBBLE_POINTS}
+            xLabel="Known species"
+            yLabel="Share with a DNA record"
+            xLog
+            xTicks={BUBBLE_TICKS}
+            yMax={70}
+            yUnit="%"
+            reference={{ y: BUBBLE_OVERALL, label: `All classes: ${BUBBLE_OVERALL}%` }}
+            className="h-full"
+          />
+        </ChartFrame>
+
+        <div className="grid gap-3 lg:grid-cols-2">
+          <ChartFrame
+            title="DNA records by year of collection and method"
+            description="StreamArea: when the whole grew and which part did it"
+            ariaLabel={`DNA records by year of collection and method, ${MATRIX_YEARS[0]} to ${MATRIX_YEARS[MATRIX_YEARS.length - 1]}. The most were collected in ${STREAM_PEAK.year}: ${formatNumber(STREAM_PEAK.records)}.`}
+            height="h-56"
+            legend={
+              <>
+                {METHOD_SERIES.map((method) => (
+                  <LegendSwatch key={method.key} color={method.color} label={method.label} />
+                ))}
+              </>
+            }
+            footnote="A band’s thickness is the records of one method in that year. The figure has no vertical scale. Hover a year to see the counts."
+          >
+            <StreamArea
+              data={STREAM_DATA}
+              series={METHOD_SERIES}
+              xTicks={MATRIX_TICKS}
+              className="h-full"
+            />
+          </ChartFrame>
+
+          <div className="grid content-start gap-3">
+            <SpecimenLabel
+              index="1"
+              title="Area sparkline in a metric card"
+              description="SparkArea fills the area under one count over time, with the floor at zero"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              {SPARK.map((tile) => (
+                <MetricCard
+                  key={tile.key}
+                  label={tile.label}
+                  value={formatNumber(tile.total)}
+                  detail={`most in ${tile.peakYear}`}
+                  trend={<SparkArea values={tile.values} color={tile.color} className="h-6 w-16" />}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <ChartFrame
+          title="DNA records by country and year of collection"
+          description="BubbleMatrix: rows by columns"
+          ariaLabel={`DNA records by country and year. ${MATRIX_PEAKS.map((row) => `${row.label}: most in ${row.year}, ${row.records}`).join("; ")}.`}
+          height="h-auto"
+          legend={
+            <>
+              {METHODS.map((method) => (
+                <LegendSwatch key={method.key} color={METHOD_COLOR[method.key]} label={method.label} />
+              ))}
+            </>
+          }
+          footnote="A circle’s area is the number of records collected in that country in that year. Its colour is the method with the most records. The figure at the end of a row is the total for the country. On a phone, scroll the figure sideways."
+        >
+          <div className="overflow-x-auto">
+            <BubbleMatrix
+              rows={MATRIX_ROWS}
+              columns={MATRIX_YEARS}
+              columnTicks={MATRIX_TICKS}
+              className="mx-auto min-w-[32rem] max-w-3xl"
+            />
+          </div>
+        </ChartFrame>
+      </section>
+
+      <section className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
+          eyebrow="Maps and packed circles"
+          title="Dot map, flow map and packed circles"
+          description="These forms answer where records are, where specimens went, and how unequal a group is. A map keeps place and distance. Packed circles show an uneven group without a scale."
+        />
+        <div className="grid gap-3 lg:grid-cols-2">
+          <ChartFrame
+            title="DNA records by half-degree square"
+            description="DotMap: counts by place, with the surveyed ground"
+            ariaLabel={`Map of DNA records in half-degree squares, with country borders. ${formatNumber(DOT_MAP.dotCount)} of ${formatNumber(DOT_MAP.groundCount)} squares with a GBIF record have a DNA record. The largest square, near Site A, has ${DOT_MAP.top} records.`}
+            height="h-auto"
+            legend={
+              <>
+                {METHODS.map((method) => (
+                  <LegendSwatch key={method.key} color={METHOD_COLOR[method.key]} label={method.label} />
+                ))}
+                <LegendSwatch color="var(--muted)" label="GBIF records, none from DNA" />
+              </>
+            }
+            footnote="A dot’s area is the number of DNA records in the square. Its colour is the method with the most records. The ring marks a named site. Borders: Natural Earth."
+          >
+            <DotMap
+              ground={DOT_MAP.ground}
+              cells={DOT_MAP.cells}
+              cell={DOT_MAP.cell}
+              box={DOT_MAP.box}
+              labels={DOT_MAP.labels}
+              borders={DOT_MAP.borders}
+              marks={DOT_MAP.marks}
+              className="mx-auto max-w-md"
+            />
+          </ChartFrame>
+
+          <ChartFrame
+            title="DNA records by collector"
+            description="PackedCircles, laid out with packCircles"
+            ariaLabel={`${PACKED_COUNT} collectors. ${PACKED_LEAD.label} has ${formatNumber(PACKED_LEAD.records)} of ${formatNumber(PACKED_TOTAL)} records. The three largest have ${formatNumber(PACKED_TOP_THREE)}.`}
+            height="h-auto"
+            legend={
+              <>
+                {METHODS.map((method) => (
+                  <LegendSwatch key={method.key} color={METHOD_COLOR[method.key]} label={method.label} />
+                ))}
+              </>
+            }
+            footnote="A circle’s area is the collector’s number of records. Its colour is the method the collector used most. A circle shows a name when the name fits. Hover a circle to read the rest."
+          >
+            <PackedCircles circles={PACKED} size={PACKED_SIZE} className="mx-auto max-w-md" />
+          </ChartFrame>
+        </div>
+
+        <ChartFrame
+          title="Specimens collected in East Africa, by location of the holder"
+          description="FlowMap: from one origin to places on a map"
+          ariaLabel={`World map of where specimens collected in East Africa are held. ${FLOW_MAP.places.map((place) => `${place.label} ${formatNumber(place.value)}`).join(", ")}. East Africa ${formatNumber(FLOW_MAP.home)}.`}
+          height="h-auto"
+          legend={
+            <>
+              <LegendSwatch color="var(--foreground)" label="Held outside East Africa" />
+              <LegendSwatch color="var(--primary)" label="Held in East Africa" />
+            </>
+          }
+          footnote={`A circle’s area and a line’s width are the number of specimens. Each circle is at the city of the largest holder in the country. Not named on the map: ${FLOW_MAP.unnamed.join(", ")}. Land: Natural Earth.`}
+        >
+          <div className="overflow-x-auto">
+            <FlowMap
+              land={FLOW_MAP.land}
+              box={FLOW_MAP.box}
+              origin={FLOW_MAP.origin}
+              places={FLOW_MAP.places}
+              lineColor="var(--foreground)"
+              className="mx-auto min-w-[36rem] max-w-4xl"
+            />
+          </div>
+        </ChartFrame>
+      </section>
+
+      <section className="grid gap-6 border-t border-border/60 pt-6">
+        <SectionHeader
           eyebrow="Identity"
           title="The categorical ramp"
           description="These nine hues are the chart palette. The preset's own five chart steps are one olive-grey at five strengths, which is one colour on screen, so nothing a reader has to tell apart is drawn from them. The nine exist as tokens because their absence produced seventy-one loose hex values across the platform's charts."
@@ -509,7 +819,7 @@ export default function ChartsPage() {
               { key: "BirdNET v2.4", value: 59.5 },
               { key: "Perch v2", value: 56.7 },
             ]}
-            colors={TRIO}
+            colors={SERIES_TRIO}
             seriesLabel="Top-1 agreement"
             max={100}
             className="h-56 w-full"
@@ -521,13 +831,13 @@ export default function ChartsPage() {
         >
           <div className="grid gap-2">
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[0.6875rem] text-muted-foreground">
-              <LegendSwatch color={TRIO[0]} label="Records that year" />
-              <LegendSwatch color={TRIO[2]} label="Running total" />
+              <LegendSwatch color={SERIES_TRIO[0]} label="Records that year" />
+              <LegendSwatch color={SERIES_TRIO[2]} label="Running total" />
             </div>
             <BarLine
               data={BAR_LINE}
-              bar={{ key: "value", label: "Records that year", color: TRIO[0] }}
-              line={{ key: "total", label: "Running total", color: TRIO[2] }}
+              bar={{ key: "value", label: "Records that year", color: SERIES_TRIO[0] }}
+              line={{ key: "total", label: "Running total", color: SERIES_TRIO[2] }}
               className="h-56 w-full"
             />
           </div>

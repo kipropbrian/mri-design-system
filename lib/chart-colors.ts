@@ -29,11 +29,14 @@
  *   three-way sets on this ramp, nine pass with every pair compared, and this is the
  *   best (ΔE 12.4 colour-blind, 22.2 otherwise). `seriesColors(3)` is blue, red, green,
  *   and its red and green are ΔE 4.0 apart for a deuteranope.
+ *   `SERIES_TRIO` names this set, so a caller does not index `CATEGORICAL` by hand.
  * - **Four or more:** no four hues on this ramp stay apart for every pair. Label the
  *   series directly, or fold the tail into "Other".
  * - **Good to bad:** green, gold, red — `--primary`, `--notable`, `--destructive`
  *   (ΔE 9.2 colour-blind, 27.8 otherwise). Not amber: `--warning` against
  *   `--destructive` is ΔE 2.6 for a deuteranope.
+ * - **A folded "Other" part, or a mark with no identity:** `SERIES_NEUTRAL`, a grey that
+ *   does not read as one more identity.
  *
  * ## Why this is not in `components/mri/charts.tsx`
  *
@@ -160,3 +163,16 @@ export function categoricalConfig(
     series.map((item, index) => [item.key, { label: item.label, color: colors[index] }]),
   );
 }
+
+/**
+ * The checked three-series set: teal, purple, orange. It is `CATEGORICAL[4]`, `[7]` and
+ * `[1]`, and the "Checked sets" part of the module comment gives its measurements. It
+ * exists so that callers stop indexing `CATEGORICAL` by hand.
+ */
+export const SERIES_TRIO = [CATEGORICAL[4], CATEGORICAL[7], CATEGORICAL[1]] as const;
+
+/**
+ * The colour for a folded "Other" part, or for a mark that has no identity. It is grey
+ * so that it does not read as one more identity beside the hues of the series.
+ */
+export const SERIES_NEUTRAL = "var(--muted-foreground)";

@@ -4,6 +4,50 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
+## v0.10.0 — unreleased
+
+### Added
+- **Six recharts forms** (`charts`, in `components/mri/charts.tsx`). They came from the
+  platform's East Africa DNA report, where they lived in a file outside the system.
+  - `StackedBar`: the same parts in every period or thing. `expand` shows shares.
+  - `StreamArea`: when the whole grew and which part did it, with no vertical scale.
+  - `RadialBars`: several shares of one fixed whole.
+  - `BubbleField`: things placed by two measures, with a third as size.
+  - `GroupTreemap`: what a whole is made of, in two levels, when there are dozens of parts.
+  - `FlowSankey`: where a total goes, in stages.
+- **Five plain-SVG figures** (`charts`, new `components/mri/figures.tsx`). They use no
+  recharts and are in the server HTML. Hover is the only client part.
+  - `SparkArea`: one count over time, inside a metric tile.
+  - `DotMap`: counts by place, with the surveyed ground shown.
+  - `BubbleMatrix`: rows by columns, such as countries by years.
+  - `FlowMap`: flows from one origin to places on a map.
+  - `PackedCircles`: how unequal the members of a group are.
+  - `HoverBox`, the hover box these figures share.
+- **`packCircles`** (`charts`, new `lib/chart-layout.ts`): the deterministic layout that
+  `PackedCircles` draws. The same input gives the same layout on the server and in the browser.
+- **`SERIES_TRIO` and `SERIES_NEUTRAL`** (`charts`, `lib/chart-colors.ts`).
+  `SERIES_TRIO` is teal, purple and orange, the checked three-series set, so callers
+  stop indexing `CATEGORICAL` by hand. `SERIES_NEUTRAL` is `var(--muted-foreground)`,
+  for a folded "Other" part.
+- **`AGENT-RULES.md`**: a "Which figure for which question" table and a "Rules for a
+  figure in a report" section. No audit rule is added.
+
+### Fixed
+- **The `charts` audit rule allows `recharts` in exactly `components/mri/charts.tsx`.**
+  It allowed an import in any file named `charts.tsx`. A consumer with another
+  `charts.tsx` that imports recharts fails the audit after it adopts this release.
+- **The `chips` audit rule exempts exactly `components/mri/chips.tsx`.** It exempted any
+  file named `chips.tsx` from the hand-rolled chip check.
+
+### Adopting
+For the platform:
+1. Install the `charts` item.
+2. Change imports from `@/components/dnav2/charts` to `@/components/mri/charts`
+   and `@/components/mri/figures`.
+3. Import `packCircles` from `@/lib/chart-layout`.
+4. Delete `components/dnav2/charts.tsx`.
+5. Move the pin in `mri.json` to `v0.10.0`.
+
 ## v0.9.4 — 2026-11-07
 
 ### Added

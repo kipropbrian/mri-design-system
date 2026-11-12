@@ -75,8 +75,10 @@ An exemption nobody wants is visible in the diff that added it.
   `Button` is for things that are actions, not places to go.
 - **Never import an icon library other than `@phosphor-icons/react/dist/ssr`.**
 - **Never use an off-scale spacing value.** The scale is below.
-- **Never hand-roll a chart.** Compose it from `components/mri/charts.tsx`, with
-  colour from `seriesColors()` or a status role.
+- **Never hand-roll a chart.** Compose it from `components/mri/charts.tsx` (recharts
+  forms) or `components/mri/figures.tsx` (plain-SVG forms), with colour from
+  `seriesColors()`, `SERIES_TRIO` or a status role. Only `components/mri/charts.tsx`
+  imports `recharts`. Pick the form from "Which figure for which question" below.
 - **Never tell things apart with shades of one colour.** Series, slices, bars and
   levels a reader has to distinguish each get their own hue: `seriesColors(n)` from
   `lib/chart-colors.ts` for identities, and the status roles — `primary`, `notable`,
@@ -314,6 +316,66 @@ one does. The platform's five document routes shared one such shell, so a change
 (`px-4 sm:px-6 lg:px-8`), the rhythm (`py-6 lg:py-10`) and the space between
 sections (`gap-10`). A route that passes `py-*`, `pt-*`, `pb-*` or `space-y-*` to
 it is restating the contract; a nav strip is `density="band"`.
+
+## Which figure for which question
+
+Start from the question the reader asks, not from the chart you know. Each form below
+answers one question. The last column names the form that looks right and answers it badly.
+
+| question                                                       | form                                              | not this                                   |
+| -------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------ |
+| how a count or measure ranks across things                     | `InatTaxaBar`, `CountryBar`                       | a pie, or a table with no bars             |
+| the same measure for two or three groups across categories     | `GroupedBar`                                      | more than three groups in one chart        |
+| each category's own value, each a different thing              | `CategoryBar` (`max` for a share of a fixed whole) | one colour for bars that are different things |
+| a count per period beside its running total                    | `BarLine`                                         | two charts, or one shared axis             |
+| the share of a few parts, one whole                            | `StatusDonut`, `SplitBar` (one line, stacks well) | a pie with more than six slices            |
+| how two or three series change over time                       | `MultiLine`                                       | an area chart of the same series           |
+| the shape of two or three series over an ordered axis          | `MultiArea`                                       | a stacked area (it hides each outline)     |
+| a profile on five to fourteen unordered categories             | `MultiRadar`                                      | reading area as a total                    |
+| one share of a fixed whole                                     | `RadialMeter`                                     | a bar chart of one number                  |
+| the same thing measured twice, per row                         | `Dumbbell`                                        | two bars per row                           |
+| a collection small enough to show whole, one cell per item     | `UnitGrid`                                        | a bar that asks the reader to trust "18%"  |
+| which of these reported, and when                              | `AvailabilityGrid`                                | a Gantt on a linear time axis              |
+| one count over time, inside a metric tile                      | `SparkArea` (`Sparkline` for a line)              | a full chart in a tile                     |
+| where a total goes, in stages                                  | `FlowSankey`                                      | three bar charts                           |
+| what a whole is made of, two levels, dozens of parts           | `GroupTreemap`                                    | a bar chart of 60 rows                     |
+| things placed by two measures, with a third as size            | `BubbleField`                                     | a table of three columns                   |
+| when the whole grew and which part did it, no vertical scale   | `StreamArea`                                      | a stacked area with a value axis           |
+| the same parts in every period or thing                        | `StackedBar` (`expand` for shares)                | a donut for each period                    |
+| several shares of one fixed whole                              | `RadialBars`                                      | several `RadialMeter` rings in a row      |
+| counts by place, with the surveyed ground shown                | `DotMap`                                          | a bar list of places                       |
+| from one origin to places on a map                             | `FlowMap`                                         | a table of destinations                    |
+| rows by columns, such as countries by years                    | `BubbleMatrix`                                    | a table of raw counts                      |
+| how unequal the members of a group are                         | `PackedCircles`, laid out with `packCircles`      | a bar chart that hides the long tail       |
+
+`components/mri/charts.tsx` holds the recharts forms. `components/mri/figures.tsx` holds
+`SparkArea`, `DotMap`, `BubbleMatrix`, `FlowMap`, `PackedCircles` and the shared
+`HoverBox`. The figures file is plain SVG. It is in the server HTML, and hover is its
+only client part. `packCircles` is in `lib/chart-layout.ts`. It gives the same layout on
+the server and in the browser.
+
+## Rules for a figure in a report
+
+These rules come from the platform's East Africa DNA report.
+
+- **Every figure sits in a `ChartFrame`.** The title states what is counted and by what.
+  The `ariaLabel` gives the main numbers in words, because the SVG itself is
+  `aria-hidden`. The footnote says what area, width and colour mean.
+- **A plain-SVG figure keeps its own proportions.** Give `ChartFrame` `height="h-auto"`.
+  A recharts form needs a height on the frame and `className="h-full"` on the chart.
+- **A wide figure on a phone goes in an `overflow-x-auto` box with a minimum width.**
+  Do not shrink it until the names are unreadable.
+- **One colour map per page.** Key it by identity (a method, a country) and use it in
+  every figure on that page. Define it once in the page's `lib/` module.
+- **Four or more hues need a second way to name each mark.** No four hues on the ramp
+  stay apart for every reader. Name each mark by a direct label or by the hover box. The
+  legend lists every hue. Small parts fold into one grey part (`SERIES_NEUTRAL`).
+- **A name written on a coloured mark is a help, not the only name.** Measured in the
+  light theme, white text on the nine categorical fills has a contrast of 3.5:1 to
+  4.6:1. Small text needs 4.5:1, and most hues fall short. The hover box, the legend
+  and the `ariaLabel` must carry the name too.
+- **A section of a report has three parts, in this order.** First `SectionHeader`. Then
+  the text: what the section covers, then what the data shows. Then the figures.
 
 ## Availability grids
 

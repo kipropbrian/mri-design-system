@@ -77,10 +77,10 @@ the base layer and the gates, so install all of it:
 | `availability-grid` | fixed-width monthly availability cells, pinned row labels, shared tooltip and legend                                                    |
 | `layout`            | `PageContainer`, `PageHeader`, `SectionHeader`, `Specimen`, `Prose`                                                                     |
 | `patterns`          | `Panel` (the data card), `TableCard`, `DataRow`, `MetricCard`, `MetricStrip`, `StatusBadge`, `FilterSidebar`, `StatusPath`, data states |
-| `charts`            | the chart compositions and the chart palette (`seriesColors`, `CATEGORICAL`) — the only place a project imports `recharts`             |
+| `charts`            | the chart compositions (recharts, `charts.tsx`), the plain-SVG figures (`figures.tsx`), `packCircles` and the palette (`seriesColors`, `CATEGORICAL`, `SERIES_TRIO`) — `components/mri/charts.tsx` is the only file that imports `recharts` |
 | `audio-player`      | `AudioPlayer` — transport chrome for a caller-owned `<audio>`                                                                           |
 | `specimen-card`     | `ObservationCard`, `BirdMediaCard`, `IucnChip`                                                                                          |
-| `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-seven-rule CI gate                                                                                  |
+| `ui-audit`          | `scripts/audit-ui.mjs` — the twenty-eight-rule CI gate                                                                                  |
 | `parity-check`      | `scripts/check-mri-parity.mjs` — fails when an installed file differs from the pinned version                                           |
 | `spacing-audit`     | deprecated alias for `ui-audit`; installs the same file                                                                                 |
 | `chip-audit`        | `components/mri/chip-audit.tsx` — measures the rendered DOM                                                                             |

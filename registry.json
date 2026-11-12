@@ -208,7 +208,7 @@
       "name": "charts",
       "type": "registry:item",
       "title": "Chart compositions",
-      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, CategoryBar, BarLine, StatusDonut, MultiLine, MultiArea, MultiRadar, RadialMeter, UnitGrid, Dumbbell, SplitBar and Sparkline, plus seriesColors and CATEGORICAL \u2014 the nine-hue chart palette: one hue per series, slice or level, never shades of one colour. OLIVE stays for a single neutral series. Pairs with the theme item, which carries the ramp's tokens.",
+      "description": "InatScanArea, InatTaxaBar, CountryBar, GroupedBar, CategoryBar, BarLine, StatusDonut, MultiLine, MultiArea, MultiRadar, RadialMeter, UnitGrid, Dumbbell, SplitBar and Sparkline, plus seriesColors and CATEGORICAL \u2014 the nine-hue chart palette: one hue per series, slice or level, never shades of one colour. OLIVE stays for a single neutral series. Pairs with the theme item, which carries the ramp's tokens. Also StackedBar, StreamArea, RadialBars, BubbleField, GroupTreemap and FlowSankey (recharts), and the plain-SVG figures SparkArea, DotMap, BubbleMatrix, FlowMap and PackedCircles in components/mri/figures.tsx, with packCircles in lib/chart-layout.ts. lib/chart-colors.ts adds SERIES_TRIO and SERIES_NEUTRAL.",
       "dependencies": [
         "cn@^0.3.0",
         "recharts@^3.10.1"
@@ -227,6 +227,16 @@
           "path": "lib/chart-colors.ts",
           "type": "registry:file",
           "target": "~/lib/chart-colors.ts"
+        },
+        {
+          "path": "components/mri/figures.tsx",
+          "type": "registry:file",
+          "target": "~/components/mri/figures.tsx"
+        },
+        {
+          "path": "lib/chart-layout.ts",
+          "type": "registry:file",
+          "target": "~/lib/chart-layout.ts"
         }
       ]
     },

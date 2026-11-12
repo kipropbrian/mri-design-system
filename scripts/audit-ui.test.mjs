@@ -465,3 +465,43 @@ test("allows a rule book or a specimen label to name the token in prose", () => 
   });
 });
 
+
+/** A tree with files at root-relative paths, for rules that depend on the full path. */
+function fixtureAt(files) {
+  const root = mkdtempSync(join(tmpdir(), "mri-audit-"));
+  mkdirSync(join(root, "scripts"), { recursive: true });
+  for (const [path, body] of Object.entries(files)) {
+    mkdirSync(join(root, path, ".."), { recursive: true });
+    writeFileSync(join(root, path), body);
+  }
+  return root;
+}
+
+const RECHARTS = `import { LineChart } from "recharts";\nexport const A = () => <LineChart />;\n`;
+
+test("allows recharts only in components/mri/charts.tsx, not in any charts.tsx", () => {
+  const allowed = fixtureAt({ "components/mri/charts.tsx": RECHARTS });
+  withCleanup(allowed, () => {
+    const { code, out } = run(allowed);
+    assert.equal(code, 0, out);
+  });
+
+  const elsewhere = fixtureAt({ "components/dnav2/charts.tsx": RECHARTS });
+  withCleanup(elsewhere, () => {
+    const { code, out } = run(elsewhere);
+    assert.equal(code, 1);
+    assert.match(out, /hand-rolled chart/);
+    assert.match(out, /components\/dnav2\/charts\.tsx/);
+  });
+});
+
+test("fails on a recharts subpath import in a route file", () => {
+  const root = fixtureAt({
+    "app/page.tsx": `import { Foo } from "recharts/types/util";\nexport const A = () => <Foo />;\n`,
+  });
+  withCleanup(root, () => {
+    const { code, out } = run(root);
+    assert.equal(code, 1);
+    assert.match(out, /hand-rolled chart/);
+  });
+});

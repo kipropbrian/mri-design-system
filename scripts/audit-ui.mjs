@@ -164,9 +164,9 @@ const SPACING_UTILITY =
 const SPACING_ALLOWED = new Map(Object.entries(CONFIG.spacingAllowed));
 
 /** The one chip module owns every chip-shaped class string. */
-const CHIP_MODULE = "chips.tsx";
-/** The one module allowed to import Recharts: every chart is composed from it. */
-const CHART_MODULE = "charts.tsx";
+const CHIP_MODULE = "components/mri/chips.tsx";
+/** The one module allowed to import Recharts: every chart is composed from it. An exact path, not a file name. */
+const CHART_MODULE = "components/mri/charts.tsx";
 const CHIP_SIGNATURE = (literal) =>
   /rounded-full/.test(literal) &&
   /\btext-(xs|\[1[01]px\]|\[10px\])/.test(literal) &&
@@ -383,7 +383,7 @@ const RULES = {
     title: "hand-rolled chip",
     hint: "use <Chip> from components/mri/chips.tsx",
     scan(rel, source) {
-      if (basename(rel) === CHIP_MODULE) return [];
+      if (rel === CHIP_MODULE) return [];
       const hits = [];
       for (const { literal, line } of literals(source)) {
         if (CHIP_SIGNATURE(literal)) hits.push({ line, token: "chip-shaped class string" });
@@ -889,9 +889,9 @@ const RULES = {
    */
   charts: {
     title: "hand-rolled chart",
-    hint: "compose from components/mri/charts.tsx, or add the composition there once; routes never import recharts",
+    hint: "compose from components/mri/charts.tsx, or add the composition there once; only that exact path may import recharts, whatever a file is called",
     scan(rel, source) {
-      if (basename(rel) === CHART_MODULE) return [];
+      if (rel === CHART_MODULE) return [];
       const hits = [];
       for (const match of source.matchAll(IMPORT_SOURCE)) {
         const spec = match[1];

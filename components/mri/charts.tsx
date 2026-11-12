@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentProps,
   type MouseEvent,
   type PointerEvent,
   type ReactNode,
@@ -27,8 +28,16 @@ import {
   PolarRadiusAxis,
   Radar,
   RadarChart,
+  RadialBar,
+  RadialBarChart,
+  ReferenceLine,
+  Sankey,
+  Scatter,
+  ScatterChart,
+  Treemap,
   XAxis,
   YAxis,
+  ZAxis,
 } from "recharts";
 import {
   ChartContainer,
@@ -36,6 +45,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { HoverBox } from "@/components/mri/figures";
 import { CATEGORICAL, OLIVE } from "@/lib/chart-colors";
 import { cn } from "cn";
 
@@ -73,6 +83,13 @@ import { cn } from "cn";
  * been given a height and a parent wants. `min-w-0` is the other half: without it
  * a grid child refuses to shrink below its content and pushes the card wider than
  * the page.
+ *
+ * ## Forms added in 0.10
+ *
+ * `StackedBar`, `StreamArea`, `RadialBars`, `BubbleField`, `GroupTreemap` and `FlowSankey`
+ * come last in this file. The forms that are plain SVG (`SparkArea`, `DotMap`,
+ * `BubbleMatrix`, `FlowMap`, `PackedCircles`) are in `figures.tsx`, so a page that uses only
+ * those does not load `recharts`. This file imports `HoverBox` from there.
  */
 
 const AXIS_TICK = { fontSize: 10 } as const;
@@ -1236,5 +1253,664 @@ export function SplitBar({
         ))}
       </ul>
     </div>
+  );
+}
+
+const whole = (value: number) => Math.round(value).toLocaleString("en-GB");
+
+/* ------------------------------------------------------------ stacked bars */
+
+/**
+ * One bar per period or per thing, cut into the same parts every time.
+ *
+ * - `layout="vertical"` lays the bars on their side, one row per thing, for names too
+ *   long to sit under a bar.
+ * - `expand` draws every bar the same length, so the parts read as shares. Use it when
+ *   the things differ a hundredfold in size and the question is their make-up.
+ *
+ * More than three parts break the rule that hues must stay apart for every reader, so
+ * the caller's legend names every part and the hover box names it again.
+ */
+export function StackedBar({
+  data,
+  series,
+  xKey = "key",
+  layout = "horizontal",
+  expand = false,
+  xTicks,
+  labelWidth = 84,
+  className,
+}: {
+  data: Record<string, string | number>[];
+  series: { key: string; label: string; color: string }[];
+  xKey?: string;
+  layout?: "horizontal" | "vertical";
+  expand?: boolean;
+  xTicks?: (string | number)[];
+  /** The room for the names when the bars lie on their side. */
+  labelWidth?: number;
+  className?: string;
+}) {
+  const config = Object.fromEntries(
+    series.map((item) => [item.key, { label: item.label, color: item.color }])
+  ) satisfies ChartConfig;
+  const sideways = layout === "vertical";
+  const valueTick = expand ? (value: number) => `${Math.round(value * 100)}%` : compact;
+  return (
+    <ChartContainer config={config} className={cn("aspect-auto w-full min-w-0", className)}>
+      <BarChart
+        data={data}
+        layout={layout}
+        stackOffset={expand ? "expand" : "none"}
+        margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
+        barCategoryGap={sideways ? "22%" : "14%"}
+      >
+        <CartesianGrid {...GRID} vertical={sideways} horizontal={!sideways} />
+        {sideways ? (
+          <>
+            <XAxis
+              type="number"
+              tickFormatter={valueTick}
+              domain={expand ? [0, 1] : undefined}
+              {...axisProps()}
+            />
+            <YAxis type="category" dataKey={xKey} width={labelWidth} {...axisProps()} />
+          </>
+        ) : (
+          <>
+            <XAxis dataKey={xKey} ticks={xTicks} {...axisProps()} />
+            <YAxis width={40} tickFormatter={valueTick} {...axisProps()} />
+          </>
+        )}
+        <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<ChartTooltipContent />} />
+        {series.map((item) => (
+          <Bar
+            key={item.key}
+            dataKey={item.key}
+            stackId="stack"
+            fill={item.color}
+            isAnimationActive={false}
+          />
+        ))}
+      </BarChart>
+    </ChartContainer>
+  );
+}
+
+/* ------------------------------------------------------------- streamgraph */
+
+/**
+ * Series stacked around a middle line, so the figure's outline is the total and each
+ * band's thickness is one series.
+ *
+ * A stacked area on a flat floor makes every series but the first ride on the bumps of
+ * the ones below it. Centring the stack shares the distortion out, and the reader sees
+ * what this form is for: when the whole swelled, and which band did it. It has no
+ * vertical scale on purpose. Thickness compares; the hover box gives the counts.
+ */
+export function StreamArea({
+  data,
+  series,
+  xKey = "key",
+  xTicks,
+  className,
+}: {
+  data: Record<string, string | number>[];
+  series: { key: string; label: string; color: string }[];
+  xKey?: string;
+  xTicks?: (string | number)[];
+  className?: string;
+}) {
+  const config = Object.fromEntries(
+    series.map((item) => [item.key, { label: item.label, color: item.color }])
+  ) satisfies ChartConfig;
+  return (
+    <ChartContainer config={config} className={cn("aspect-auto w-full min-w-0", className)}>
+      <AreaChart
+        data={data}
+        stackOffset="silhouette"
+        margin={{ top: 8, right: 8, bottom: 0, left: 8 }}
+      >
+        <XAxis dataKey={xKey} ticks={xTicks} {...axisProps()} />
+        <ChartTooltip cursor={{ stroke: "var(--border)" }} content={<ChartTooltipContent />} />
+        {series.map((item) => (
+          <Area
+            key={item.key}
+            dataKey={item.key}
+            type="monotone"
+            stackId="stream"
+            stroke="var(--card)"
+            strokeWidth={1}
+            fill={item.color}
+            fillOpacity={0.9}
+            isAnimationActive={false}
+          />
+        ))}
+      </AreaChart>
+    </ChartContainer>
+  );
+}
+
+/* ------------------------------------------------------------- radial bars */
+
+export interface RadialRow {
+  key: string;
+  label: string;
+  /** A share of the whole, 0 to 100. */
+  value: number;
+  color: string;
+}
+
+/**
+ * Several shares of one fixed whole, as rings round one centre.
+ *
+ * `RadialMeter` is one share. This is the same idea for a handful that must be compared:
+ * every ring runs the same full turn, so the scale cannot be cropped, and the rings sit
+ * inside one square where the same shares as bars would take a card. The outer ring is
+ * the first row. Rings are named by the caller's key beside the figure, in the same
+ * order and colours.
+ */
+export function RadialBars({ rows, className }: { rows: RadialRow[]; className?: string }) {
+  const config = Object.fromEntries(
+    rows.map((row) => [row.key, { label: row.label, color: row.color }])
+  ) satisfies ChartConfig;
+  // recharts draws the first row innermost; the caller's first row is the outer ring.
+  const data = [...rows].reverse().map((row) => ({
+    key: row.key,
+    name: row.label,
+    value: Math.max(0, Math.min(100, row.value)),
+    fill: row.color,
+  }));
+  return (
+    <ChartContainer config={config} className={cn("aspect-square w-full min-w-0", className)}>
+      <RadialBarChart
+        data={data}
+        innerRadius="22%"
+        outerRadius="100%"
+        startAngle={90}
+        endAngle={-270}
+        barCategoryGap="18%"
+      >
+        <PolarAngleAxis type="number" domain={[0, 100]} tick={false} axisLine={false} />
+        <ChartTooltip
+          cursor={false}
+          content={({ active, payload }) => {
+            const row = active
+              ? (payload?.[0]?.payload as { name: string; value: number } | undefined)
+              : undefined;
+            return row ? (
+              <HoverBox
+                title={row.name}
+                rows={[
+                  {
+                    label: "share",
+                    value: `${Math.round(row.value * 10) / 10}%`,
+                  },
+                ]}
+              />
+            ) : null;
+          }}
+        />
+        <RadialBar dataKey="value" background cornerRadius={8} isAnimationActive={false} />
+      </RadialBarChart>
+    </ChartContainer>
+  );
+}
+
+/* ----------------------------------------------------------------- bubbles */
+
+export interface BubblePoint {
+  key: string;
+  label: string;
+  /** Position along the bottom scale. */
+  x: number;
+  /** Position up the side scale. */
+  y: number;
+  /** The count the bubble's area is drawn from. */
+  size: number;
+  color: string;
+  /** Written beside the bubble. Leave it out for the bubbles a reader finds by hovering. */
+  tag?: string;
+  /** Extra lines for the hover box. */
+  rows?: { label: string; value: string }[];
+}
+
+/**
+ * Things placed by two measures at once, each as a bubble whose area is a third.
+ *
+ * The form for "which are large and which are covered": a ranked list answers one of
+ * those and hides the other, and the finding is usually in the corner where one is
+ * high and the other low.
+ *
+ * - **The bottom scale may be a log scale** (`xLog`), for counts that run from hundreds
+ *   to tens of thousands. Its ticks are the caller's, in plain figures.
+ * - **Name the bubbles that carry the story** with `tag`, and leave the rest to the
+ *   hover box. A name on every bubble is a figure nobody can read.
+ * - **A dashed line marks the whole's own value** (`reference`), so every bubble reads
+ *   as above or below it.
+ */
+export function BubbleField({
+  points,
+  xLabel,
+  yLabel,
+  xLog = false,
+  xTicks,
+  yMax,
+  yUnit = "",
+  reference,
+  className,
+}: {
+  points: BubblePoint[];
+  xLabel: string;
+  yLabel: string;
+  xLog?: boolean;
+  xTicks?: number[];
+  yMax?: number;
+  yUnit?: string;
+  reference?: { y: number; label: string };
+  className?: string;
+}) {
+  const xs = points.map((point) => point.x);
+  const domain: [number, number] = xLog
+    ? [Math.min(...xs) * 0.8, Math.max(...xs) * 1.25]
+    : [0, Math.max(...xs) * 1.05];
+  return (
+    <ChartContainer config={{}} className={cn("aspect-auto w-full min-w-0", className)}>
+      <ScatterChart margin={{ top: 12, right: 16, bottom: 18, left: 0 }}>
+        <CartesianGrid {...GRID} />
+        <XAxis
+          type="number"
+          dataKey="x"
+          scale={xLog ? "log" : "linear"}
+          domain={domain}
+          ticks={xTicks}
+          allowDataOverflow
+          tickFormatter={(value: number) => whole(value)}
+          label={{
+            value: xLabel,
+            position: "insideBottom",
+            offset: -10,
+            fontSize: 10,
+            fill: "var(--muted-foreground)",
+          }}
+          {...axisProps()}
+        />
+        <YAxis
+          type="number"
+          dataKey="y"
+          width={36}
+          domain={[0, yMax ?? "auto"]}
+          tickFormatter={(value: number) => `${value}${yUnit}`}
+          {...axisProps()}
+        />
+        <ZAxis type="number" dataKey="size" range={[36, 2200]} />
+        {reference ? (
+          <ReferenceLine
+            y={reference.y}
+            stroke="var(--foreground)"
+            strokeDasharray="4 4"
+            strokeOpacity={0.55}
+            label={{
+              value: reference.label,
+              position: "insideTopLeft",
+              fontSize: 10,
+              fill: "var(--foreground)",
+            }}
+          />
+        ) : null}
+        <ChartTooltip
+          cursor={false}
+          content={({ active, payload }) => {
+            const point = active ? (payload?.[0]?.payload as BubblePoint | undefined) : undefined;
+            return point ? (
+              <HoverBox
+                title={point.label}
+                rows={point.rows ?? [{ label: yLabel, value: `${point.y}${yUnit}` }]}
+              />
+            ) : null;
+          }}
+        />
+        <Scatter data={points} isAnimationActive={false}>
+          {points.map((point) => (
+            <Cell
+              key={point.key}
+              fill={point.color}
+              fillOpacity={0.72}
+              stroke={point.color}
+              strokeWidth={1}
+            />
+          ))}
+          <LabelList
+            dataKey="tag"
+            position="top"
+            offset={6}
+            fontSize={10}
+            fill="var(--foreground)"
+          />
+        </Scatter>
+      </ScatterChart>
+    </ChartContainer>
+  );
+}
+
+/* ---------------------------------------------------------------- treemap */
+
+export interface TreeGroup {
+  key: string;
+  label: string;
+  color: string;
+  children: { key: string; label: string; value: number; detail?: string }[];
+}
+
+interface TreeTileProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  depth: number;
+  index: number;
+  name: string;
+  value: number;
+  color?: string;
+  group?: string;
+}
+
+/**
+ * A total cut into tiles, one per part, each as large as its count, with the parts of
+ * one group kept together in one colour.
+ *
+ * The form for "what is this made of" when there are two levels and the second has
+ * dozens of members: a bar chart of sixty families is a list nobody reads, and the
+ * same sixty as tiles show at once that two families outweigh whole groups.
+ *
+ * - **One hue per group**, from the caller. Tiles of one group are told apart by their
+ *   outline and their name, not by shade.
+ * - **A tile is named when its name fits.** The first tile of a group also carries the
+ *   group's name, so the figure reads without its legend.
+ * - **The hover box names every tile**, so a tile too small for text is not anonymous.
+ */
+export function GroupTreemap({
+  groups,
+  unit = "records",
+  className,
+}: {
+  groups: TreeGroup[];
+  unit?: string;
+  className?: string;
+}) {
+  const data = groups.map((group) => ({
+    name: group.label,
+    color: group.color,
+    children: group.children.map((child) => ({
+      name: child.label,
+      size: child.value,
+      color: group.color,
+      group: group.label,
+      detail: child.detail,
+    })),
+  }));
+
+  const renderTile = (props: TreeTileProps) => {
+    const { x, y, width, height, depth, index, name, color, group } = props;
+    if (depth !== 2) return <g />;
+    const roomy = width > 64 && height > 30;
+    const fits = width > 46 && height > 16;
+    const cut = (text: string) => {
+      const room = Math.floor((width - 10) / 5.6);
+      return text.length > room ? `${text.slice(0, Math.max(room - 1, 1))}…` : text;
+    };
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          rx={3}
+          fill={color}
+          stroke="var(--card)"
+          strokeWidth={2}
+        />
+        {index === 0 && roomy ? (
+          <text x={x + 6} y={y + 15} fontSize={11} fontWeight={600} fill="var(--card)">
+            {cut(group ?? "")}
+          </text>
+        ) : null}
+        {fits ? (
+          <text
+            x={x + 6}
+            y={y + (index === 0 && roomy ? 28 : 14)}
+            fontSize={10}
+            fill="var(--card)"
+            fillOpacity={0.92}
+          >
+            {cut(name)}
+          </text>
+        ) : null}
+      </g>
+    );
+  };
+
+  return (
+    <ChartContainer config={{}} className={cn("aspect-auto w-full min-w-0", className)}>
+      <Treemap
+        data={data}
+        dataKey="size"
+        nameKey="name"
+        aspectRatio={1.4}
+        isAnimationActive={false}
+        content={renderTile as unknown as ComponentProps<typeof Treemap>["content"]}
+      >
+        <ChartTooltip
+          content={({ active, payload }) => {
+            const tile = active
+              ? (payload?.[0]?.payload as
+                  | {
+                      name: string;
+                      group?: string;
+                      size?: number;
+                      value?: number;
+                      detail?: string;
+                    }
+                  | undefined)
+              : undefined;
+            if (!tile) return null;
+            return (
+              <HoverBox
+                title={tile.group ? `${tile.group} · ${tile.name}` : tile.name}
+                rows={[
+                  { label: unit, value: whole(tile.size ?? tile.value ?? 0) },
+                  ...(tile.detail ? [{ label: "", value: tile.detail }] : []),
+                ]}
+              />
+            );
+          }}
+        />
+      </Treemap>
+    </ChartContainer>
+  );
+}
+
+/* ------------------------------------------------------------------- flow */
+
+export interface FlowNode {
+  key: string;
+  label: string;
+  /** A shorter name for a phone, where three columns of full names collide. */
+  short?: string;
+  color: string;
+}
+
+export interface FlowLink {
+  source: string;
+  target: string;
+  value: number;
+}
+
+interface FlowNodeProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  payload: {
+    name: string;
+    short: string;
+    value: number;
+    depth: number;
+    color: string;
+  };
+}
+
+interface FlowLinkProps {
+  sourceX: number;
+  targetX: number;
+  sourceY: number;
+  targetY: number;
+  sourceControlX: number;
+  targetControlX: number;
+  linkWidth: number;
+  payload: { source: { color: string }; target: { color: string } };
+}
+
+/**
+ * Where a total goes, in stages: a band for every path, as wide as its count.
+ *
+ * The form for "these came from here, by this route, and ended up there". Three bar
+ * charts give the three totals and lose the paths between them, and the paths are the
+ * finding: which source feeds which destination.
+ *
+ * - **Stages run left to right**, and a node belongs to one stage. The first stage's
+ *   names sit right of their node, and every later stage's names sit left of theirs,
+ *   so no name runs off the figure. Below `sm` a node shows its `short` name and no
+ *   count, because three columns of full names do not fit a phone.
+ * - **A band takes its source's colour**, so a reader can follow one source across the
+ *   figure. Nodes of a later stage take a colour of their own or the neutral one.
+ * - **Small paths stay.** A band is never thinner than a hairline, so "one path in a
+ *   thousand" is still on the figure.
+ */
+export function FlowSankey({
+  nodes,
+  links,
+  unit = "records",
+  className,
+}: {
+  nodes: FlowNode[];
+  links: FlowLink[];
+  /** What a band counts, for the hover box. */
+  unit?: string;
+  className?: string;
+}) {
+  const index = new Map(nodes.map((node, position) => [node.key, position]));
+  const data = {
+    nodes: nodes.map((node) => ({
+      name: node.label,
+      short: node.short ?? node.label,
+      color: node.color,
+    })),
+    links: links
+      .filter((link) => link.value > 0 && index.has(link.source) && index.has(link.target))
+      .map((link) => ({
+        source: index.get(link.source) as number,
+        target: index.get(link.target) as number,
+        value: link.value,
+      })),
+  };
+
+  const renderNode = (props: FlowNodeProps) => {
+    const { x, y, width, height, payload } = props;
+    const first = payload.depth === 0;
+    return (
+      <g>
+        <rect x={x} y={y} width={width} height={Math.max(height, 1)} rx={2} fill={payload.color} />
+        {height >= 9
+          ? [true, false].map((phone) => (
+              <text
+                key={String(phone)}
+                className={phone ? "sm:hidden" : "hidden sm:inline"}
+                x={first ? x + width + 6 : x - 6}
+                y={y + height / 2}
+                textAnchor={first ? "start" : "end"}
+                dominantBaseline="central"
+                fontSize={11}
+                fill="var(--foreground)"
+                stroke="var(--card)"
+                strokeWidth={3}
+                paintOrder="stroke"
+              >
+                {phone ? payload.short : payload.name}
+                {phone ? null : (
+                  <tspan
+                    fill="var(--muted-foreground)"
+                    fontSize={10}
+                  >{`  ${compact(payload.value)}`}</tspan>
+                )}
+              </text>
+            ))
+          : null}
+      </g>
+    );
+  };
+  const renderLink = (props: FlowLinkProps) => {
+    const {
+      sourceX,
+      targetX,
+      sourceY,
+      targetY,
+      sourceControlX,
+      targetControlX,
+      linkWidth,
+      payload,
+    } = props;
+    return (
+      <path
+        d={`M${sourceX},${sourceY} C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}`}
+        fill="none"
+        stroke={payload.source.color}
+        strokeOpacity={0.38}
+        strokeWidth={Math.max(linkWidth, 0.75)}
+      />
+    );
+  };
+  return (
+    <ChartContainer config={{}} className={cn("aspect-auto w-full min-w-0", className)}>
+      <Sankey
+        data={data}
+        nodeWidth={10}
+        nodePadding={12}
+        linkCurvature={0.55}
+        iterations={48}
+        margin={{ top: 8, right: 2, bottom: 8, left: 2 }}
+        node={renderNode as unknown as ComponentProps<typeof Sankey>["node"]}
+        link={renderLink as unknown as ComponentProps<typeof Sankey>["link"]}
+      >
+        <ChartTooltip
+          content={({ active, payload }) => {
+            const item = active
+              ? (
+                  payload?.[0]?.payload as
+                    | {
+                        payload?: {
+                          source?: { name: string };
+                          target?: { name: string };
+                          name?: string;
+                          value: number;
+                        };
+                      }
+                    | undefined
+                )?.payload
+              : undefined;
+            if (!item) return null;
+            return item.source && item.target ? (
+              <HoverBox
+                title={`${item.source.name} → ${item.target.name}`}
+                rows={[{ label: unit, value: whole(item.value) }]}
+              />
+            ) : (
+              <HoverBox title={item.name} rows={[{ label: unit, value: whole(item.value) }]} />
+            );
+          }}
+        />
+      </Sankey>
+    </ChartContainer>
   );
 }
