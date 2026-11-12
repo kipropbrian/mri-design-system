@@ -4,7 +4,7 @@ Consumers pin a tag in `mri.json`; `scripts/check-mri-parity.mjs` fails their bu
 an installed file differs from it. Every release is listed here so moving the pin is a
 reviewable decision.
 
-## v0.10.0 — unreleased
+## v0.10.0 — 2026-11-12
 
 ### Added
 - **Six recharts forms** (`charts`, in `components/mri/charts.tsx`). They came from the
